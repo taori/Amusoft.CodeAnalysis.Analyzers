@@ -1,0 +1,297 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=1436CF481AE50D46B6840DD3440D40FF/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=1436CF481AE50D46B6840DD3440D40FF/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=1436CF481AE50D46B6840DD3440D40FF/Description/@EntryValue">file header</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=1436CF481AE50D46B6840DD3440D40FF/Reformat/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=1436CF481AE50D46B6840DD3440D40FF/Scope/=558F05AA0DE96347816FF785232CFB2A/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=1436CF481AE50D46B6840DD3440D40FF/Scope/=558F05AA0DE96347816FF785232CFB2A/CustomProperties/=minimumLanguageVersion/@EntryIndexedValue">2.0</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=1436CF481AE50D46B6840DD3440D40FF/Scope/=558F05AA0DE96347816FF785232CFB2A/Type/@EntryValue">InCSharpTypeAndNamespace</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=1436CF481AE50D46B6840DD3440D40FF/Shortcut/@EntryValue">fh</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=1436CF481AE50D46B6840DD3440D40FF/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=1436CF481AE50D46B6840DD3440D40FF/Text/@EntryValue">// Copyright 2018 Andreas Müller&#xD;
+// This file is a part of Amusoft.Roslyn.Analyzers and is licensed under Apache 2.0&#xD;
+// See https://github.com/taori/Amusoft.Roslyn.Analyzers/blob/master/LICENSE for details</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/Applicability/=File/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/CustomProperties/=Extension/@EntryIndexedValue">cs</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/CustomProperties/=FileName/@EntryIndexedValue">codefix</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/CustomProperties/=ValidateFileName/@EntryIndexedValue">True</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/Description/@EntryValue">codefix</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/Field/=analyzerType/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/Field/=analyzerType/Expression/@EntryValue">completeType("")</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/Field/=analyzerType/Order/@EntryValue">2</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/Field/=className/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/Field/=className/Expression/@EntryValue">getFileNameWithoutExtension()</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/Field/=className/InitialRange/@EntryValue">-1</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/Field/=className/Order/@EntryValue">1</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/Field/=codeFixTitle/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/Field/=codeFixTitle/Order/@EntryValue">3</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/Field/=namespace/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/Field/=namespace/Expression/@EntryValue">fileDefaultNamespace()</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/Field/=namespace/InitialRange/@EntryValue">-1</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/Field/=namespace/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/Reformat/@EntryValue">True</s:Boolean>
+	
+	
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/Scope/=E8F0594528C33E45BBFEC6CFE851095D/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/Scope/=E8F0594528C33E45BBFEC6CFE851095D/Type/@EntryValue">InCSharpProjectFile</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4E14806A51F25543A08676037EB9631A/Text/@EntryValue">// Copyright 2018 Andreas Müller
+// This file is a part of Amusoft.Roslyn.Analyzers and is licensed under Apache 2.0
+// See https://github.com/taori/Amusoft.Roslyn.Analyzers/blob/master/LICENSE for details
+
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Composition;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Rename;
+using Microsoft.CodeAnalysis.Text;
+
+namespace $namespace$
+{
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof($className$)), Shared]
+    public class $className$ : CodeFixProvider
+    {
+        private const string CodeFixUniqueKey = "$className$";
+
+        public sealed override ImmutableArray&lt;string&gt; FixableDiagnosticIds
+        {
+            get { return ImmutableArray.Create($analyzerType$.DiagnosticId); }
+        }
+
+        public sealed override FixAllProvider GetFixAllProvider()
+        {
+            // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
+            return WellKnownFixAllProviders.BatchFixer;
+        }
+
+        public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        {
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
+            // TODO: Replace the following code with your own analysis, generating a CodeAction for each fix to suggest
+            var diagnostic = context.Diagnostics.First();
+            var diagnosticSpan = diagnostic.Location.SourceSpan;
+
+            // Find the type declaration identified by the diagnostic.
+            var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType&lt;TypeDeclarationSyntax&gt;().First();
+
+            // Register a code action that will invoke the fix.
+            context.RegisterCodeFix(
+                CodeAction.Create(
+                    title: $codeFixTitle$,
+                    createChangedSolution: c =&gt; MakeUppercaseAsync(context.Document, declaration, c), 
+                    equivalenceKey: CodeFixUniqueKey),
+                diagnostic);
+        }
+
+        private async Task&lt;Solution&gt; MakeUppercaseAsync(Document document, TypeDeclarationSyntax typeDecl, CancellationToken cancellationToken)
+        {
+            // Compute new uppercase name.
+            var identifierToken = typeDecl.Identifier;
+            var newName = identifierToken.Text.ToUpperInvariant();
+
+            // Get the symbol representing the type to be renamed.
+            var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
+            var typeSymbol = semanticModel.GetDeclaredSymbol(typeDecl, cancellationToken);
+
+            // Produce a new solution that has all references to that type renamed, including the declaration.
+            var originalSolution = document.Project.Solution;
+            var optionSet = originalSolution.Workspace.Options;
+            var newSolution = await Renamer.RenameSymbolAsync(document.Project.Solution, typeSymbol, newName, optionSet, cancellationToken).ConfigureAwait(false);
+
+            // Return the new solution with the now-uppercase type name.
+            return newSolution;
+        }
+    }
+}
+</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/Applicability/=File/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/CustomProperties/=Extension/@EntryIndexedValue">cs</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/CustomProperties/=FileName/@EntryIndexedValue">test</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/CustomProperties/=ValidateFileName/@EntryIndexedValue">True</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/Description/@EntryValue">codeFixAndAnalyzerTest</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/Field/=class/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/Field/=class/Expression/@EntryValue">getFileNameWithoutExtension()</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/Field/=class/InitialRange/@EntryValue">-1</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/Field/=class/Order/@EntryValue">1</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/Field/=Namespace/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/Field/=Namespace/Expression/@EntryValue">fileDefaultNamespace()</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/Field/=Namespace/InitialRange/@EntryValue">-1</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/Field/=Namespace/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/Field/=smartCompleteAnalyzer/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/Field/=smartCompleteAnalyzer/Expression/@EntryValue">completeSmart()</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/Field/=smartCompleteAnalyzer/Order/@EntryValue">2</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/Field/=smartCompleteCodeFix/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/Field/=smartCompleteCodeFix/Expression/@EntryValue">completeSmart()</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/Field/=smartCompleteCodeFix/Order/@EntryValue">3</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/Reformat/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/Scope/=E8F0594528C33E45BBFEC6CFE851095D/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/Scope/=E8F0594528C33E45BBFEC6CFE851095D/Type/@EntryValue">InCSharpProjectFile</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=CB5878FD53568E4996CFED8194D533D0/Text/@EntryValue">using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using TestHelper;
+using Amusoft.Roslyn.Analyzers;
+
+namespace $Namespace$
+{
+    [TestClass]
+    public class $class$ : CodeFixVerifier
+    {
+        //No diagnostics expected to show up
+        [TestMethod]
+        public void TestMethod1()
+        {
+            var test = @"";
+
+            VerifyCSharpDiagnostic(test);
+        }
+
+        //Diagnostic and CodeFix both triggered and checked for
+        [TestMethod]
+        public void TestMethod2()
+        {
+            var test = @"
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using System.Diagnostics;
+
+    namespace ConsoleApplication1
+    {
+        class TypeName
+        {   
+        }
+    }";
+            var expected = new DiagnosticResult
+            {
+                Id = "AmusoftRoslynAnalyzers",
+                Message = String.Format("Type name '{0}' contains lowercase letters", "TypeName"),
+                Severity = DiagnosticSeverity.Warning,
+                Locations =
+                    new[] {
+                            new DiagnosticResultLocation("Test0.cs", 11, 15)
+                        }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using System.Diagnostics;
+
+    namespace ConsoleApplication1
+    {
+        class TYPENAME
+        {   
+        }
+    }";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new $smartCompleteCodeFix$
+        }
+
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        {
+            return new $smartCompleteAnalyzer$
+        }
+    }
+}</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FA8811773A3D004F9ACA32A89056F247/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FA8811773A3D004F9ACA32A89056F247/Description/@EntryValue">analyzer</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FA8811773A3D004F9ACA32A89056F247/Field/=className/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FA8811773A3D004F9ACA32A89056F247/Field/=className/Expression/@EntryValue">getFileNameWithoutExtension()</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FA8811773A3D004F9ACA32A89056F247/Field/=className/InitialRange/@EntryValue">-1</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FA8811773A3D004F9ACA32A89056F247/Field/=className/Order/@EntryValue">1</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FA8811773A3D004F9ACA32A89056F247/Field/=namespace/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FA8811773A3D004F9ACA32A89056F247/Field/=namespace/Expression/@EntryValue">fileDefaultNamespace()</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FA8811773A3D004F9ACA32A89056F247/Field/=namespace/InitialRange/@EntryValue">-1</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FA8811773A3D004F9ACA32A89056F247/Field/=namespace/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FA8811773A3D004F9ACA32A89056F247/Scope/=E8F0594528C33E45BBFEC6CFE851095D/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FA8811773A3D004F9ACA32A89056F247/Scope/=E8F0594528C33E45BBFEC6CFE851095D/Type/@EntryValue">InCSharpProjectFile</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FA8811773A3D004F9ACA32A89056F247/Text/@EntryValue">// Copyright 2018 Andreas Müller
+// This file is a part of Amusoft.Roslyn.Analyzers and is licensed under Apache 2.0
+// See https://github.com/taori/Amusoft.Roslyn.Analyzers/blob/master/LICENSE for details
+
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace $namespace$
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class $className$ : DiagnosticAnalyzer
+    {
+        public const string DiagnosticId = "$className$";
+
+        // You can change these strings in the Resources.resx file. If you do not want your analyzer to be localize-able, you can use regular strings for Title and MessageFormat.
+        // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Localizing%20Analyzers.md for more on localization
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(Resources.$className$Title), Resources.ResourceManager, typeof(Resources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(Resources.$className$MessageFormat), Resources.ResourceManager, typeof(Resources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(Resources.$className$Description), Resources.ResourceManager, typeof(Resources));
+        private const string Category = "Naming";
+
+        private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: Description);
+
+        public override ImmutableArray&lt;DiagnosticDescriptor&gt; SupportedDiagnostics { get { return ImmutableArray.Create(Rule); } }
+
+        public override void Initialize(AnalysisContext context)
+        {
+            // TODO: Consider registering other actions that act on syntax instead of or in addition to symbols
+            // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Analyzer%20Actions%20Semantics.md for more information
+            context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.NamedType);
+        }
+
+        private static void AnalyzeSymbol(SymbolAnalysisContext context)
+        {
+            // TODO: Replace the following code with your own analysis, generating Diagnostic objects for any issues you find
+            var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
+
+            // Find just those named type symbols with names containing lowercase letters.
+            if (namedTypeSymbol.Name.ToCharArray().Any(char.IsLower))
+            {
+                // For all such symbols, produce a diagnostic.
+                var diagnostic = Diagnostic.Create(Rule, namedTypeSymbol.Locations[0], namedTypeSymbol.Name);
+
+                context.ReportDiagnostic(diagnostic);
+            }
+        }
+    }
+}
+</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FA8811773A3D004F9ACA32A89056F247/Reformat/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FA8811773A3D004F9ACA32A89056F247/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FA8811773A3D004F9ACA32A89056F247/CustomProperties/=FileName/@EntryIndexedValue">analyzer</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FA8811773A3D004F9ACA32A89056F247/CustomProperties/=Extension/@EntryIndexedValue">cs</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FA8811773A3D004F9ACA32A89056F247/CustomProperties/=ValidateFileName/@EntryIndexedValue">True</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FA8811773A3D004F9ACA32A89056F247/Applicability/=File/@EntryIndexedValue">True</s:Boolean>
+	
+	</wpf:ResourceDictionary>
