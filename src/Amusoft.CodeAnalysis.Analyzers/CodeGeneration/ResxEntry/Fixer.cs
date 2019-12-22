@@ -14,16 +14,16 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Rename;
 
-namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.GeneratePoco
+namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.ResxEntry
 {
-	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(GeneratePocoFixer)), Shared]
-	public class GeneratePocoFixer : CodeFixProvider
+	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(Fixer)), Shared]
+	public class Fixer : CodeFixProvider
 	{
-		private const string CodeFixUniqueKey = "GeneratePocoFixer";
+		private const string CodeFixUniqueKey = "ResxEntryFixer";
 
 		public sealed override ImmutableArray<string> FixableDiagnosticIds
 		{
-			get { return ImmutableArray.Create(GeneratePocoAnalyzer.DiagnosticId); }
+			get { return ImmutableArray.Create(Analyzer.DiagnosticId); }
 		}
 
 		public sealed override FixAllProvider GetFixAllProvider()
@@ -46,7 +46,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.GeneratePoco
 			// Register a code action that will invoke the fix.
 			context.RegisterCodeFix(
 				CodeAction.Create(
-					title: "Generate POCO class",
+					title: "Generate .resx entry",
 					createChangedSolution: c => MakeUppercaseAsync(context.Document, declaration, c),
 					equivalenceKey: CodeFixUniqueKey),
 				diagnostic);

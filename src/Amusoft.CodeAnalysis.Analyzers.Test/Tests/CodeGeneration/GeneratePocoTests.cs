@@ -40,7 +40,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
     }";
 			var expected = new DiagnosticResult
 			{
-				Id = GeneratePocoAnalyzer.DiagnosticId,
+				Id = Analyzer.DiagnosticId,
 				Message = string.Format(Resources.GeneratePocoAnalyzerMessageFormat),
 				Severity = DiagnosticSeverity.Warning,
 				Locations =
@@ -71,12 +71,12 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
 
 		protected override CodeFixProvider GetCSharpCodeFixProvider()
 		{
-			return new GeneratePocoFixer();
+			return new Fixer();
 		}
 
 		protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
 		{
-			return new GeneratePocoAnalyzer();
+			return new Analyzer();
 		}
 	}
 }

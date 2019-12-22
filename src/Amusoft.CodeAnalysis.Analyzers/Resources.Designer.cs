@@ -20,7 +20,7 @@ namespace Amusoft.CodeAnalysis.Analyzers {
     // -Klasse über ein Tool wie ResGen oder Visual Studio automatisch generiert.
     // Um einen Member hinzuzufügen oder zu entfernen, bearbeiten Sie die .ResX-Datei und führen dann ResGen
     // mit der /str-Option erneut aus, oder Sie erstellen Ihr VS-Projekt neu.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -58,6 +58,33 @@ namespace Amusoft.CodeAnalysis.Analyzers {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+        /// </summary>
+        public static string DelegateImplementationToFieldAnalyzerDescription {
+            get {
+                return ResourceManager.GetString("DelegateImplementationToFieldAnalyzerDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+        /// </summary>
+        public static string DelegateImplementationToFieldAnalyzerMessageFormat {
+            get {
+                return ResourceManager.GetString("DelegateImplementationToFieldAnalyzerMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+        /// </summary>
+        public static string DelegateImplementationToFieldAnalyzerTitle {
+            get {
+                return ResourceManager.GetString("DelegateImplementationToFieldAnalyzerTitle", resourceCulture);
             }
         }
         
