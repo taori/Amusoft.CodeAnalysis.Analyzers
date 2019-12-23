@@ -59,19 +59,8 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
              private ICollection<IDisposable> _disposables;
         }
     }";
-			var expected = new DiagnosticResult
-			{
-				Id = Analyzer.DiagnosticId,
-				Message = string.Format(Resources.DelegateImplementationToFieldAnalyzerMessageFormat),
-				Severity = DiagnosticSeverity.Info,
-				Locations =
-					new[]
-					{
-						new DiagnosticResultLocation("Test0.cs", 13, 47)
-					}
-			};
 
-			VerifyCSharpDiagnostic(test, expected);
+			VerifyCSharpDiagnostic(test);
 		}
 
 		[TestMethod]
@@ -92,19 +81,8 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
              private List<IDisposable> _disposables;
         }
     }";
-			var expected = new DiagnosticResult
-			{
-				Id = Analyzer.DiagnosticId,
-				Message = string.Format(Resources.DelegateImplementationToFieldAnalyzerMessageFormat),
-				Severity = DiagnosticSeverity.Info,
-				Locations =
-					new[]
-					{
-						new DiagnosticResultLocation("Test0.cs", 13, 40)
-					}
-			};
 
-			VerifyCSharpDiagnostic(test, expected);
+			VerifyCSharpDiagnostic(test);
 		}
 
 		[TestMethod]
@@ -149,19 +127,8 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
              private ICollection<IDisposable> _disposables;
         }
     }";
-			var expected = new DiagnosticResult
-			{
-				Id = Analyzer.DiagnosticId,
-				Message = string.Format(Resources.DelegateImplementationToFieldAnalyzerMessageFormat),
-				Severity = DiagnosticSeverity.Info,
-				Locations =
-					new[]
-					{
-						new DiagnosticResultLocation("Test0.cs", 13, 47)
-					}
-			};
 
-			VerifyCSharpDiagnostic(test, expected);
+			VerifyCSharpDiagnostic(test);
 		}
 
 		[TestMethod]
@@ -177,6 +144,15 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
 
     namespace ConsoleApplication1
     {
+        public interface ICustomInterface
+        {
+            void Method1(object p1);
+            void Method1(string p1);
+            void Method2(string p1, int p2);
+            void Method2(string p1);
+            void Method3();
+        }
+
         class TypeName : ICustomInterface
         {
             private ICollection<ICustomInterface> _disposables;
@@ -206,27 +182,21 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
                 throw new NotImplementedException();
             }
         }
-
-        public interface ICustomInterface
-        {
-            void Method1(object p1);
-            void Method1(string p1);
-            void Method2(string p1, int p2);
-            void Method2(string p1);
-            void Method3();
-        }
     }";
-			var expected = new DiagnosticResult
+			var expected = new []
 			{
-				Id = Analyzer.DiagnosticId,
-				Message = string.Format(Resources.DelegateImplementationToFieldAnalyzerMessageFormat),
-				Severity = DiagnosticSeverity.Info,
-				Locations =
-					new[]
-					{
-						new DiagnosticResultLocation("Test0.cs", 11, 15)
-					}
-			};
+				new DiagnosticResult
+				{
+					Id = Analyzer.DiagnosticId,
+					Message = string.Format(Resources.DelegateImplementationToFieldAnalyzerMessageFormat),
+					Severity = DiagnosticSeverity.Info,
+					Locations =
+						new[]
+						{
+							new DiagnosticResultLocation("Test0.cs", 11, 15)
+						}
+				}
+            } ;
 
 			VerifyCSharpDiagnostic(test, expected);
 
@@ -240,6 +210,15 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
 
     namespace ConsoleApplication1
     {
+        public interface ICustomInterface
+        {
+            void Method1(object p1);
+            void Method1(string p1);
+            void Method2(string p1, int p2);
+            void Method2(string p1);
+            void Method3();
+        }
+
         class TypeName : ICustomInterface
         {
             private ICollection<ICustomInterface> _disposables;
@@ -283,15 +262,6 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
                     item.Method3();
                 }
             }
-        }
-
-        public interface ICustomInterface
-        {
-            void Method1(object p1);
-            void Method1(string p1);
-            void Method2(string p1, int p2);
-            void Method2(string p1);
-            void Method3();
         }
     }";
 			VerifyCSharpFix(test, fixtest);
@@ -310,6 +280,15 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
 
     namespace ConsoleApplication1
     {
+        public interface ICustomInterface
+        {
+            void Method1(object p1);
+            void Method1(string p1);
+            void Method2(string p1, int p2);
+            void Method2(string p1);
+            void Method3();
+        }
+
         class TypeName : ICustomInterface
         {
             private ICollection<ICustomInterface> _disposables;
@@ -338,29 +317,23 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
                 throw new NotImplementedException();
             }
         }
-
-        public interface ICustomInterface
-        {
-            void Method1(object p1);
-            void Method1(string p1);
-            void Method2(string p1, int p2);
-            void Method2(string p1);
-            void Method3();
-        }
     }";
-			var expected = new DiagnosticResult
+			var expected = new[]
 			{
-				Id = Analyzer.DiagnosticId,
-				Message = string.Format(Resources.DelegateImplementationToFieldAnalyzerMessageFormat),
-				Severity = DiagnosticSeverity.Info,
-				Locations =
-					new[]
-					{
-						new DiagnosticResultLocation("Test0.cs", 11, 15)
-					}
+				new DiagnosticResult
+				{
+					Id = Analyzer.DiagnosticId,
+					Message = string.Format(Resources.DelegateImplementationToFieldAnalyzerMessageFormat),
+					Severity = DiagnosticSeverity.Info,
+					Locations =
+						new[]
+						{
+							new DiagnosticResultLocation("Test0.cs", 11, 15)
+						}
+				}
 			};
 
-			VerifyCSharpDiagnostic(test, expected);
+            VerifyCSharpDiagnostic(test, expected);
 
 			var fixtest = @"
     using System;
@@ -372,6 +345,15 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
 
     namespace ConsoleApplication1
     {
+        public interface ICustomInterface
+        {
+            void Method1(object p1);
+            void Method1(string p1);
+            void Method2(string p1, int p2);
+            void Method2(string p1);
+            void Method3();
+        }
+
         class TypeName : ICustomInterface
         {
             private ICollection<ICustomInterface> _disposables;
@@ -413,15 +395,6 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
                 }
             }
         }
-
-        public interface ICustomInterface
-        {
-            void Method1(object p1);
-            void Method1(string p1);
-            void Method2(string p1, int p2);
-            void Method2(string p1);
-            void Method3();
-        }
     }";
 			VerifyCSharpFix(test, fixtest);
 		}
@@ -429,11 +402,6 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
 		protected override CodeFixProvider GetCSharpCodeFixProvider()
 		{
 			return new Fixer();
-		}
-
-		public void Bla()
-		{
-			throw new NotImplementedException();
 		}
 
 		protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

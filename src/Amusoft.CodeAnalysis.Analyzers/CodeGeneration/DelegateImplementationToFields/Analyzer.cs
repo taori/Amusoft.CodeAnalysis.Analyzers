@@ -2,6 +2,7 @@
 // This file is a part of Amusoft.Roslyn.Analyzers and is licensed under Apache 2.0
 // See https://github.com/taori/Amusoft.Roslyn.Analyzers/blob/master/LICENSE for details
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Amusoft.CodeAnalysis.Analyzers.Extensions;
@@ -33,16 +34,24 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationTo
 
 		public override void Initialize(AnalysisContext context)
 		{
+			context.RegisterSymbolAction(Action, SymbolKind.Field);
 			context.RegisterSyntaxNodeAction(AnalyzeSyntax, 
-				SyntaxKind.PropertyDeclaration, SyntaxKind.FieldDeclaration);
+				SyntaxKind.ClassDeclaration, SyntaxKind.PropertyDeclaration, SyntaxKind.FieldDeclaration);
+		}
+
+		private void Action(SymbolAnalysisContext obj)
+		{
+			var d = obj.Symbol.DeclaringSyntaxReferences;
 		}
 
 		private static void AnalyzeSyntax(SyntaxNodeAnalysisContext context)
 		{
+			if (context.Node.IsKind(SyntaxKind.ClassDeclaration))
+				AnalyzeClass(context);
 			if (context.Node.IsKind(SyntaxKind.PropertyDeclaration))
-				AnalyzePropertySyntax(context);
+				AnalyzeProperty(context);
 			if (context.Node.IsKind(SyntaxKind.FieldDeclaration))
-				AnalyzeFieldDeclarationSyntax(context);
+				AnalyzeFieldDeclaration(context);
 		}
 
 
@@ -62,7 +71,63 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationTo
 
 			return false;
 		}
-		private static void AnalyzeFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
+
+		private static void AnalyzeClass(SyntaxNodeAnalysisContext context)
+		{
+			if (context.Node is ClassDeclarationSyntax classDeclarationSyntax && context.SemanticModel.GetDeclaredSymbol(classDeclarationSyntax, context.CancellationToken) is var classSymbol)
+			{
+				if (classSymbol.AllInterfaces.Length == 0)
+					return;
+
+				var fieldSymbols = classDeclarationSyntax
+					.ChildNodes()
+					.OfType<FieldDeclarationSyntax>()
+					.Select(syntax => context.SemanticModel.GetDeclaredSymbol(syntax.Declaration.Variables.First()))
+					.ToImmutableArray();
+
+				var propertySymbols = classDeclarationSyntax
+					.ChildNodes()
+					.OfType<PropertyDeclarationSyntax>()
+					.Select(syntax => context.SemanticModel.GetDeclaredSymbol(syntax))
+					.ToImmutableArray();
+				
+//				var memberCandidates = new Dictionary<ITypeSymbol, INamedTypeSymbol>();
+//				foreach (var fieldSymbol in fieldSymbols)
+//				{
+//					if (fieldSymbol.TryGetEnumerableType(context.SemanticModel, out var implementationSymbol))
+//					{
+//						memberCandidates.Add(implementationSymbol, fieldSymbol);
+//					}
+//				}
+
+				foreach (var interfaceSymbol in classSymbol.AllInterfaces)
+				{
+					// if((context, ))
+					
+				}
+
+				var methods = classDeclarationSyntax
+					.ChildNodes()
+					.OfType<MethodDeclarationSyntax>()
+					.Where(MethodIsEmptyOrNotImplemented)
+					.ToImmutableArray();
+			}
+		}
+
+		private static bool MethodIsEmptyOrNotImplemented(MethodDeclarationSyntax methodDeclarationSyntax)
+		{
+			if (methodDeclarationSyntax.Body.Statements.Count == 0)
+				return true;
+
+			if (methodDeclarationSyntax.Body.Statements.Count == 1 && methodDeclarationSyntax.Body.Statements[0] is ThrowStatementSyntax)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		private static void AnalyzeFieldDeclaration(SyntaxNodeAnalysisContext context)
 		{
 			if (context.Node is FieldDeclarationSyntax fieldDeclarationSyntax)
 			{
@@ -78,7 +143,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationTo
 			}
 		}
 
-		private static void AnalyzePropertySyntax(SyntaxNodeAnalysisContext context)
+		private static void AnalyzeProperty(SyntaxNodeAnalysisContext context)
 		{
 			if (context.Node is PropertyDeclarationSyntax propertyDeclarationSyntax)
 			{
