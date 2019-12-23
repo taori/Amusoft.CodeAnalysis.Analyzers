@@ -74,7 +74,97 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
 			VerifyCSharpDiagnostic(test, expected);
 		}
 
-//		[TestMethod]
+		[TestMethod]
+		public void FieldAsListWithDelegation()
+		{
+			var test = @"
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using System.Diagnostics;
+
+    namespace ConsoleApplication1
+    {
+        class TypeName : IDisposable
+        {
+             private List<IDisposable> _disposables;
+        }
+    }";
+			var expected = new DiagnosticResult
+			{
+				Id = Analyzer.DiagnosticId,
+				Message = string.Format(Resources.DelegateImplementationToFieldAnalyzerMessageFormat),
+				Severity = DiagnosticSeverity.Warning,
+				Locations =
+					new[]
+					{
+						new DiagnosticResultLocation("Test0.cs", 13, 40)
+					}
+			};
+
+			VerifyCSharpDiagnostic(test, expected);
+		}
+
+		[TestMethod]
+		public void FieldWithInvalidDelegation()
+		{
+			var test = @"
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using System.Diagnostics;
+
+    namespace ConsoleApplication1
+    {
+        class TypeName : ISomethingElse
+        {
+             private List<IDisposable> _disposables;
+        }
+
+        public interface ISomethingElse {}
+    }";
+
+			VerifyCSharpDiagnostic(test);
+		}
+
+		[TestMethod]
+		public void PropertyWithDelegation()
+		{
+			var test = @"
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using System.Diagnostics;
+
+    namespace ConsoleApplication1
+    {
+        class TypeName : IDisposable
+        {
+             private ICollection<IDisposable> _disposables;
+        }
+    }";
+			var expected = new DiagnosticResult
+			{
+				Id = Analyzer.DiagnosticId,
+				Message = string.Format(Resources.DelegateImplementationToFieldAnalyzerMessageFormat),
+				Severity = DiagnosticSeverity.Warning,
+				Locations =
+					new[]
+					{
+						new DiagnosticResultLocation("Test0.cs", 13, 47)
+					}
+			};
+
+			VerifyCSharpDiagnostic(test, expected);
+		}
+
+		//		[TestMethod]
 		public void NoFieldNoChange()
 		{
 			var test = @"
