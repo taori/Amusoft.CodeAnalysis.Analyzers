@@ -63,7 +63,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
 			{
 				Id = Analyzer.DiagnosticId,
 				Message = string.Format(Resources.DelegateImplementationToFieldAnalyzerMessageFormat),
-				Severity = DiagnosticSeverity.Warning,
+				Severity = DiagnosticSeverity.Info,
 				Locations =
 					new[]
 					{
@@ -96,7 +96,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
 			{
 				Id = Analyzer.DiagnosticId,
 				Message = string.Format(Resources.DelegateImplementationToFieldAnalyzerMessageFormat),
-				Severity = DiagnosticSeverity.Warning,
+				Severity = DiagnosticSeverity.Info,
 				Locations =
 					new[]
 					{
@@ -153,7 +153,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
 			{
 				Id = Analyzer.DiagnosticId,
 				Message = string.Format(Resources.DelegateImplementationToFieldAnalyzerMessageFormat),
-				Severity = DiagnosticSeverity.Warning,
+				Severity = DiagnosticSeverity.Info,
 				Locations =
 					new[]
 					{
@@ -185,7 +185,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
 			{
 				Id = Analyzer.DiagnosticId,
 				Message = string.Format(Resources.DelegateImplementationToFieldAnalyzerMessageFormat),
-				Severity = DiagnosticSeverity.Warning,
+				Severity = DiagnosticSeverity.Info,
 				Locations =
 					new[]
 					{
