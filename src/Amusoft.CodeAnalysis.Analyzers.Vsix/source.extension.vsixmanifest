@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="Amusoft.CodeAnalysis.Analyzers.43873083-1a1e-4324-83b1-d5330a4faa49" Version="1.0.0" Language="en-US" Publisher="Amusoft"/>
+        <Identity Id="Amusoft.CodeAnalysis.Analyzers.43873083-1a1e-4324-83b1-d5330a4faa49" Version="1.0.0" Language="en-US" Publisher="taori"/>
         <DisplayName>Amusoft.CodeAnalysis.Analyzers</DisplayName>
         <Description xml:space="preserve">This project contains multiple codefixes for seveal code generation scenarios</Description>
         <Preview>true</Preview>
