@@ -9,8 +9,6 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-name: 1.0.$(patch)
-
 steps:
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
