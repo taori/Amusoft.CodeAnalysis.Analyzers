@@ -67,9 +67,9 @@ jobs:
       SourceFolder: '$(Build.SourcesDirectory)'
       Contents: |
         README.md
+        build/**
         **/*.vsix
       TargetFolder: '$(Build.ArtifactStagingDirectory)'
-      flattenFolders: true
 
   - task: PublishGitHubRelease@0
     displayName: 'Publish-GitHub'
