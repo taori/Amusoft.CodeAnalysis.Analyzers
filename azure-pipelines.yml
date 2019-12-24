@@ -4,11 +4,12 @@ trigger:
 - master
 
 variables:
+  patch: $[counter('versioncounter', 100)]
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
 
-name: 1.0.$(Build.BuildNumber)
+name: 1.0.$(patch)
 
 pool:
   vmImage: 'windows-2019'
