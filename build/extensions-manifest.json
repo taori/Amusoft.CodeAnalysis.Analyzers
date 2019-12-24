@@ -4,14 +4,15 @@
         "Coding"
     ],
     "identity": {
-        "internalName": "Meziantou-Analyzer",
+        "internalName": "Amusoft.CodeAnalysis.Analyzers",
+        "displayName": "Amusoft analyzers",
         "tags": [
             "analyzer"
         ]
     },
     "overview": "../README.md",
     "priceCategory": "free",
-    "publisher": "Meziantou",
+    "publisher": "Amusoft",
     "private": false,
     "qna": true,
     "repo": "https://github.com/taori/Amusoft.CodeAnalysis.Analyzers"

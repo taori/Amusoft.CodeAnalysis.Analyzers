@@ -12,7 +12,7 @@
     <Authors>Andreas Müller</Authors>
     <PackageLicenseUrl>https://github.com/taori/Amusoft.CodeAnalysis.Analyzers/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/taori/Amusoft.CodeAnalysis.Analyzers</PackageProjectUrl>
-    <PackageIconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</PackageIconUrl>
+    <!-- <PackageIconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</PackageIconUrl> -->
     <RepositoryUrl>https://github.com/taori/Amusoft.CodeAnalysis.Analyzers.git</RepositoryUrl>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Description>This package contains analyzers for refactoring and other actions.</Description>
