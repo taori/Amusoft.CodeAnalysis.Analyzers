@@ -1,28 +1,44 @@
 # Starter pipeline
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'build'
-    projects: '**/*.csproj'
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
 trigger:
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'test'
-    projects: '**/*.csproj'
-    testRunTitle: 'unit tests'
 - master
 
 pool:
   vmImage: 'ubuntu-latest'
 
+name: 1.0.$(patch)
+
 steps:
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
 
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: '**/*.csproj'
+    testRunTitle: 'unit tests'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
+
+- task: PublishGitHubRelease@0
+  inputs:
+    applicationName: 'Amusoft.CodeAnalysis.Analyzers'
+    gitSourceOption: 'github'
+    token: '$($gitAccessToken)'
+    repo: 'Amusoft.CodeAnalysis.Analyzers'
+    owner: 'taori'
+    tagName: 'alpha-$(build.buildNumber)'
+    releaseName: 'alpha-$(build.buildNumber)'
+    releaseBody: 'automated release from Azure DevOps'
+    draft: false
+    prerelease: true
+
 - script: |
     echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
