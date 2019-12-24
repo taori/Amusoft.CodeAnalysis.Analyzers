@@ -62,9 +62,11 @@ jobs:
 
   - task: CopyFiles@2
     inputs:
-      SourceFolder: '$(agent.builddirectory)'
-      Contents: '**/*.vsix'
-      TargetFolder: '$(build.artifactstagingdirectory)'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+      SourceFolder: '$(Build.SourcesDirectory)'
+      Contents: |
+        README.md
+        **/*.vsix
 
 - job: 
   displayName: deploy artifacts
