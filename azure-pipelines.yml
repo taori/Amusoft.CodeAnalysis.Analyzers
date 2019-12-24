@@ -1,6 +1,3 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
 trigger:
@@ -10,8 +7,9 @@ variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  MyRunNumber: '1.0.0-CI-$(Build.BuildNumber)'
 
-name: 1.0.$(patch)
+name: 1.0.$(Build.BuildNumber)
 
 pool:
   vmImage: 'windows-2019'
@@ -20,6 +18,9 @@ jobs:
 - job: CI
   displayName: GitHub Alpha release
   steps:
+
+  - script: echo $(MyRunNumber) # display MyRunNumber
+  - script: echo $(Build.BuildNumber) #display Run Number
 
   - task: PowerShell@2
     displayName: Update version
