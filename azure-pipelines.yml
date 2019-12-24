@@ -7,7 +7,6 @@ variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-  MyRunNumber: '1.0.0-CI-$(Build.BuildNumber)'
 
 name: 1.0.$(Build.BuildNumber)
 
@@ -19,8 +18,7 @@ jobs:
   displayName: GitHub Alpha release
   steps:
 
-  - script: echo $(MyRunNumber) # display MyRunNumber
-  - script: echo $(Build.BuildNumber) #display Run Number
+  - script: echo Running build $(Build.BuildNumber)
 
   - task: PowerShell@2
     displayName: Update version
