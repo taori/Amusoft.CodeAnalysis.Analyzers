@@ -3,6 +3,9 @@
 trigger:
  branches:
    include:
+     - release
+     - release/*
+   exclude:
      - master
 
 variables:
@@ -75,7 +78,7 @@ jobs:
       releaseName: 'alpha-$(build.buildNumber)'
       releaseBody: 'automated release from Azure DevOps'
       draft: false
-      prerelease: true
+      prerelease: false
       assetsPattern: '$(build.artifactstagingdirectory)\**\*.vsix'
 
   - task: PublishPipelineArtifact@1
