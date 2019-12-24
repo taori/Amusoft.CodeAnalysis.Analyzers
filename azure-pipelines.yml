@@ -11,6 +11,8 @@ variables:
   buildConfiguration: 'Release'
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
 
+name: 1.0.$(patch)
+
 pool:
   vmImage: 'windows-2019'
 
@@ -18,6 +20,13 @@ jobs:
 - job: CI
   displayName: GitHub Alpha release
   steps:
+
+  - task: PowerShell@2
+    displayName: Update version
+    inputs:
+      filePath: 'build\update-version.ps1'
+      arguments: '$(Build.BuildNumber) $(Build.SourcesDirectory)src\Amusoft.CodeAnalysis.Analyzers\Amusoft.CodeAnalysis.Analyzers.csproj $(Build.SourcesDirectory)src\Amusoft.CodeAnalysis.Analyzers.Vsix\source.extension.vsixmanifest'
+      pwsh: true
 
   - task: NuGetToolInstaller@1
     inputs:
@@ -51,7 +60,6 @@ jobs:
       SourceFolder: '$(agent.builddirectory)'
       Contents: '**/*.vsix'
       TargetFolder: '$(build.artifactstagingdirectory)'
-  
 
   - task: PublishGitHubRelease@0
     inputs:
