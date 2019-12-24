@@ -18,7 +18,7 @@ pool:
 
 jobs:
 - job: 
-  displayName: build+test master
+  displayName: Deploy to VS Marketplace
   steps:
 
   - task: PowerShell@2
