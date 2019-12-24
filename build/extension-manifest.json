@@ -12,7 +12,7 @@
     },
     "overview": "../README.md",
     "priceCategory": "free",
-    "publisher": "taori",
+    "publisher": "Amusoft",
     "private": false,
     "qna": true,
     "repo": "https://github.com/taori/Amusoft.CodeAnalysis.Analyzers"
