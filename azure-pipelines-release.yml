@@ -3,6 +3,7 @@
 trigger:
  branches:
    include:
+     - release
      - release/*
    exclude:
      - master
@@ -22,14 +23,6 @@ jobs:
 - job: 
   displayName: Deploy to VS Marketplace
   steps:
-
-  - task: PowerShell@2
-    inputs:
-      targetType: 'inline'
-      script: |
-        # Write your PowerShell commands here.
-        $bla = Get-Content $(Build.SourcesDirectory)\src\Amusoft.CodeAnalysis.Analyzers\Amusoft.CodeAnalysis.Analyzers.csproj
-        Write-Host $bla
 
   - task: PowerShell@2
     displayName: Update version
@@ -85,7 +78,7 @@ jobs:
       releaseName: 'release-$(build.buildNumber)'
       releaseBody: 'automated release from Azure DevOps'
       draft: false
-      prerelease: true
+      prerelease: false
       assetsPattern: '$(build.artifactstagingdirectory)\**\*.vsix'
 
   - task: PublishPipelineArtifact@1
