@@ -10,19 +10,22 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- task: NuGetCommand@2
+  inputs:
+    command: 'restore'
+    restoreSolution: '**/*.sln'
+    feedsToUse: 'select'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'test'
     projects: '**/*.csproj'
     testRunTitle: 'unit tests'
-
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'build'
-    projects: '**/*.csproj'
 
 - task: PublishGitHubRelease@0
   inputs:
@@ -38,5 +41,6 @@ steps:
     prerelease: true
 
 - script: |
-    echo Add other tasks to build, test, and deploy your project.
-  displayName: 'Run a multi-line script'
+    echo All tests executed
+    echo Deployment complete
+  displayName: 'Pipeline complete'
