@@ -16,7 +16,7 @@ pool:
 
 jobs:
 - job: CI
-  displayName: GitHub Alpha release
+  displayName: Alpha(master) release
   steps:
 
   - task: PowerShell@2
