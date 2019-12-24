@@ -3,12 +3,10 @@
 trigger:
  branches:
    include:
-     - release
-     - release/*
-   exclude:
      - master
 
 variables:
+  tagName: 'alpha'
   patch: $[counter('versioncounter', 100)]
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
@@ -74,8 +72,8 @@ jobs:
       token: '$($gitAccessToken)'
       repo: 'Amusoft.CodeAnalysis.Analyzers'
       owner: 'taori'
-      tagName: 'alpha-$(build.buildNumber)'
-      releaseName: 'alpha-$(build.buildNumber)'
+      tagName: '$(tagName)-$(build.buildNumber)'
+      releaseName: '$(tagName)-$(build.buildNumber)'
       releaseBody: 'automated release from Azure DevOps'
       draft: false
       prerelease: false
