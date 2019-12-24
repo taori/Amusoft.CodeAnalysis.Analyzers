@@ -9,24 +9,29 @@ variables:
   buildConfiguration: 'Release'
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
 
-name: 1.0.$(patch)
+name: 1.0.1.$(patch)
 
 pool:
   vmImage: 'windows-2019'
 
 jobs:
-- job: CI
-  displayName: GitHub Alpha release
+- job: 
+  displayName: build+test master
   steps:
 
-  - script: echo Running build $(Build.BuildNumber)
+  - task: PowerShell@2
+    inputs:
+      targetType: 'inline'
+      script: |
+        # Write your PowerShell commands here.
+        $bla = Get-Content $(Build.SourcesDirectory)\src\Amusoft.CodeAnalysis.Analyzers\Amusoft.CodeAnalysis.Analyzers.csproj
+        Write-Host $bla
 
   - task: PowerShell@2
     displayName: Update version
     inputs:
       filePath: 'build\update-version.ps1'
       arguments: '$(Build.BuildNumber) $(Build.SourcesDirectory)\src\Amusoft.CodeAnalysis.Analyzers\Amusoft.CodeAnalysis.Analyzers.csproj $(Build.SourcesDirectory)\src\Amusoft.CodeAnalysis.Analyzers.Vsix\source.extension.vsixmanifest'
-      pwsh: true
 
   - task: NuGetToolInstaller@1
     inputs:
@@ -61,8 +66,12 @@ jobs:
       Contents: '**/*.vsix'
       TargetFolder: '$(build.artifactstagingdirectory)'
 
+- job: 
+  displayName: deploy artifacts
+  steps:
+
   - task: PublishGitHubRelease@0
-    displayName: 'publish artififact on GitHub'
+    displayName: 'Publish-GitHub'
     inputs:
       applicationName: 'Amusoft.CodeAnalysis.Analyzers'
       gitSourceOption: 'github'
@@ -77,13 +86,8 @@ jobs:
       assetsPattern: '$(build.artifactstagingdirectory)\**\*.vsix'
 
   - task: PublishPipelineArtifact@1
-    displayName: 'Publish artifact for vsix marketplace'
+    displayName: 'Publish-Vsix-Marketplace'
     inputs:
       targetPath: '$(Build.ArtifactStagingDirectory)'
       artifact: 'drop'
       publishLocation: 'pipeline'
-
-  - script: |
-      echo All tests executed
-      echo Deployment complete
-    displayName: 'Pipeline complete'
