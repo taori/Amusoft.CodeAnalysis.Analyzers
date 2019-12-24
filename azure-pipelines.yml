@@ -62,11 +62,12 @@ jobs:
 
   - task: CopyFiles@2
     inputs:
-      TargetFolder: '$(Build.ArtifactStagingDirectory)'
       SourceFolder: '$(Build.SourcesDirectory)'
       Contents: |
         README.md
         **/*.vsix
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+      flattenFolders: true
 
 - job: 
   displayName: deploy artifacts
