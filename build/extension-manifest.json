@@ -4,7 +4,7 @@
         "Coding"
     ],
     "identity": {
-        "internalName": "Amusoft.CodeAnalysis.Analyzers",
+        "internalName": "Amusoft-CodeAnalysis-Analyzers",
         "displayName": "Amusoft analyzers",
         "tags": [
             "analyzer"
