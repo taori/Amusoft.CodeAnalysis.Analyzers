@@ -10,10 +10,10 @@
     <PackageId>Amusoft.CodeAnalysis.Analyzers</PackageId>
     <PackageVersion>1.0.0.0</PackageVersion>
     <Authors>Andreas Müller</Authors>
-    <PackageLicenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</PackageLicenseUrl>
-    <PackageProjectUrl>http://PROJECT_URL_HERE_OR_DELETE_THIS_LINE</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/taori/Amusoft.CodeAnalysis.Analyzers/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/taori/Amusoft.CodeAnalysis.Analyzers</PackageProjectUrl>
     <PackageIconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</PackageIconUrl>
-    <RepositoryUrl>http://REPOSITORY_URL_HERE_OR_DELETE_THIS_LINE</RepositoryUrl>
+    <RepositoryUrl>https://github.com/taori/Amusoft.CodeAnalysis.Analyzers.git</RepositoryUrl>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Description>This analyzer package contains a collection of different analyzers</Description>
     <PackageReleaseNotes>Initial release</PackageReleaseNotes>
