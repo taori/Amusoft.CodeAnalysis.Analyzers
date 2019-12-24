@@ -3,8 +3,6 @@
 // See https://github.com/taori/Amusoft.Roslyn.Analyzers/blob/master/LICENSE for details
 
 using System.Collections.Concurrent;
-using System.Collections.Concurrent;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;

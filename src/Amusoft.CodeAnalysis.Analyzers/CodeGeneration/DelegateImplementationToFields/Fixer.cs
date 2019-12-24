@@ -35,7 +35,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationTo
 			return WellKnownFixAllProviders.BatchFixer;
 		}
 
-		public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
+		public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
 		{
 			foreach (var diagnostic in context.Diagnostics)
 			{
@@ -43,6 +43,8 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationTo
 				if (diagnostic.Properties.TryGetValue(Analyzer.Properties.MemberName, out var memberName))
 					context.RegisterCodeFix(CodeAction.Create(title, c => CreateChangedDocument(context, c, diagnostic), CodeFixUniqueKey + memberName), diagnostic);
 			}
+
+			return Task.CompletedTask;
 		}
 
 		private async Task<Document> CreateChangedDocument(CodeFixContext context, CancellationToken cancellationToken, Diagnostic diagnostic)
