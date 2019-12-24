@@ -15,12 +15,11 @@
     <PackageIconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</PackageIconUrl>
     <RepositoryUrl>https://github.com/taori/Amusoft.CodeAnalysis.Analyzers.git</RepositoryUrl>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Description>This analyzer package contains a collection of different analyzers</Description>
+    <Description>This package contains analyzers for refactoring and other actions.</Description>
     <PackageReleaseNotes>Initial release</PackageReleaseNotes>
-    <Copyright>2018, Andreas Müller</Copyright>
+    <Copyright>2019, Andreas Müller</Copyright>
     <PackageTags>Amusoft.CodeAnalysis.Analyzers, analyzers</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
-    <Version>0.1.0</Version>
   </PropertyGroup>
   
   <ItemGroup>
