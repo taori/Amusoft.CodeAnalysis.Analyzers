@@ -1,6 +1,8 @@
 $PersonalAccessToken = $args[0]
-$VsixPath = $args[1]
-$ManifestPath = $args[2]
+$VsixPath = "$PSScriptRoot\..\src\Amusoft.CodeAnalysis.Analyzers.Vsix\bin\Release\Amusoft.CodeAnalysis.Analyzers.vsix"
+$ManifestPath = "$PSScriptRoot\extension-manifest.json"
+Write-Host "Using vsix from $VsixPath"
+Write-Host "Using manifest from $ManifestPath"
 
 $Installation = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -prerelease -format json | ConvertFrom-Json
 $Path = $Installation.installationPath
