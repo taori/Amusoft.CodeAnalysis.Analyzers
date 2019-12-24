@@ -6,6 +6,11 @@
 trigger:
 - master
 
+variables:
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+
 pool:
   vmImage: 'windows-2019'
 
@@ -14,22 +19,32 @@ jobs:
   displayName: GitHub Alpha release
   steps:
 
+  - task: NuGetToolInstaller@1
+    inputs:
+      versionSpec: 5.4.0
+
   - task: NuGetCommand@2
     inputs:
       command: 'restore'
       restoreSolution: '**/*.sln'
       feedsToUse: 'select'
 
-  - task: DotNetCoreCLI@2
+  - task: VSBuild@1
     inputs:
-      command: 'build'
-      projects: '**/*.csproj'
+      solution: '**\*.sln'
+      vsVersion: '16.0'
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
+      maximumCpuCount: true
 
-  - task: DotNetCoreCLI@2
+  - task: VSTest@2
     inputs:
-      command: 'test'
-      projects: '**/*.csproj'
-      testRunTitle: 'unit tests'
+      testSelector: 'testAssemblies'
+      testAssemblyVer2: |
+        **\*test*.dll
+        !**\*TestAdapter.dll
+        !**\obj\**
+      searchFolder: '$(System.DefaultWorkingDirectory)'
 
   - task: PublishGitHubRelease@0
     inputs:
