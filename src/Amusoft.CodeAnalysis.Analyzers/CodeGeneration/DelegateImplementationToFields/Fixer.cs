@@ -1,7 +1,9 @@
-﻿// Copyright 2018 Andreas Müller
+﻿// Copyright 2019 Andreas Müller
 // This file is a part of Amusoft.Roslyn.Analyzers and is licensed under Apache 2.0
 // See https://github.com/taori/Amusoft.Roslyn.Analyzers/blob/master/LICENSE for details
 
+using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -12,14 +14,15 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Rename;
+using Microsoft.CodeAnalysis.Formatting;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationToFields
 {
-	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(Fixer)), Shared]
-	public class Fixer : CodeFixProvider
+	[ExportCodeFixProvider(LanguageNames.CSharp, Name = "DelegateImplementationToFieldsRefactoring"), Shared]
+	public class Fixer : CodeFixProvider 
 	{
-		private const string CodeFixUniqueKey = "GeneratePocoFixer";
+		private const string CodeFixUniqueKey = "DelegateImplementationFixer";
 
 		public sealed override ImmutableArray<string> FixableDiagnosticIds
 		{
@@ -34,41 +37,74 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationTo
 
 		public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
 		{
-			var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-
-			// TODO: Replace the following code with your own analysis, generating a CodeAction for each fix to suggest
-			var diagnostic = context.Diagnostics.First();
-			var diagnosticSpan = diagnostic.Location.SourceSpan;
-
-			// Find the type declaration identified by the diagnostic.
-			var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<TypeDeclarationSyntax>().First();
-
-			// Register a code action that will invoke the fix.
-			context.RegisterCodeFix(
-				CodeAction.Create(
-					title: "Generate POCO class",
-					createChangedSolution: c => MakeUppercaseAsync(context.Document, declaration, c),
-					equivalenceKey: CodeFixUniqueKey),
-				diagnostic);
+			foreach (var diagnostic in context.Diagnostics)
+			{
+				var title = diagnostic.Descriptor.MessageFormat.ToString();
+				if (diagnostic.Properties.TryGetValue(Analyzer.Properties.MemberName, out var memberName))
+					context.RegisterCodeFix(CodeAction.Create(title, c => CreateChangedDocument(context, c, diagnostic), CodeFixUniqueKey + memberName), diagnostic);
+			}
 		}
 
-		private async Task<Solution> MakeUppercaseAsync(Document document, TypeDeclarationSyntax typeDecl, CancellationToken cancellationToken)
+		private async Task<Document> CreateChangedDocument(CodeFixContext context, CancellationToken cancellationToken, Diagnostic diagnostic)
 		{
-			// Compute new uppercase name.
-			var identifierToken = typeDecl.Identifier;
-			var newName = identifierToken.Text.ToUpperInvariant();
+			var root = await context.Document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+			var node = root.FindNode(diagnostic.Location.SourceSpan);
+			var methodNode = node.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().FirstOrDefault();
+			if (methodNode != null)
+			{
+				if (!diagnostic.Properties.TryGetValue(Analyzer.Properties.MemberName, out var memberName))
+					return context.Document;
 
-			// Get the symbol representing the type to be renamed.
-			var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
-			var typeSymbol = semanticModel.GetDeclaredSymbol(typeDecl, cancellationToken);
+				var newMethod = MethodDeclaration(methodNode.ReturnType, methodNode.Identifier).WithBody(
+					Block(
+						SingletonList<StatementSyntax>(
+							ForEachStatement(
+								IdentifierName("var"),
+								Identifier("item"),
+								IdentifierName(memberName),
+								Block(
+									SingletonList<StatementSyntax>(
+										ExpressionStatement(
+											CreateIterationCall(methodNode))))
+							)
+						)));
 
-			// Produce a new solution that has all references to that type renamed, including the declaration.
-			var originalSolution = document.Project.Solution;
-			var optionSet = originalSolution.Workspace.Options;
-			var newSolution = await Renamer.RenameSymbolAsync(document.Project.Solution, typeSymbol, newName, optionSet, cancellationToken).ConfigureAwait(false);
+				var replacedRoot = root.ReplaceNode(methodNode.Body, newMethod.Body.WithAdditionalAnnotations(Formatter.Annotation));
 
-			// Return the new solution with the now-uppercase type name.
-			return newSolution;
+				return context.Document.WithSyntaxRoot(replacedRoot);
+			}
+
+			return context.Document;
+		}
+
+		private static InvocationExpressionSyntax CreateIterationCall(MethodDeclarationSyntax methodNode)
+		{
+			if (methodNode.ParameterList.Parameters.Any())
+			{
+				return InvocationExpression(
+					MemberAccessExpression(
+						SyntaxKind.SimpleMemberAccessExpression,
+						IdentifierName("item"),
+						IdentifierName(methodNode.Identifier.Text)
+					)).WithArgumentList(
+						ArgumentList(
+							SeparatedList<ArgumentSyntax>(CreateMethodArguments(methodNode)
+					)));
+			}
+			else
+			{
+				return InvocationExpression(
+					MemberAccessExpression(
+						SyntaxKind.SimpleMemberAccessExpression,
+						IdentifierName("item"),
+						IdentifierName(methodNode.Identifier.Text)
+					));
+			}
+		}
+
+		private static IEnumerable<ArgumentSyntax> CreateMethodArguments(MethodDeclarationSyntax methodNode)
+		{
+			return methodNode.ParameterList.Parameters.Select(d => Argument(IdentifierName(d.Identifier.Text)));
 		}
 	}
 }

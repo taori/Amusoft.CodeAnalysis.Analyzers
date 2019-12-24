@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DelegateImplementationToFieldAnalyzerDescription" xml:space="preserve">
-    <value />
+    <value>Delegates execution to collection member of class</value>
   </data>
   <data name="DelegateImplementationToFieldAnalyzerMessageFormat" xml:space="preserve">
-    <value />
+    <value>Forward execution of "{0}" to member "{1}"</value>
   </data>
   <data name="DelegateImplementationToFieldAnalyzerTitle" xml:space="preserve">
-    <value />
+    <value>Forward execution of member to collection member</value>
   </data>
   <data name="GeneratePocoAnalyzerDescription" xml:space="preserve">
     <value />

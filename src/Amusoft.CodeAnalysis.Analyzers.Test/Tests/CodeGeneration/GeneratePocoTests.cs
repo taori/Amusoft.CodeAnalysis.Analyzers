@@ -9,7 +9,7 @@ using TestHelper;
 namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
 {
 	[TestClass]
-	public class GeneratePocoTests : TestHelper.CodeFixVerifier
+	public class GeneratePocoTests : CodeFixVerifier
 	{
 		//No diagnostics expected to show up
 		[TestMethod]
@@ -22,6 +22,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
 
 		//Diagnostic and CodeFix both triggered and checked for
 		[TestMethod]
+		[Ignore]
 		public void TestMethod2()
 		{
 			var test = @"

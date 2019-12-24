@@ -28,6 +28,8 @@ namespace TestHelper
 		public string Path { get; }
 		public int Line { get; }
 		public int Column { get; }
+
+		public static implicit operator DiagnosticResultLocation ((string path, int line, int column) value) => new DiagnosticResultLocation(value.path, value.line, value.column);
 	}
 
 	/// <summary>
@@ -35,6 +37,14 @@ namespace TestHelper
 	/// </summary>
 	public struct DiagnosticResult
 	{
+		public DiagnosticResult(string id, DiagnosticSeverity severity, string message, DiagnosticResultLocation[] locations)
+		{
+			this.locations = locations;
+			Severity = severity;
+			Id = id;
+			Message = message;
+		}
+
 		private DiagnosticResultLocation[] locations;
 
 		public DiagnosticResultLocation[] Locations

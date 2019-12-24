@@ -62,7 +62,7 @@ namespace Amusoft.CodeAnalysis.Analyzers {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Delegates execution to collection member of class ähnelt.
         /// </summary>
         public static string DelegateImplementationToFieldAnalyzerDescription {
             get {
@@ -71,7 +71,7 @@ namespace Amusoft.CodeAnalysis.Analyzers {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Forward execution of &quot;{0}&quot; to member &quot;{1}&quot; ähnelt.
         /// </summary>
         public static string DelegateImplementationToFieldAnalyzerMessageFormat {
             get {
@@ -80,7 +80,7 @@ namespace Amusoft.CodeAnalysis.Analyzers {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Forward execution of member to collection member ähnelt.
         /// </summary>
         public static string DelegateImplementationToFieldAnalyzerTitle {
             get {
