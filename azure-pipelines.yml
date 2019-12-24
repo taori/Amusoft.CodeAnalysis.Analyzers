@@ -1,7 +1,9 @@
 # https://aka.ms/yaml
 
 trigger:
-- master
+ branches:
+   include:
+     - master
 
 variables:
   patch: $[counter('versioncounter', 100)]
@@ -68,10 +70,6 @@ jobs:
         **/*.vsix
       TargetFolder: '$(Build.ArtifactStagingDirectory)'
       flattenFolders: true
-
-- job: 
-  displayName: deploy artifacts
-  steps:
 
   - task: PublishGitHubRelease@0
     displayName: 'Publish-GitHub'
