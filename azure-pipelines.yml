@@ -62,6 +62,7 @@ jobs:
       TargetFolder: '$(build.artifactstagingdirectory)'
 
   - task: PublishGitHubRelease@0
+    displayName: 'publish artififact on GitHub'
     inputs:
       applicationName: 'Amusoft.CodeAnalysis.Analyzers'
       gitSourceOption: 'github'
@@ -74,6 +75,13 @@ jobs:
       draft: false
       prerelease: true
       assetsPattern: '$(build.artifactstagingdirectory)\**\*.vsix'
+
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish artifact for vsix marketplace'
+    inputs:
+      targetPath: '$(Build.ArtifactStagingDirectory)'
+      artifact: 'drop'
+      publishLocation: 'pipeline'
 
   - script: |
       echo All tests executed
