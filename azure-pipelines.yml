@@ -46,6 +46,13 @@ jobs:
         !**\obj\**
       searchFolder: '$(System.DefaultWorkingDirectory)'
 
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: '$(agent.builddirectory)'
+      Contents: '**/*.vsix'
+      TargetFolder: '$(build.artifactstagingdirectory)'
+  
+
   - task: PublishGitHubRelease@0
     inputs:
       applicationName: 'Amusoft.CodeAnalysis.Analyzers'
@@ -58,6 +65,7 @@ jobs:
       releaseBody: 'automated release from Azure DevOps'
       draft: false
       prerelease: true
+      assetsPattern: '$(build.artifactstagingdirectory)\**\*.vsix'
 
   - script: |
       echo All tests executed
