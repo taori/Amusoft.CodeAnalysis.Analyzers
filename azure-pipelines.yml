@@ -18,109 +18,114 @@ name: 1.0.1.$(patch)
 
 pool:
   vmImage: 'windows-2019'
+stages:
+  - stage: Build
+    jobs:
+    - job: Build 
+      displayName: change project and build
+      condition: succeeded()
+      steps:
 
-jobs:
+      - task: PowerShell@2
+        displayName: Update version
+        inputs:
+          filePath: 'build\update-version.ps1'
+          arguments: '$(Build.BuildNumber) $(Build.SourcesDirectory)\src\Amusoft.CodeAnalysis.Analyzers\Amusoft.CodeAnalysis.Analyzers.csproj $(Build.SourcesDirectory)\src\Amusoft.CodeAnalysis.Analyzers.Vsix\source.extension.vsixmanifest'
 
-- job: Build 
-  displayName: change project and build
-  condition: succeeded()
-  steps:
+      - task: NuGetToolInstaller@1
+        inputs:
+          versionSpec: 5.4.0
 
-  - task: PowerShell@2
-    displayName: Update version
-    inputs:
-      filePath: 'build\update-version.ps1'
-      arguments: '$(Build.BuildNumber) $(Build.SourcesDirectory)\src\Amusoft.CodeAnalysis.Analyzers\Amusoft.CodeAnalysis.Analyzers.csproj $(Build.SourcesDirectory)\src\Amusoft.CodeAnalysis.Analyzers.Vsix\source.extension.vsixmanifest'
+      - task: NuGetCommand@2
+        inputs:
+          command: 'restore'
+          restoreSolution: '**/*.sln'
+          feedsToUse: 'select'
 
-  - task: NuGetToolInstaller@1
-    inputs:
-      versionSpec: 5.4.0
+      - task: VSBuild@1
+        inputs:
+          solution: '**\*.sln'
+          vsVersion: '16.0'
+          platform: '$(buildPlatform)'
+          configuration: '$(buildConfiguration)'
+          maximumCpuCount: true
 
-  - task: NuGetCommand@2
-    inputs:
-      command: 'restore'
-      restoreSolution: '**/*.sln'
-      feedsToUse: 'select'
+  - stage: Test
+    jobs:
 
-  - task: VSBuild@1
-    inputs:
-      solution: '**\*.sln'
-      vsVersion: '16.0'
-      platform: '$(buildPlatform)'
-      configuration: '$(buildConfiguration)'
-      maximumCpuCount: true
+    - job: Test 
+      displayName: QA
+      dependsOn: Build
+      condition: succeeded()
+      steps:
 
-- job: Test 
-  displayName: QA
-  dependsOn: Build
-  condition: succeeded()
-  steps:
+      - task: VSTest@2
+        inputs:
+          testSelector: 'testAssemblies'
+          testAssemblyVer2: |
+            **\*test*.dll
+            !**\*TestAdapter.dll
+            !**\obj\**
+          searchFolder: '$(System.DefaultWorkingDirectory)'
 
-  - task: VSTest@2
-    inputs:
-      testSelector: 'testAssemblies'
-      testAssemblyVer2: |
-        **\*test*.dll
-        !**\*TestAdapter.dll
-        !**\obj\**
-      searchFolder: '$(System.DefaultWorkingDirectory)'
+  - stage: Deployment
+    jobs:
+    - job: CopyArtifacts 
+      displayName: copy artifacts
+      dependsOn: Test
+      condition: succeeded()
+      steps:
+      - task: CopyFiles@2
+        inputs:
+          SourceFolder: '$(Build.SourcesDirectory)'
+          Contents: |
+            README.md
+            build/**
+            **/*.vsix
+          TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
-- job: CopyArtifacts 
-  displayName: copy artifacts
-  dependsOn: Test
-  condition: succeeded()
-  steps:
-  - task: CopyFiles@2
-    inputs:
-      SourceFolder: '$(Build.SourcesDirectory)'
-      Contents: |
-        README.md
-        build/**
-        **/*.vsix
-      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    - job: DeployArtifacts 
+      displayName: deploy artifacts
+      dependsOn: CopyArtifacts
+      condition: and(succeeded(), or(  eq(variables['Build.SourceBranch'], 'refs/heads/master'),     startsWith(variables['Build.SourceBranch'], 'refs/heads/releases/')))      )
 
-- job: DeployArtifacts 
-  displayName: deploy artifacts
-  dependsOn: CopyArtifacts
-  condition: and(succeeded(), or(  eq(variables['Build.SourceBranch'], 'refs/heads/master'),     startsWith(variables['Build.SourceBranch'], 'refs/heads/releases/')))      )
+      steps:
 
-  steps:
+      - task: PublishGitHubRelease@0
+        displayName: 'Publish-GitHub-Alpha'
+        condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')       
+        inputs:
+          applicationName: 'Amusoft.CodeAnalysis.Analyzers'
+          gitSourceOption: 'github'
+          token: '$($gitAccessToken)'
+          repo: 'Amusoft.CodeAnalysis.Analyzers'
+          owner: 'taori'
+          tagName: 'alpha-$(build.buildNumber)'
+          releaseName: 'alpha-$(build.buildNumber)'
+          releaseBody: 'automated release from Azure DevOps'
+          draft: false
+          prerelease: true
+          assetsPattern: '$(build.artifactstagingdirectory)\**\*.vsix'
 
-  - task: PublishGitHubRelease@0
-    displayName: 'Publish-GitHub-Alpha'
-    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')       
-    inputs:
-      applicationName: 'Amusoft.CodeAnalysis.Analyzers'
-      gitSourceOption: 'github'
-      token: '$($gitAccessToken)'
-      repo: 'Amusoft.CodeAnalysis.Analyzers'
-      owner: 'taori'
-      tagName: 'alpha-$(build.buildNumber)'
-      releaseName: 'alpha-$(build.buildNumber)'
-      releaseBody: 'automated release from Azure DevOps'
-      draft: false
-      prerelease: true
-      assetsPattern: '$(build.artifactstagingdirectory)\**\*.vsix'
+      - task: PublishGitHubRelease@0
+        displayName: 'Publish-GitHub-Release'
+        condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')       
+        inputs:
+          applicationName: 'Amusoft.CodeAnalysis.Analyzers'
+          gitSourceOption: 'github'
+          token: '$($gitAccessToken)'
+          repo: 'Amusoft.CodeAnalysis.Analyzers'
+          owner: 'taori'
+          tagName: 'release-$(build.buildNumber)'
+          releaseName: 'release-$(build.buildNumber)'
+          releaseBody: 'automated release from Azure DevOps'
+          draft: false
+          prerelease: false
+          assetsPattern: '$(build.artifactstagingdirectory)\**\*.vsix'
 
-  - task: PublishGitHubRelease@0
-    displayName: 'Publish-GitHub-Release'
-    condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')       
-    inputs:
-      applicationName: 'Amusoft.CodeAnalysis.Analyzers'
-      gitSourceOption: 'github'
-      token: '$($gitAccessToken)'
-      repo: 'Amusoft.CodeAnalysis.Analyzers'
-      owner: 'taori'
-      tagName: 'release-$(build.buildNumber)'
-      releaseName: 'release-$(build.buildNumber)'
-      releaseBody: 'automated release from Azure DevOps'
-      draft: false
-      prerelease: false
-      assetsPattern: '$(build.artifactstagingdirectory)\**\*.vsix'
-
-  - task: PublishPipelineArtifact@1
-    displayName: 'Publish-Vsix-Marketplace'
-    inputs:
-      targetPath: '$(Build.ArtifactStagingDirectory)'
-      artifact: 'drop'
-      publishLocation: 'pipeline'
+      - task: PublishPipelineArtifact@1
+        displayName: 'Publish-Vsix-Marketplace'
+        inputs:
+          targetPath: '$(Build.ArtifactStagingDirectory)'
+          artifact: 'drop'
+          publishLocation: 'pipeline'
