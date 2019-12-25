@@ -87,7 +87,6 @@ stages:
 
     - job: DeployArtifacts 
       displayName: deploy artifacts
-      dependsOn: CopyArtifacts
       condition: and(succeeded(), or( eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/releases/')))
       steps:
 
