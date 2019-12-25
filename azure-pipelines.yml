@@ -9,7 +9,6 @@ trigger:
      - releases/*
 
 variables:
-  tagName: 'alpha'
   patch: $[counter('versioncounter', 100)]
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
@@ -21,9 +20,10 @@ pool:
   vmImage: 'windows-2019'
 
 jobs:
+
 - job: Build 
   displayName: change project and build
-  condition: success()
+  condition: succeeded()
   steps:
 
   - task: PowerShell@2
@@ -53,7 +53,7 @@ jobs:
 - job: Test 
   displayName: QA
   dependsOn: Build
-  condition: success()
+  condition: succeeded()
   steps:
 
   - task: VSTest@2
@@ -68,7 +68,7 @@ jobs:
 - job: CopyArtifacts 
   displayName: copy artifacts
   dependsOn: Test
-  condition: success()
+  condition: succeeded()
   steps:
   - task: CopyFiles@2
     inputs:
@@ -85,16 +85,34 @@ jobs:
   condition: and(succeeded(), or(  eq(variables['Build.SourceBranch'], 'refs/heads/master')),     startsWith(variables['Build.SourceBranch'], 'refs/heads/releases/')      )
 
   steps:
+
   - task: PublishGitHubRelease@0
-    displayName: 'Publish-GitHub'
+    displayName: 'Publish-GitHub-Alpha'
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')       
     inputs:
       applicationName: 'Amusoft.CodeAnalysis.Analyzers'
       gitSourceOption: 'github'
       token: '$($gitAccessToken)'
       repo: 'Amusoft.CodeAnalysis.Analyzers'
       owner: 'taori'
-      tagName: '$(tagName)-$(build.buildNumber)'
-      releaseName: '$(tagName)-$(build.buildNumber)'
+      tagName: 'alpha-$(build.buildNumber)'
+      releaseName: 'alpha-$(build.buildNumber)'
+      releaseBody: 'automated release from Azure DevOps'
+      draft: false
+      prerelease: true
+      assetsPattern: '$(build.artifactstagingdirectory)\**\*.vsix'
+
+  - task: PublishGitHubRelease@0
+    displayName: 'Publish-GitHub-Release'
+    condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')       
+    inputs:
+      applicationName: 'Amusoft.CodeAnalysis.Analyzers'
+      gitSourceOption: 'github'
+      token: '$($gitAccessToken)'
+      repo: 'Amusoft.CodeAnalysis.Analyzers'
+      owner: 'taori'
+      tagName: 'release-$(build.buildNumber)'
+      releaseName: 'release-$(build.buildNumber)'
       releaseBody: 'automated release from Azure DevOps'
       draft: false
       prerelease: false
