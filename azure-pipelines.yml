@@ -79,8 +79,8 @@ jobs:
       token: '$($gitAccessToken)'
       repo: 'Amusoft.CodeAnalysis.Analyzers'
       owner: 'taori'
-      tagName: 'alpha-$(build.buildNumber)'
-      releaseName: 'alpha-$(build.buildNumber)'
+      tagName: 'alpha-$(PackageVersion)'
+      releaseName: 'alpha-$(PackageVersion)'
       releaseBody: 'automated release from Azure DevOps'
       draft: false
       prerelease: true
@@ -95,8 +95,8 @@ jobs:
       token: '$($gitAccessToken)'
       repo: 'Amusoft.CodeAnalysis.Analyzers'
       owner: 'taori'
-      tagName: 'release-$(build.buildNumber)'
-      releaseName: 'release-$(build.buildNumber)'
+      tagName: 'release-$(PackageVersion)'
+      releaseName: 'release-$(PackageVersion)'
       releaseBody: 'automated release from Azure DevOps'
       draft: false
       prerelease: false

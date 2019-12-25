@@ -12,8 +12,11 @@ Write-Host "Path to vsix project manifest file: $vsixSourceManifestPath"
 # Read version from csproj
 $FullPath = $analyzerProjectPath
 [xml]$content = Get-Content $FullPath
-$version = Select-Xml -Path $file -XPath //Project/PropertyGroup/Version | Select -ExpandProperty Node | Select -Expand '#text'
+$version = Select-Xml -Path $analyzerProjectPath -XPath //Project/PropertyGroup/Version | Select -ExpandProperty Node | Select -Expand '#text'
 $version = "$version.$build"
+
+Write-Host "##vso[task.setvariable variable=PackageVersion;]$packageVersion"
+Write-Host "Set environment variable to ($env:PackageVersion)"
 
 Write-Host "Version: $version"
 
