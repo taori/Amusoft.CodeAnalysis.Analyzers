@@ -18,10 +18,12 @@ name: 1.0.1.$(patch)
 
 pool:
   vmImage: 'windows-2019'
+  
 stages:
-  - stage: Build
+
+  - stage: Build + Test
     jobs:
-    - job: Build 
+    - job: Build
       displayName: change project and build
       condition: succeeded()
       steps:
@@ -50,12 +52,6 @@ stages:
           configuration: '$(buildConfiguration)'
           maximumCpuCount: true
 
-    - job: CopyArtifacts 
-      dependsOn: Build
-      displayName: copy artifacts
-      condition: succeeded()
-      steps:
-
       - task: CopyFiles@2
         inputs:
           SourceFolder: '$(Build.SourcesDirectory)'
@@ -64,14 +60,6 @@ stages:
             build/**
             **/*.vsix
           TargetFolder: '$(Build.ArtifactStagingDirectory)'
-
-  - stage: Test
-    jobs:
-
-    - job: Test 
-      displayName: QA
-      condition: succeeded()
-      steps:
 
       - task: VSTest@2
         inputs:
