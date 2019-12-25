@@ -21,7 +21,8 @@ pool:
   
 stages:
 
-  - stage: Build + Test
+  - stage: Build
+    displayName: Build + Test
     jobs:
     - job: Build
       displayName: change project and build
