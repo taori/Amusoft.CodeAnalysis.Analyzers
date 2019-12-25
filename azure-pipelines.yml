@@ -55,7 +55,6 @@ stages:
 
     - job: Test 
       displayName: QA
-      dependsOn: Build
       condition: succeeded()
       steps:
 
@@ -73,7 +72,6 @@ stages:
 
     - job: CopyArtifacts 
       displayName: copy artifacts
-      dependsOn: Test
       condition: succeeded()
       steps:
 
