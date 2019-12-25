@@ -72,12 +72,6 @@ jobs:
       artifactName: 'drop'
       targetPath: '$(Build.ArtifactStagingDirectory)'
 
-- job: DeployArtifacts 
-  dependsOn: Build
-  displayName: deploy artifacts
-  condition: and(succeeded(), or( eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/releases/')))
-  steps:
-
   - task: PublishGitHubRelease@0
     displayName: 'Publish-GitHub-Alpha'
     condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/releases/'))    
