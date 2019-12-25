@@ -16,8 +16,7 @@ $version = Select-Xml -Path $analyzerProjectPath -XPath //Project/PropertyGroup/
 $version = "$version.$build"
 
 Write-Output "##vso[task.setvariable variable=PackageVersion;]$version"
-Write-Host "Set environment variable to ($env:PackageVersion)"
-
+Write-Host "Set environment variable to ($version)"
 Write-Host "Version: $version"
 
 # Update NuGet package version
