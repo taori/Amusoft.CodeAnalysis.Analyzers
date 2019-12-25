@@ -14,8 +14,6 @@ variables:
   buildConfiguration: 'Release'
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
 
-name: 1.0.1.$(patch)
-
 pool:
   vmImage: 'windows-2019'
   
@@ -24,6 +22,12 @@ jobs:
   displayName: change project and build
   condition: succeeded()
   steps:
+
+  - task: PowerShell@2
+    displayName: Update version
+    inputs:
+      filePath: 'build\update-version-append.ps1'
+      arguments: '$(patch) $(Build.SourcesDirectory)\src\Amusoft.CodeAnalysis.Analyzers\Amusoft.CodeAnalysis.Analyzers.csproj $(Build.SourcesDirectory)\src\Amusoft.CodeAnalysis.Analyzers.Vsix\source.extension.vsixmanifest'
 
   - task: PowerShell@2
     displayName: Update version
