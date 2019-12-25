@@ -4,6 +4,9 @@ trigger:
  branches:
    include:
      - master
+     - features/*
+     - feature/*
+     - releases/*
 
 variables:
   tagName: 'alpha'
@@ -18,8 +21,9 @@ pool:
   vmImage: 'windows-2019'
 
 jobs:
-- job: 
-  displayName: Deploy to VS Marketplace
+- job: Build 
+  displayName: change project and build
+  condition: success()
   steps:
 
   - task: PowerShell@2
@@ -46,6 +50,12 @@ jobs:
       configuration: '$(buildConfiguration)'
       maximumCpuCount: true
 
+- job: Test 
+  displayName: QA
+  dependsOn: Build
+  condition: success()
+  steps:
+
   - task: VSTest@2
     inputs:
       testSelector: 'testAssemblies'
@@ -55,6 +65,11 @@ jobs:
         !**\obj\**
       searchFolder: '$(System.DefaultWorkingDirectory)'
 
+- job: CopyArtifacts 
+  displayName: copy artifacts
+  dependsOn: Test
+  condition: success()
+  steps:
   - task: CopyFiles@2
     inputs:
       SourceFolder: '$(Build.SourcesDirectory)'
@@ -64,6 +79,12 @@ jobs:
         **/*.vsix
       TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
+- job: DeployArtifacts 
+  displayName: deploy artifacts
+  dependsOn: CopyArtifacts
+  condition: and(succeeded(), or(  eq(variables['Build.SourceBranch'], 'refs/heads/master')),     startsWith(variables['Build.SourceBranch'], 'refs/heads/releases/')      )
+
+  steps:
   - task: PublishGitHubRelease@0
     displayName: 'Publish-GitHub'
     inputs:
