@@ -2,7 +2,7 @@ $VerbosePreference="Continue"
 
 # see https://github.com/meziantou/Meziantou.Analyzer/build
 
-$version = $args[0]
+$build = $args[0]
 $analyzerProjectPath = $args[1]
 $vsixSourceManifestPath = $args[2]
 
@@ -12,7 +12,8 @@ Write-Host "Path to vsix project manifest file: $vsixSourceManifestPath"
 # Read version from csproj
 $FullPath = $analyzerProjectPath
 [xml]$content = Get-Content $FullPath
-$version = "$content.Project.PropertyGroup.PackageVersion.$version"
+$version = Select-Xml -Path $file -XPath //Project/PropertyGroup/Version | Select -ExpandProperty Node | Select -Expand '#text'
+$version = "$version.$build"
 
 Write-Host "Version: $version"
 

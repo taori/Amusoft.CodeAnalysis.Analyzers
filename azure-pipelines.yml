@@ -29,12 +29,6 @@ jobs:
       filePath: 'build\update-version-append.ps1'
       arguments: '$(patch) $(Build.SourcesDirectory)\src\Amusoft.CodeAnalysis.Analyzers\Amusoft.CodeAnalysis.Analyzers.csproj $(Build.SourcesDirectory)\src\Amusoft.CodeAnalysis.Analyzers.Vsix\source.extension.vsixmanifest'
 
-  - task: PowerShell@2
-    displayName: Update version
-    inputs:
-      filePath: 'build\update-version.ps1'
-      arguments: '$(Build.BuildNumber) $(Build.SourcesDirectory)\src\Amusoft.CodeAnalysis.Analyzers\Amusoft.CodeAnalysis.Analyzers.csproj $(Build.SourcesDirectory)\src\Amusoft.CodeAnalysis.Analyzers.Vsix\source.extension.vsixmanifest'
-
   - task: NuGetToolInstaller@1
     inputs:
       versionSpec: 5.4.0
