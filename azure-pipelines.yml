@@ -67,6 +67,11 @@ jobs:
         !**\obj\**
       searchFolder: '$(System.DefaultWorkingDirectory)'
 
+  - task: PublishPipelineArtifact@0
+    inputs:
+      artifactName: 'drop'
+      targetPath: '$(Build.ArtifactStagingDirectory)'
+
 - job: DeployArtifacts 
   dependsOn: Build
   displayName: deploy artifacts
@@ -75,7 +80,7 @@ jobs:
 
   - task: PublishGitHubRelease@0
     displayName: 'Publish-GitHub-Alpha'
-    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')       
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/releases/'))    
     inputs:
       applicationName: 'Amusoft.CodeAnalysis.Analyzers'
       gitSourceOption: 'github'
@@ -91,7 +96,7 @@ jobs:
 
   - task: PublishGitHubRelease@0
     displayName: 'Publish-GitHub-Release'
-    condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')       
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     inputs:
       applicationName: 'Amusoft.CodeAnalysis.Analyzers'
       gitSourceOption: 'github'
@@ -107,6 +112,7 @@ jobs:
 
   - task: PublishPipelineArtifact@1
     displayName: 'Publish-Vsix-Marketplace'
+    condition: and(succeeded(), or( eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/releases/')))
     inputs:
       targetPath: '$(Build.ArtifactStagingDirectory)'
       artifact: 'drop'
