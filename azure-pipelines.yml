@@ -50,6 +50,21 @@ stages:
           configuration: '$(buildConfiguration)'
           maximumCpuCount: true
 
+    - job: CopyArtifacts 
+      dependsOn: Build
+      displayName: copy artifacts
+      condition: succeeded()
+      steps:
+
+      - task: CopyFiles@2
+        inputs:
+          SourceFolder: '$(Build.SourcesDirectory)'
+          Contents: |
+            README.md
+            build/**
+            **/*.vsix
+          TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
   - stage: Test
     jobs:
 
@@ -69,20 +84,6 @@ stages:
 
   - stage: Deployment
     jobs:
-
-    - job: CopyArtifacts 
-      displayName: copy artifacts
-      condition: succeeded()
-      steps:
-
-      - task: CopyFiles@2
-        inputs:
-          SourceFolder: '$(Build.SourcesDirectory)'
-          Contents: |
-            README.md
-            build/**
-            **/*.vsix
-          TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
     - job: DeployArtifacts 
       displayName: deploy artifacts
