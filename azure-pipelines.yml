@@ -74,7 +74,7 @@ jobs:
 
   - task: PublishGitHubRelease@0
     displayName: 'Publish-GitHub-Alpha'
-    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/releases/'))    
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
     inputs:
       applicationName: 'Amusoft.CodeAnalysis.Analyzers'
       gitSourceOption: 'github'
@@ -90,7 +90,7 @@ jobs:
 
   - task: PublishGitHubRelease@0
     displayName: 'Publish-GitHub-Release'
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/releases/')) 
     inputs:
       applicationName: 'Amusoft.CodeAnalysis.Analyzers'
       gitSourceOption: 'github'
