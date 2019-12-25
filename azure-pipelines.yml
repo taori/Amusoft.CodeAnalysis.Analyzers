@@ -70,11 +70,13 @@ stages:
 
   - stage: Deployment
     jobs:
+
     - job: CopyArtifacts 
       displayName: copy artifacts
       dependsOn: Test
       condition: succeeded()
       steps:
+
       - task: CopyFiles@2
         inputs:
           SourceFolder: '$(Build.SourcesDirectory)'
@@ -87,8 +89,7 @@ stages:
     - job: DeployArtifacts 
       displayName: deploy artifacts
       dependsOn: CopyArtifacts
-      condition: and(succeeded(), or(  eq(variables['Build.SourceBranch'], 'refs/heads/master'),     startsWith(variables['Build.SourceBranch'], 'refs/heads/releases/')))      )
-
+      condition: and(succeeded(), or( eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/releases/')))
       steps:
 
       - task: PublishGitHubRelease@0
