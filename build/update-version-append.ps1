@@ -15,7 +15,7 @@ $FullPath = $analyzerProjectPath
 $version = Select-Xml -Path $analyzerProjectPath -XPath //Project/PropertyGroup/PackageVersion | Select -ExpandProperty Node | Select -Expand '#text'
 $version = "$version.$build"
 
-Write-Host "##vso[task.setvariable variable=PackageVersion;]$packageVersion"
+Write-Output "##vso[task.setvariable variable=PackageVersion;]$version"
 Write-Host "Set environment variable to ($env:PackageVersion)"
 
 Write-Host "Version: $version"
