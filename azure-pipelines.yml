@@ -106,7 +106,7 @@ jobs:
 
   - task: PublishPipelineArtifact@1
     displayName: 'Publish-Vsix-Marketplace'
-    condition: and(succeeded(), or( eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/releases/')))
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/releases/'))
     inputs:
       targetPath: '$(Build.ArtifactStagingDirectory)'
       artifact: 'drop'
