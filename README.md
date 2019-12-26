@@ -11,5 +11,5 @@
 |[Download](https://marketplace.visualstudio.com/items?itemName=Amusoft.Amusoft-CodeAnalysis-Analyzers)|[Download](https://github.com/taori/Amusoft.CodeAnalysis.Analyzers/releases/latest)|
 
 ## References
-- [Repository docs](https://github.com/taori/Amusoft.CodeAnalysis.Analyzers/docs)
-- [Features](https://github.com/taori/Amusoft.CodeAnalysis.Analyzers/docs/FEATURES.md)
+- [Repository docs](https://github.com/taori/Amusoft.CodeAnalysis.Analyzers/tree/master/docs)
+- [Features](https://github.com/taori/Amusoft.CodeAnalysis.Analyzers/tree/master/docs/FEATURES.md)
