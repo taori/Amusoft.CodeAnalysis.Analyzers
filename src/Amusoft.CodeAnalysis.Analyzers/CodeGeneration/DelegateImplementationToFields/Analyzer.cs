@@ -123,6 +123,51 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationTo
 			return false;
 		}
 
+		private static bool MethodCanBeFixed(SemanticModel semanticModel, MethodDeclarationSyntax methodDeclarationSyntax)
+		{
+			if (semanticModel.GetDeclaredSymbol(methodDeclarationSyntax) is IMethodSymbol methodSymbol)
+			{
+				if (!DiagnosticHelper.TryAnalyzeMethod(semanticModel, methodSymbol, out _, out _))
+					return false;
+
+				return true;
+			}
+
+			return false;
+		}
+
+		public static class DiagnosticHelper
+		{
+			public static bool TryAnalyzeMethod(SemanticModel semanticModel, IMethodSymbol methodSymbol, out bool returnTask, out bool returnBool)
+			{
+				returnTask = false;
+				returnBool = false;
+
+				if (methodSymbol == null)
+					return false;
+
+				if (methodSymbol.ReturnsVoid)
+					return true;
+
+				var boolType = semanticModel.Compilation.GetTypeByMetadataName("System.Boolean");
+				if (methodSymbol.ReturnType.Equals(boolType))
+				{
+					returnBool = true;
+					return true;
+				}
+
+				var taskGenericType = semanticModel.Compilation.GetTypeByMetadataName("System.Threading.Tasks.Task`1");
+				if (methodSymbol.ReturnType is INamedTypeSymbol ntMethodSymbol && ntMethodSymbol.ConstructedFrom.Equals(taskGenericType))
+				{
+					returnTask = true;
+					returnBool = ntMethodSymbol.TypeArguments[0].Equals(boolType);
+					return returnBool;
+				}
+
+				return false;
+			}
+		}
+
 		private static void AnalyzeClass(SyntaxNodeAnalysisContext context)
 		{
 			if (context.Node is ClassDeclarationSyntax classDeclarationSyntax && context.SemanticModel.GetDeclaredSymbol(classDeclarationSyntax, context.CancellationToken) is var classSymbol)
@@ -136,6 +181,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationTo
 					.ChildNodes()
 					.OfType<MethodDeclarationSyntax>()
 					.Where(MethodIsEmptyOrNotImplemented)
+					.Where(d => MethodCanBeFixed(context.SemanticModel, d))
 					.Where(d => IsMethodCandidate(context, d, memberCandidates))
 					.ToImmutableArray();
 				

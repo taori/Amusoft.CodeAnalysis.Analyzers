@@ -57,19 +57,10 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationTo
 				if (!diagnostic.Properties.TryGetValue(Analyzer.Properties.MemberName, out var memberName))
 					return context.Document;
 
-				var newMethod = MethodDeclaration(methodNode.ReturnType, methodNode.Identifier).WithBody(
-					Block(
-						SingletonList<StatementSyntax>(
-							ForEachStatement(
-								IdentifierName("var"),
-								Identifier("item"),
-								IdentifierName(memberName),
-								Block(
-									SingletonList<StatementSyntax>(
-										ExpressionStatement(
-											CreateIterationCall(methodNode))))
-							)
-						)));
+				if (!context.Document.TryGetSemanticModel(out var semanticModel))
+					return context.Document;
+
+				var newMethod = RewriteMethod(semanticModel, methodNode, memberName);
 
 				var replacedRoot = root.ReplaceNode(methodNode.Body, newMethod.Body.WithAdditionalAnnotations(Formatter.Annotation));
 
@@ -77,6 +68,139 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationTo
 			}
 
 			return context.Document;
+		}
+
+		private static MethodDeclarationSyntax RewriteMethod(SemanticModel semanticModel, MethodDeclarationSyntax methodNode, string memberName)
+		{
+			if (!(semanticModel.GetDeclaredSymbol(methodNode) is IMethodSymbol methodSymbol))
+				return methodNode;
+
+			if (!Analyzer.DiagnosticHelper.TryAnalyzeMethod(semanticModel, methodSymbol, out var returnTask, out var returnBool))
+				return methodNode;
+
+			if (returnBool)
+			{
+				if (returnTask)
+				{
+					return RewriteAsBoolTaskMethod(methodNode, memberName);
+				}
+				else
+				{
+					return RewriteAsBoolMethod(methodNode, memberName);
+				}
+			}
+			else
+			{
+				return RewriteAsVoidMethod(methodNode, memberName);
+			}
+		}
+
+		private static MethodDeclarationSyntax RewriteAsBoolMethod(MethodDeclarationSyntax methodNode, string memberName)
+		{
+			return MethodDeclaration(methodNode.ReturnType, methodNode.Identifier).WithBody(
+				Block(
+					SingletonList<StatementSyntax>(
+						ReturnStatement(
+							InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName(memberName), IdentifierName("All")))
+								.WithArgumentList(
+									ArgumentList(
+										SingletonSeparatedList(Argument(SimpleLambdaExpression(Parameter(Identifier("item")), CreateIterationCall(methodNode))))))
+							)
+					)));
+		}
+
+		private static MethodDeclarationSyntax RewriteAsBoolTaskMethod(MethodDeclarationSyntax methodNode, string memberName)
+		{
+			if (methodNode.Modifiers.Any(SyntaxKind.AsyncKeyword))
+			{
+				return MethodDeclaration(methodNode.ReturnType, methodNode.Identifier).WithBody(
+					Block(
+						SingletonList<StatementSyntax>(
+							ReturnStatement(
+								InvocationExpression(
+									MemberAccessExpression(
+										SyntaxKind.SimpleMemberAccessExpression,
+										IdentifierName(memberName),
+										IdentifierName("All")
+									),
+									ArgumentList(
+										SingletonSeparatedList(
+											Argument(
+												SimpleLambdaExpression(
+													Parameter(
+														Identifier("item")
+													),
+													CreateIterationCall(methodNode)
+												)
+											)
+										)
+									)
+								)
+							)
+						)
+					)
+				);
+			}
+			else
+			{
+				return MethodDeclaration(methodNode.ReturnType, methodNode.Identifier).WithBody(
+					Block(
+						SingletonList<StatementSyntax>(
+							ReturnStatement(
+								InvocationExpression(
+									MemberAccessExpression(
+										SyntaxKind.SimpleMemberAccessExpression,
+										IdentifierName("Task"),
+										IdentifierName("FromResult")
+									),
+									ArgumentList(
+										SingletonSeparatedList(
+											Argument(
+												InvocationExpression(
+													MemberAccessExpression(
+														SyntaxKind.SimpleMemberAccessExpression,
+														IdentifierName(memberName),
+														IdentifierName("All")
+													),
+													ArgumentList(
+														SingletonSeparatedList(
+															Argument(
+																SimpleLambdaExpression(
+																	Parameter(
+																		Identifier("item")
+																	),
+																	CreateIterationCall(methodNode)
+																)
+															)
+														)
+													)
+												)
+											)
+										)
+									)
+								)
+							)
+						)
+					)
+				);
+			}
+		}
+
+		private static MethodDeclarationSyntax RewriteAsVoidMethod(MethodDeclarationSyntax methodNode, string memberName)
+		{
+			return MethodDeclaration(methodNode.ReturnType, methodNode.Identifier).WithBody(
+				Block(
+					SingletonList<StatementSyntax>(
+						ForEachStatement(
+							IdentifierName("var"),
+							Identifier("item"),
+							IdentifierName(memberName),
+							Block(
+								SingletonList<StatementSyntax>(
+									ExpressionStatement(
+										CreateIterationCall(methodNode))))
+						)
+					)));
 		}
 
 		private static InvocationExpressionSyntax CreateIterationCall(MethodDeclarationSyntax methodNode)
