@@ -7,6 +7,10 @@ trigger:
      - features/*
      - feature/*
      - releases/*
+ paths:
+   exclude:
+     - README.md
+     - azure-pipelines.yml
 
 variables:
   patch: $[counter('versioncounter', 100)]
