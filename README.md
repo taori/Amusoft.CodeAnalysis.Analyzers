@@ -25,3 +25,4 @@ Compositional programming styles sometimes require you to forward calls to items
 CI Automation
  - https://github.com/meziantou/Meziantou.Analyzer/tree/master/build 
  - https://www.meziantou.net/ci-cd-pipeline-for-a-visual-studio-extension-vsix-using-azure-devops.htm
+ - https://roslynquoter.azurewebsites.net/
