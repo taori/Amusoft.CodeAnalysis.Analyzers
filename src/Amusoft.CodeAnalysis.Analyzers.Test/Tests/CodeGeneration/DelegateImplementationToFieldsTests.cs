@@ -133,6 +133,285 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
 		}
 
 		[TestMethod]
+		public void VerifyReturnBoolSupportedType()
+		{
+			var test = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    public interface ICustomInterface
+    {
+        bool Method1(object p1);
+    }
+
+    class TypeName : ICustomInterface
+    {
+        private ICollection<ICustomInterface> _disposables;
+
+        public bool Method1(object p1)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+			var expected = new[]
+			{
+				new DiagnosticResult
+				{
+					Id = Analyzer.DiagnosticId,
+					Message = string.Format(Resources.DelegateImplementationToFieldAnalyzerMessageFormat, "Method1", "_disposables"),
+					Severity = DiagnosticSeverity.Info,
+					Locations = new DiagnosticResultLocation[]{ ("Test0.cs", 20, 21) }
+				},
+			};
+
+			VerifyCSharpDiagnostic(test, expected);
+
+			var fixtest = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    public interface ICustomInterface
+    {
+        bool Method1(object p1);
+    }
+
+    class TypeName : ICustomInterface
+    {
+        private ICollection<ICustomInterface> _disposables;
+
+        public bool Method1(object p1)
+        {
+            return _disposables.All(item => item.Method1(p1));
+        }
+    }
+}";
+			VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
+		}
+
+		[TestMethod]
+		public void VerifyReturnTaskBoolSupportedType()
+		{
+			var test = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    public interface ICustomInterface
+    {
+        Task<bool> Method1(object p1);
+    }
+
+    class TypeName : ICustomInterface
+    {
+        private ICollection<ICustomInterface> _disposables;
+
+        public Task<bool> Method1(object p1)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+			var expected = new[]
+			{
+				new DiagnosticResult
+				{
+					Id = Analyzer.DiagnosticId,
+					Message = string.Format(Resources.DelegateImplementationToFieldAnalyzerMessageFormat, "Method1", "_disposables"),
+					Severity = DiagnosticSeverity.Info,
+					Locations = new DiagnosticResultLocation[]{ ("Test0.cs", 20, 27) }
+				},
+			};
+
+			VerifyCSharpDiagnostic(test, expected);
+
+			var fixtest = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    public interface ICustomInterface
+    {
+        Task<bool> Method1(object p1);
+    }
+
+    class TypeName : ICustomInterface
+    {
+        private ICollection<ICustomInterface> _disposables;
+
+        public Task<bool> Method1(object p1)
+        {
+            return Task.FromResult(_disposables.All(item => item.Method1(p1)));
+        }
+    }
+}";
+			VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
+		}
+
+
+        [TestMethod]
+		public void VerifyReturnTaskNonBoolSupportedType()
+		{
+			var test = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    public interface ICustomInterface
+    {
+        Task<string> Method1(object p1);
+    }
+
+    class TypeName : ICustomInterface
+    {
+        private ICollection<ICustomInterface> _disposables;
+
+        public Task<string> Method1(object p1)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+			var expected = new DiagnosticResult[]
+			{
+			};
+
+			VerifyCSharpDiagnostic(test, expected);
+		}
+
+		[TestMethod]
+		public void VerifyReturnTaskBoolAsyncSupportedType()
+		{
+			var test = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    public interface ICustomInterface
+    {
+        Task<bool> Method1(object p1);
+    }
+
+    class TypeName : ICustomInterface
+    {
+        private ICollection<ICustomInterface> _disposables;
+
+        public async Task<bool> Method1(object p1)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+			var expected = new[]
+			{
+				new DiagnosticResult
+				{
+					Id = Analyzer.DiagnosticId,
+					Message = string.Format(Resources.DelegateImplementationToFieldAnalyzerMessageFormat, "Method1", "_disposables"),
+					Severity = DiagnosticSeverity.Info,
+					Locations = new DiagnosticResultLocation[]{ ("Test0.cs", 20, 33) }
+				},
+			};
+
+			VerifyCSharpDiagnostic(test, expected);
+
+			var fixtest = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    public interface ICustomInterface
+    {
+        Task<bool> Method1(object p1);
+    }
+
+    class TypeName : ICustomInterface
+    {
+        private ICollection<ICustomInterface> _disposables;
+
+        public async Task<bool> Method1(object p1)
+        {
+            return _disposables.All(item => item.Method1(p1));
+        }
+    }
+}";
+			VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
+		}
+
+
+
+        [TestMethod]
+		public void VerifyReturnNoFixUnsupportedType()
+		{
+			var test = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    public interface ICustomInterface
+    {
+        string Method1(object p1);
+    }
+
+    class TypeName : ICustomInterface
+    {
+        private ICollection<ICustomInterface> _disposables;
+
+        public string Method1(object p1)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+			var expected = new DiagnosticResult[0];
+
+			VerifyCSharpDiagnostic(test, expected);
+		}
+
+
+        [TestMethod]
 		public void VerifyFullRewrite()
 		{
 			var test = @"
