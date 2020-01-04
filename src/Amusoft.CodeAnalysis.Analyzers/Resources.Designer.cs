@@ -89,6 +89,15 @@ namespace Amusoft.CodeAnalysis.Analyzers {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Generate alternate method stub for expression ähnelt.
+        /// </summary>
+        public static string GenerateMethodFixerMessageFormat {
+            get {
+                return ResourceManager.GetString("GenerateMethodFixerMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
         /// </summary>
         public static string GeneratePocoAnalyzerDescription {
