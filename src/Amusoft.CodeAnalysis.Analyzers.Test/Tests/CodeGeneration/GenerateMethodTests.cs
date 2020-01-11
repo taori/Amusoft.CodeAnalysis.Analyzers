@@ -83,7 +83,7 @@ namespace ConsoleApplication1
 		}
 
 		[TestMethod]
-		public async Task Cs0123FixGenerateFixedReturn()
+		public async Task Cs0407FixGenerateFixedReturn()
 		{
 			var test = @"
 using System;
@@ -127,20 +127,18 @@ namespace ConsoleApplication1
             var action = new Func<int, string>(TestMethod);
         }
 
-        private int TestMethod(int arg)
-        {
-            throw new NotImplementedException();
-        }
-
         private string TestMethod(int arg)
         {
             throw new NotImplementedException();
         }
     }
 }";
-			var diagnostic1 = CompilerError("CS0407").WithLocation(15, 48);
+			var diagnostics = new[]
+			{
+				CompilerError("CS0407").WithLocation(15, 48),
+			};
 
-			await Verify.VerifyCodeFixAsync(test, diagnostic1, fixtest);
+			await Verify.VerifyCodeFixAsync(test, diagnostics, fixtest);
         }
 	}
 }

@@ -25,7 +25,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.GenerateMethod
 	{
 		public sealed override ImmutableArray<string> FixableDiagnosticIds
 		{
-			get { return ImmutableArray.Create("CS1503", "CS0123"); }
+			get { return ImmutableArray.Create("CS0407", "CS0123"); }
 		}
 
 		public sealed override FixAllProvider GetFixAllProvider()
@@ -38,15 +38,17 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.GenerateMethod
 		{
 			foreach (var diagnostic in context.Diagnostics)
 			{
-				if (diagnostic.Id.Equals("CS1503", StringComparison.OrdinalIgnoreCase))
+				if (diagnostic.Id.Equals("CS0407", StringComparison.OrdinalIgnoreCase))
 					context.RegisterCodeFix(
 						CodeAction.Create(Resources.GenerateMethodFixerMessageFormat,
-							async (c) => await FixCs1503Async(context, c, diagnostic)), diagnostic);
+							c => FixCs0407Async(context, c, diagnostic), 
+							equivalenceKey: "CS1503"), diagnostic);
 
 				if (diagnostic.Id.Equals("CS0123", StringComparison.OrdinalIgnoreCase))
 					context.RegisterCodeFix(
 						CodeAction.Create(Resources.GenerateMethodFixerMessageFormat,
-							async (c) => await FixCs0123Async(context, c, diagnostic)), diagnostic);
+							c => FixCs0123Async(context, c, diagnostic), 
+							equivalenceKey: "CS0123"), diagnostic);
 			}
 
 			return Task.CompletedTask;
@@ -57,8 +59,36 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.GenerateMethod
 			return context.Document;
 		}
 
-		private async Task<Document> FixCs1503Async(CodeFixContext context, CancellationToken cancellationToken, Diagnostic diagnostic)
+		private async Task<Document> FixCs0407Async(CodeFixContext context, CancellationToken cancellationToken, Diagnostic diagnostic)
 		{
+			if (!context.Document.TryGetSemanticModel(out var semanticModel))
+				return context.Document;
+
+			var tree = await context.Document.GetSyntaxTreeAsync(cancellationToken);
+			var root = await tree.GetRootAsync(cancellationToken);
+			var node = root.FindNode(diagnostic.Location.SourceSpan);
+
+			if (!(node is ArgumentSyntax attributeSyntax))
+				return context.Document;
+
+			
+			var speculativeSymbol = semanticModel.GetSpeculativeSymbolInfo(attributeSyntax.Expression.SpanStart, attributeSyntax.Expression, SpeculativeBindingOption.BindAsExpression);
+
+			if (speculativeSymbol.CandidateReason == CandidateReason.OverloadResolutionFailure &&
+			    speculativeSymbol.CandidateSymbols.Length > 0)
+			{
+				var syntax = speculativeSymbol.CandidateSymbols[0].DeclaringSyntaxReferences[0].GetSyntax(cancellationToken) as MethodDeclarationSyntax;
+				var spanStart = syntax.Span.Start;
+				var bindingOption = SpeculativeBindingOption.BindAsTypeOrNamespace;
+				var bcd = semanticModel.GetSpeculativeTypeInfo(attributeSyntax.Span.Start, attributeSyntax, bindingOption);
+				var speculativeSymbolInfo = semanticModel.GetSpeculativeSymbolInfo(attributeSyntax.Span.Start, attributeSyntax, bindingOption);
+			}
+			if (node.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().FirstOrDefault() is var
+				methodDeclarationSyntax)
+			{
+
+			}
+
 			return context.Document;
 		}
 	}
