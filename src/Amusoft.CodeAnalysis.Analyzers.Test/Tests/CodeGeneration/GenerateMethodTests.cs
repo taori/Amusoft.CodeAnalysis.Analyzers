@@ -3,23 +3,22 @@ using System.Threading.Tasks;
 using Amusoft.CodeAnalysis.Analyzers.CodeGeneration.GenerateMethod;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp.Testing.MSTest;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestHelper;
 using static Microsoft.CodeAnalysis.Testing.DiagnosticResult;
-using Verify = Microsoft.CodeAnalysis.CSharp.Testing.MSTest.CodeFixVerifier<Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationToFields.Analyzer, Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationToFields.Fixer>;
+using Verify = Microsoft.CodeAnalysis.CSharp.Testing.MSTest.CodeFixVerifier<Microsoft.CodeAnalysis.Testing.EmptyDiagnosticAnalyzer, Amusoft.CodeAnalysis.Analyzers.CodeGeneration.GenerateMethod.Fixer>;
 
 namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
 {
 	[TestClass]
-	public class GenerateMethodTests : CodeFixVerifier
+	public class GenerateMethodTests : TestHelper.CodeFixVerifier
 	{
 		[TestMethod]
-		public void NoAction()
+		public async Task NoAction()
 		{
-			var test = @"";
-			
-			VerifyCSharpDiagnostic(test);
+			await CodeFixVerifier<EmptyDiagnosticAnalyzer, Fixer>.VerifyCodeFixAsync(string.Empty, string.Empty);
 		}
 
 		[TestMethod]
@@ -80,11 +79,11 @@ namespace ConsoleApplication1
 }";
 			var diagnostic1 = CompilerError("CS0123").WithLocation(15, 26);
 
-			await Verify.VerifyCodeFixAsync(test, new []{diagnostic1}, fixtest);
+			await Verify.VerifyCodeFixAsync(test, diagnostic1, fixtest);
 		}
 
 		[TestMethod]
-		public void Cs0123FixGenerateFixedReturn()
+		public async Task Cs0123FixGenerateFixedReturn()
 		{
 			var test = @"
 using System;
@@ -109,19 +108,7 @@ namespace ConsoleApplication1
         }
     }
 }";
-			var expected = new DiagnosticResult
-			{
-				Id = "CS0123",
-				Message = string.Format(Resources.GenerateMethodFixerMessageFormat),
-				Severity = DiagnosticSeverity.Error,
-				Locations =
-					new[]
-					{
-						new DiagnosticResultLocation("Test0.cs", 11, 15)
-					}
-			};
 
-			VerifyCSharpDiagnostic(test, expected);
 
 			var fixtest = @"
 using System;
@@ -151,17 +138,9 @@ namespace ConsoleApplication1
         }
     }
 }";
-			VerifyCSharpFix(test, fixtest);
-		}
+			var diagnostic1 = CompilerError("CS0407").WithLocation(15, 48);
 
-		protected override CodeFixProvider GetCSharpCodeFixProvider()
-		{
-			return new Fixer();
-		}
-
-		protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-		{
-			return null;
-		}
+			await Verify.VerifyCodeFixAsync(test, diagnostic1, fixtest);
+        }
 	}
 }
