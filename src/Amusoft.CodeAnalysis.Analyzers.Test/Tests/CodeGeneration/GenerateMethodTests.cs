@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Amusoft.CodeAnalysis.Analyzers.CodeGeneration.GenerateMethod;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestHelper;
+using static Microsoft.CodeAnalysis.Testing.DiagnosticResult;
+using Verify = Microsoft.CodeAnalysis.CSharp.Testing.MSTest.CodeFixVerifier<Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationToFields.Analyzer, Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationToFields.Fixer>;
 
 namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
 {
@@ -20,7 +23,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
 		}
 
 		[TestMethod]
-		public void Cs0123FixGenerateFixedArgument()
+		public async Task Cs0123FixGenerateFixedArgument()
 		{
 			var test = @"
 using System;
@@ -45,19 +48,7 @@ namespace ConsoleApplication1
         }
     }
 }";
-			var expected = new DiagnosticResult
-			{
-				Id = "CS0123",
-				Message = string.Format(Resources.GenerateMethodFixerMessageFormat),
-				Severity = DiagnosticSeverity.Error,
-				Locations =
-					new[]
-					{
-						new DiagnosticResultLocation("Test0.cs", 11, 15)
-					}
-			};
 
-			VerifyCSharpDiagnostic(test, expected);
 
 			var fixtest = @"
 using System;
@@ -87,7 +78,9 @@ namespace ConsoleApplication1
         }
     }
 }";
-			VerifyCSharpFix(test, fixtest);
+			var diagnostic1 = CompilerError("CS0123").WithLocation(15, 26);
+
+			await Verify.VerifyCodeFixAsync(test, new []{diagnostic1}, fixtest);
 		}
 
 		[TestMethod]
