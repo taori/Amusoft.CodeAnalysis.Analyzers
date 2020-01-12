@@ -25,6 +25,9 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.GenerateMethod
 	[ExportCodeFixProvider(LanguageNames.CSharp, Name = "GenerateMethodFixer"), Shared]
 	public class Fixer : CodeFixProvider
 	{
+		private const string AnnotationMethod = "META:method";
+		private const string AnnotationType = "META:type";
+
 		public sealed override ImmutableArray<string> FixableDiagnosticIds
 		{
 			get { return ImmutableArray.Create("CS0407", "CS0123"); }
@@ -36,15 +39,18 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.GenerateMethod
 			return WellKnownFixAllProviders.BatchFixer;
 		}
 
-		public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
+		public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
 		{
 			foreach (var diagnostic in context.Diagnostics)
 			{
-				if (diagnostic.Id.Equals("CS0407", StringComparison.OrdinalIgnoreCase)
-				&& CanFixCs0407(context, diagnostic, out var methodName, out var typeName))
+				if (diagnostic.Id.Equals("CS0407", StringComparison.OrdinalIgnoreCase))
 				{
+					var canFixResult = await CanFixCs0407Async(context, diagnostic);
+					if(!canFixResult.canFix)
+						continue;
+
 					context.RegisterCodeFix(
-						CodeAction.Create(string.Format(Resources.GenerateMethodFixerCS407MessageFormat, methodName, typeName),
+						CodeAction.Create(string.Format(Resources.GenerateMethodFixerCS407MessageFormat, canFixResult.methodName, canFixResult.typeName),
 							c => FixCs0407Async(context, c, diagnostic),
 							equivalenceKey: "CS0407"), diagnostic);
 				}
@@ -57,13 +63,17 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.GenerateMethod
 							equivalenceKey: "CS0123"), diagnostic);
 				}
 			}
-
-			return Task.CompletedTask;
 		}
 
-		private bool CanFixCs0407(CodeFixContext context, Diagnostic diagnostic, out string methodName, out string typeName)
+		private async Task<(bool canFix, string methodName, string typeName)> CanFixCs0407Async(CodeFixContext context, Diagnostic diagnostic)
 		{
-			throw new NotImplementedException();
+			var fixedDocument = await FixCs0407Async(context, context.CancellationToken, diagnostic).ConfigureAwait(false);
+			var oldRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+			var newRoot = await fixedDocument.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+			var method = newRoot.GetAnnotations(AnnotationMethod).Select(d => d.Data).FirstOrDefault();
+			var newType = newRoot.GetAnnotations(AnnotationType).Select(d => d.Data).FirstOrDefault();
+
+			return (!oldRoot.IsEquivalentTo(newRoot), method, newType);
 		}
 
 		private async Task<Document> FixCs0123Async(CodeFixContext context, CancellationToken cancellationToken, Diagnostic diagnostic)
@@ -94,8 +104,13 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.GenerateMethod
 					.WithReturnType(SyntaxFactory.IdentifierName(typeSymbol.MetadataName))
 					.WithAdditionalAnnotations(SyntaxAnnotation.ElasticAnnotation, Formatter.Annotation, Simplifier.Annotation);
 
+				var newRoot = root.ReplaceNode(methodDeclarationSyntax, rewritten)
+					.WithAdditionalAnnotations(
+						new SyntaxAnnotation(AnnotationMethod, methodDeclarationSyntax.Identifier.Text),
+						new SyntaxAnnotation(AnnotationType, typeSymbol.Name)
+						);
 				return context.Document
-					.WithSyntaxRoot(root.ReplaceNode(methodDeclarationSyntax, rewritten));
+					.WithSyntaxRoot(newRoot);
 			}
 
 			return context.Document;
