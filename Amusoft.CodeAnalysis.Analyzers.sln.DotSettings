@@ -7,6 +7,7 @@
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=CLASS/Expression/@EntryValue">getAlphaNumericFileNameWithoutExtension()</s:String>
 	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=CLASS/InitialRange/@EntryValue">-1</s:Int64>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=FixerProviderType/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=FixerProviderType/Expression/@EntryValue">variableOfType("Amusoft.CodeAnalysis.Analyzers.Shared.CodeFixProviderBase")</s:String>
 	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=FixerProviderType/Order/@EntryValue">3</s:Int64>
 	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=HEADER/InitialRange/@EntryValue">-1</s:Int64>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=NAMESPACE/Expression/@EntryValue">fileDefaultNamespace()</s:String>
@@ -27,7 +28,7 @@ namespace $NAMESPACE$&#xD;
 		[TestMethod]&#xD;
 		public async Task EmptySourceNoAction()&#xD;
 		{&#xD;
-			await CodeFixVerifier&lt;EmptyDiagnosticAnalyzer, FixByChangingReturnTypeOfMethod&gt;.VerifyCodeFixAsync(string.Empty, string.Empty);&#xD;
+			await CodeFixVerifier&lt;EmptyDiagnosticAnalyzer, $CLASS$&gt;.VerifyCodeFixAsync(string.Empty, string.Empty);&#xD;
 		}&#xD;
         &#xD;
 		[TestMethod]&#xD;
@@ -117,6 +118,7 @@ namespace ConsoleApplication1&#xD;
 	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=CLASS/InitialRange/@EntryValue">-1</s:Int64>
 	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=CLASS/Order/@EntryValue">2</s:Int64>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=diagnosticId/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=diagnosticId/InitialRange/@EntryValue">1</s:Int64>
 	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=diagnosticId/Order/@EntryValue">3</s:Int64>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=HEADER/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=HEADER/Expression/@EntryValue">fileheader()</s:String>
@@ -162,7 +164,7 @@ namespace $NAMESPACE$&#xD;
 		{&#xD;
 			var member = GetAnnotationValue(rootNode, MemberAnnotation);&#xD;
 			var typeName = GetAnnotationValue(rootNode, TypeAnnotation);&#xD;
-			return string.Format(Resources.MessageFormat_CS0407_FixMethodReturnType_0_1, member, typeName);&#xD;
+			return string.Format(Resources.$SELSTART$MessageFormat_$diagnosticId$_$CLASS$$SELEND$, member, typeName);&#xD;
 		}&#xD;
 &#xD;
 		/// &lt;inheritdoc /&gt;&#xD;

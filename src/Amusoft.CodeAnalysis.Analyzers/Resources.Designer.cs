@@ -89,24 +89,6 @@ namespace Amusoft.CodeAnalysis.Analyzers {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Generate method {0} with matching parameter signature ähnelt.
-        /// </summary>
-        public static string GenerateMethodFixerCS0123MessageFormat {
-            get {
-                return ResourceManager.GetString("GenerateMethodFixerCS0123MessageFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Change return type of {0} to {1} ähnelt.
-        /// </summary>
-        public static string GenerateMethodFixerCS407MessageFormat {
-            get {
-                return ResourceManager.GetString("GenerateMethodFixerCS407MessageFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Generate alternate method stub for expression ähnelt.
         /// </summary>
         public static string GenerateMethodFixerMessageFormat {
@@ -139,6 +121,15 @@ namespace Amusoft.CodeAnalysis.Analyzers {
         public static string GeneratePocoAnalyzerTitle {
             get {
                 return ResourceManager.GetString("GeneratePocoAnalyzerTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Change return type of {0} to {1} ähnelt.
+        /// </summary>
+        public static string MessageFormat_CS0123_FixByReplacingMethodReturnValue_0_1 {
+            get {
+                return ResourceManager.GetString("MessageFormat_CS0123_FixByReplacingMethodReturnValue_0_1", resourceCulture);
             }
         }
         

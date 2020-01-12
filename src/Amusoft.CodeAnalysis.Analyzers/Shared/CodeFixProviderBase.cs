@@ -70,7 +70,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.Shared
 			}
 		}
 
-		protected string GetAnnotationValue(SyntaxNode rootNode, string annotation, string defaultValue = "unknown")
+		protected string GetAnnotationValue(SyntaxNode rootNode, string annotation, string defaultValue = "unknown annotation")
 		{
 			return rootNode.GetAnnotations(annotation).FirstOrDefault(d => d.Kind == annotation)?.Data ?? defaultValue;
 		}
