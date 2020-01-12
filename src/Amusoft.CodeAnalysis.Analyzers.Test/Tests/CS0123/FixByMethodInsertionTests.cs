@@ -3,6 +3,7 @@
 // // See https://github.com/taori/Amusoft.CodeAnalysis.Analyzers/blob/master/LICENSE for details
 
 using System.Threading.Tasks;
+using Amusoft.CodeAnalysis.Analyzers.CS0123;
 using Microsoft.CodeAnalysis.CSharp.Testing.MSTest;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,7 +17,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CS0123
 	public class FixByMethodInsertionTests
 	{
 		[TestMethod]
-		public async Task EmptySourceNoAction()
+		public async Task NoAction()
 		{
 			await Verifier.VerifyCodeFixAsync(string.Empty, string.Empty);
 		}
@@ -24,7 +25,6 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CS0123
 		[TestMethod]
 		public async Task DiagnosticAtObjectCreationExpression()
 		{
-			
 			var test = @"
 using System;
 using System.Collections.Generic;
@@ -39,7 +39,7 @@ namespace ConsoleApplication1
     {
         TypeName()
         {
-            var action = new Func<int, string>(TestMethod);
+            var action = new Func<string, int>(TestMethod);
         }
 
         private int TestMethod(int arg)
@@ -64,21 +64,23 @@ namespace ConsoleApplication1
     {
         TypeName()
         {
-            var action = new Func<int, string>(TestMethod);
+            var action = new Func<string, int>(TestMethod);
         }
 
-        private string TestMethod(int arg)
+        private int TestMethod(int arg)
+        {
+            throw new NotImplementedException();
+        }
+
+        private int TestMethod(string arg)
         {
             throw new NotImplementedException();
         }
     }
 }";
-			var diagnostics = new[]
-			{
-				CompilerError("CS0407").WithLocation(15, 48),
-			};
+			var diagnostic1 = DiagnosticResult.CompilerError("CS0123").WithLocation(15, 26);
 
-			await Verifier.VerifyCodeFixAsync(test, diagnostics, fixtest);
+			await CodeFixVerifier<EmptyDiagnosticAnalyzer, FixByIntroducingMethod>.VerifyCodeFixAsync(test, diagnostic1, fixtest);
 		}
-	}
+    }
 }

@@ -11,8 +11,8 @@ using Microsoft.CodeAnalysis.CodeFixes;
 
 namespace Amusoft.CodeAnalysis.Analyzers.CS0123
 {
-	[ExportCodeFixProvider(LanguageNames.CSharp, Name = "CS0123-FixByReplacingMethodReturnValue"), Shared]
-	public class FixByReplacingMethodReturnValue : CodeFixProviderBase
+	[ExportCodeFixProvider(LanguageNames.CSharp, Name = "CS0123-FixByReplacingMethodReturnType"), Shared]
+	public class FixByReplacingMethodReturnType : CodeFixProviderBase
 	{
 		/// <inheritdoc />
 		protected override string DiagnosticId { get; } = "CS0123";
@@ -20,7 +20,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.CS0123
 		/// <inheritdoc />
 		protected override string GetEquivalenceKey(SyntaxNode rootNode)
 		{
-			return "CS0123-FixByReplacingMethodReturnValue";
+			return "CS0123-FixByReplacingMethodReturnType";
 		}
 
 		/// <inheritdoc />

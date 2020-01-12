@@ -10,10 +10,10 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Simplification;
 
-namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.CS0407
+namespace Amusoft.CodeAnalysis.Analyzers.CS0407
 {
-	[ExportCodeFixProvider(LanguageNames.CSharp, Name = "CS0407-FixByChangingReturnTypeOfMethod"), Shared]
-	public class FixByChangingReturnTypeOfMethod : CodeFixProviderBase
+	[ExportCodeFixProvider(LanguageNames.CSharp, Name = "CS0407-FixByReplacingMethodReturnType"), Shared]
+	public class FixByReplacingMethodReturnType : CodeFixProviderBase
 	{
 		/// <inheritdoc />
 		protected override string DiagnosticId { get; } = "CS0407";

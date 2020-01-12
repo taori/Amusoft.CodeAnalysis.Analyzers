@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using Amusoft.CodeAnalysis.Analyzers.CodeGeneration.CS0407;
+using Amusoft.CodeAnalysis.Analyzers.CS0407;
 using Microsoft.CodeAnalysis.CSharp.Testing.MSTest;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static Microsoft.CodeAnalysis.Testing.DiagnosticResult;
-using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.MSTest.CodeFixVerifier<Microsoft.CodeAnalysis.Testing.EmptyDiagnosticAnalyzer, Amusoft.CodeAnalysis.Analyzers.CodeGeneration.CS0407.FixByChangingReturnTypeOfMethod>;
+using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.MSTest.CodeFixVerifier<Microsoft.CodeAnalysis.Testing.EmptyDiagnosticAnalyzer, Amusoft.CodeAnalysis.Analyzers.CS0407.FixByReplacingMethodReturnType>;
 
 namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CS0407
 {
@@ -14,7 +14,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CS0407
 		[TestMethod]
 		public async Task EmptySourceNoAction()
 		{
-			await CodeFixVerifier<EmptyDiagnosticAnalyzer, FixByChangingReturnTypeOfMethod>.VerifyCodeFixAsync(string.Empty, string.Empty);
+			await CodeFixVerifier<EmptyDiagnosticAnalyzer, FixByReplacingMethodReturnType>.VerifyCodeFixAsync(string.Empty, string.Empty);
 		}
         
 		[TestMethod]
