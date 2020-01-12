@@ -126,6 +126,9 @@
   <data name="DelegateImplementationToFieldAnalyzerTitle" xml:space="preserve">
     <value>Forward execution of member to collection member</value>
   </data>
+  <data name="GenerateMethodFixerCS407MessageFormat" xml:space="preserve">
+    <value>Change return type of {0} to {1}</value>
+  </data>
   <data name="GenerateMethodFixerMessageFormat" xml:space="preserve">
     <value>Generate alternate method stub for expression</value>
   </data>

@@ -9,6 +9,7 @@ using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Amusoft.CodeAnalysis.Analyzers.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -39,20 +40,30 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.GenerateMethod
 		{
 			foreach (var diagnostic in context.Diagnostics)
 			{
-				if (diagnostic.Id.Equals("CS0407", StringComparison.OrdinalIgnoreCase))
+				if (diagnostic.Id.Equals("CS0407", StringComparison.OrdinalIgnoreCase)
+				&& CanFixCs0407(context, diagnostic, out var methodName, out var typeName))
+				{
 					context.RegisterCodeFix(
-						CodeAction.Create(Resources.GenerateMethodFixerMessageFormat,
+						CodeAction.Create(string.Format(Resources.GenerateMethodFixerCS407MessageFormat, methodName, typeName),
 							c => FixCs0407Async(context, c, diagnostic),
-							equivalenceKey: "CS1503"), diagnostic);
+							equivalenceKey: "CS0407"), diagnostic);
+				}
 
 				if (diagnostic.Id.Equals("CS0123", StringComparison.OrdinalIgnoreCase))
+				{
 					context.RegisterCodeFix(
 						CodeAction.Create(Resources.GenerateMethodFixerMessageFormat,
 							c => FixCs0123Async(context, c, diagnostic),
 							equivalenceKey: "CS0123"), diagnostic);
+				}
 			}
 
 			return Task.CompletedTask;
+		}
+
+		private bool CanFixCs0407(CodeFixContext context, Diagnostic diagnostic, out string methodName, out string typeName)
+		{
+			throw new NotImplementedException();
 		}
 
 		private async Task<Document> FixCs0123Async(CodeFixContext context, CancellationToken cancellationToken, Diagnostic diagnostic)
