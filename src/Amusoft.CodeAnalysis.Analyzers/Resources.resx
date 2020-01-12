@@ -126,6 +126,9 @@
   <data name="DelegateImplementationToFieldAnalyzerTitle" xml:space="preserve">
     <value>Forward execution of member to collection member</value>
   </data>
+  <data name="GenerateMethodFixerCS0123MessageFormat" xml:space="preserve">
+    <value>Generate method {0} with matching parameter signature</value>
+  </data>
   <data name="GenerateMethodFixerCS407MessageFormat" xml:space="preserve">
     <value>Change return type of {0} to {1}</value>
   </data>
@@ -140,6 +143,9 @@
   </data>
   <data name="GeneratePocoAnalyzerTitle" xml:space="preserve">
     <value />
+  </data>
+  <data name="MessageFormat_CS0407_FixMethodReturnType_0_1" xml:space="preserve">
+    <value>Change return type of {0} to {1}</value>
   </data>
   <data name="ResxEntryAnalyzerDescription" xml:space="preserve">
     <value />

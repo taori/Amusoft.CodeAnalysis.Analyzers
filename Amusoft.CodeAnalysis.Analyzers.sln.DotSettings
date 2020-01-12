@@ -1,0 +1,175 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/CodeStyle/FileHeader/FileHeaderText/@EntryValue">// Copyright $CREATED_YEAR$ Andreas Müller&#xD;
+// This file is a part of Amusoft.CodeAnalysis.Analyzers and is licensed under Apache 2.0&#xD;
+// See https://github.com/taori/Amusoft.CodeAnalysis.Analyzers/blob/master/LICENSE for details</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Description/@EntryValue">&amp;CodeFixTest</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=CLASS/Expression/@EntryValue">getAlphaNumericFileNameWithoutExtension()</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=CLASS/InitialRange/@EntryValue">-1</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=FixerProviderType/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=FixerProviderType/Order/@EntryValue">3</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=HEADER/InitialRange/@EntryValue">-1</s:Int64>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=NAMESPACE/Expression/@EntryValue">fileDefaultNamespace()</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=NAMESPACE/InitialRange/@EntryValue">-1</s:Int64>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Text/@EntryValue">$HEADER$using System.Threading.Tasks;&#xD;
+using Amusoft.CodeAnalysis.Analyzers.CodeGeneration.GenerateMethod;&#xD;
+using Microsoft.CodeAnalysis.CSharp.Testing.MSTest;&#xD;
+using Microsoft.CodeAnalysis.Testing;&#xD;
+using Microsoft.VisualStudio.TestTools.UnitTesting;&#xD;
+using static Microsoft.CodeAnalysis.Testing.DiagnosticResult;&#xD;
+using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.MSTest.CodeFixVerifier&lt;Microsoft.CodeAnalysis.Testing.EmptyDiagnosticAnalyzer, $FixerProviderType$&gt;;&#xD;
+&#xD;
+namespace $NAMESPACE$&#xD;
+{&#xD;
+	[TestClass]&#xD;
+	public class $CLASS$&#xD;
+	{&#xD;
+		[TestMethod]&#xD;
+		public async Task EmptySourceNoAction()&#xD;
+		{&#xD;
+			await CodeFixVerifier&lt;EmptyDiagnosticAnalyzer, FixByChangingReturnTypeOfMethod&gt;.VerifyCodeFixAsync(string.Empty, string.Empty);&#xD;
+		}&#xD;
+        &#xD;
+		[TestMethod]&#xD;
+		public async Task DiagnosticAtObjectCreationExpression()&#xD;
+		{&#xD;
+			$END$&#xD;
+			var test = @"&#xD;
+using System;&#xD;
+using System.Collections.Generic;&#xD;
+using System.Linq;&#xD;
+using System.Text;&#xD;
+using System.Threading.Tasks;&#xD;
+using System.Diagnostics;&#xD;
+&#xD;
+namespace ConsoleApplication1&#xD;
+{&#xD;
+    class TypeName&#xD;
+    {&#xD;
+        TypeName()&#xD;
+        {&#xD;
+            var action = new Func&lt;int, string&gt;(TestMethod);&#xD;
+        }&#xD;
+&#xD;
+        private int TestMethod(int arg)&#xD;
+        {&#xD;
+            throw new NotImplementedException();&#xD;
+        }&#xD;
+    }&#xD;
+}";&#xD;
+&#xD;
+&#xD;
+			var fixtest = @"&#xD;
+using System;&#xD;
+using System.Collections.Generic;&#xD;
+using System.Linq;&#xD;
+using System.Text;&#xD;
+using System.Threading.Tasks;&#xD;
+using System.Diagnostics;&#xD;
+&#xD;
+namespace ConsoleApplication1&#xD;
+{&#xD;
+    class TypeName&#xD;
+    {&#xD;
+        TypeName()&#xD;
+        {&#xD;
+            var action = new Func&lt;int, string&gt;(TestMethod);&#xD;
+        }&#xD;
+&#xD;
+        private string TestMethod(int arg)&#xD;
+        {&#xD;
+            throw new NotImplementedException();&#xD;
+        }&#xD;
+    }&#xD;
+}";&#xD;
+			var diagnostics = new[]&#xD;
+			{&#xD;
+				CompilerError("CS0407").WithLocation(15, 48),&#xD;
+			};&#xD;
+&#xD;
+			await Verifier.VerifyCodeFixAsync(test, diagnostics, fixtest);&#xD;
+        }&#xD;
+	}&#xD;
+}</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Reformat/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/CustomProperties/=FileName/@EntryIndexedValue">CodeFixTest</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/CustomProperties/=Extension/@EntryIndexedValue">cs</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/CustomProperties/=ValidateFileName/@EntryIndexedValue">True</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Applicability/=File/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Scope/=E8F0594528C33E45BBFEC6CFE851095D/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Scope/=E8F0594528C33E45BBFEC6CFE851095D/Type/@EntryValue">InCSharpProjectFile</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=HEADER/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=HEADER/Expression/@EntryValue">fileheader()</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=HEADER/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=NAMESPACE/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=NAMESPACE/Order/@EntryValue">1</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=CLASS/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=CLASS/Order/@EntryValue">2</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Applicability/=File/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/CustomProperties/=Extension/@EntryIndexedValue">cs</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/CustomProperties/=FileName/@EntryIndexedValue">CodeFix</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/CustomProperties/=ValidateFileName/@EntryIndexedValue">True</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Description/@EntryValue">&amp;CodeFix</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=CLASS/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=CLASS/Expression/@EntryValue">getAlphaNumericFileNameWithoutExtension()</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=CLASS/InitialRange/@EntryValue">-1</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=CLASS/Order/@EntryValue">2</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=diagnosticId/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=diagnosticId/Order/@EntryValue">3</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=HEADER/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=HEADER/Expression/@EntryValue">fileheader()</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=HEADER/InitialRange/@EntryValue">-1</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=HEADER/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=NAMESPACE/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=NAMESPACE/Expression/@EntryValue">fileDefaultNamespace()</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=NAMESPACE/InitialRange/@EntryValue">-1</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=NAMESPACE/Order/@EntryValue">1</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Reformat/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Scope/=E8F0594528C33E45BBFEC6CFE851095D/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Scope/=E8F0594528C33E45BBFEC6CFE851095D/Type/@EntryValue">InCSharpProjectFile</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Text/@EntryValue">$HEADER$using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;&#xD;
+using System.Composition;&#xD;
+using System.Linq;&#xD;
+using System.Threading;&#xD;
+using System.Threading.Tasks;&#xD;
+using Amusoft.CodeAnalysis.Analyzers.Shared;&#xD;
+using Microsoft.CodeAnalysis;&#xD;
+using Microsoft.CodeAnalysis.CodeFixes;&#xD;
+using Microsoft.CodeAnalysis.CSharp;&#xD;
+using Microsoft.CodeAnalysis.CSharp.Syntax;&#xD;
+using Microsoft.CodeAnalysis.Formatting;&#xD;
+using Microsoft.CodeAnalysis.Simplification;&#xD;
+&#xD;
+namespace $NAMESPACE$&#xD;
+{&#xD;
+	[ExportCodeFixProvider(LanguageNames.CSharp, Name = "$diagnosticId$-$CLASS$"), Shared]&#xD;
+	public class $CLASS$ : Amusoft.CodeAnalysis.Analyzers.Shared.CodeFixProviderBase&#xD;
+	{&#xD;
+		/// &lt;inheritdoc /&gt;&#xD;
+		protected override string DiagnosticId { get; } = "$diagnosticId$";&#xD;
+&#xD;
+		/// &lt;inheritdoc /&gt;&#xD;
+		protected override string GetEquivalenceKey(SyntaxNode rootNode)&#xD;
+		{&#xD;
+			return "$diagnosticId$-$CLASS$";&#xD;
+		}&#xD;
+&#xD;
+		/// &lt;inheritdoc /&gt;&#xD;
+		protected override string GetTitle(SyntaxNode rootNode)&#xD;
+		{&#xD;
+			var member = GetAnnotationValue(rootNode, MemberAnnotation);&#xD;
+			var typeName = GetAnnotationValue(rootNode, TypeAnnotation);&#xD;
+			return string.Format(Resources.MessageFormat_CS0407_FixMethodReturnType_0_1, member, typeName);&#xD;
+		}&#xD;
+&#xD;
+		/// &lt;inheritdoc /&gt;&#xD;
+		protected override async Task&lt;SyntaxNode&gt; FixedDiagnosticAsync(SyntaxNode rootNode, SyntaxNode diagnosticNode, CodeFixContext context,&#xD;
+			CancellationToken cancellationToken)&#xD;
+		{&#xD;
+			return rootNode;&#xD;
+		}&#xD;
+	}&#xD;
+}</s:String></wpf:ResourceDictionary>
