@@ -7,13 +7,12 @@
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=CLASS/Expression/@EntryValue">getAlphaNumericFileNameWithoutExtension()</s:String>
 	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=CLASS/InitialRange/@EntryValue">-1</s:Int64>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=FixerProviderType/@KeyIndexDefined">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=FixerProviderType/Expression/@EntryValue">variableOfType("Amusoft.CodeAnalysis.Analyzers.Shared.CodeFixProviderBase")</s:String>
+	
 	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=FixerProviderType/Order/@EntryValue">3</s:Int64>
 	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=HEADER/InitialRange/@EntryValue">-1</s:Int64>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=NAMESPACE/Expression/@EntryValue">fileDefaultNamespace()</s:String>
 	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=NAMESPACE/InitialRange/@EntryValue">-1</s:Int64>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Text/@EntryValue">$HEADER$using System.Threading.Tasks;&#xD;
-using Amusoft.CodeAnalysis.Analyzers.CodeGeneration.GenerateMethod;&#xD;
 using Microsoft.CodeAnalysis.CSharp.Testing.MSTest;&#xD;
 using Microsoft.CodeAnalysis.Testing;&#xD;
 using Microsoft.VisualStudio.TestTools.UnitTesting;&#xD;
@@ -28,7 +27,7 @@ namespace $NAMESPACE$&#xD;
 		[TestMethod]&#xD;
 		public async Task EmptySourceNoAction()&#xD;
 		{&#xD;
-			await CodeFixVerifier&lt;EmptyDiagnosticAnalyzer, $CLASS$&gt;.VerifyCodeFixAsync(string.Empty, string.Empty);&#xD;
+			await Verifier.VerifyCodeFixAsync(string.Empty, string.Empty);&#xD;
 		}&#xD;
         &#xD;
 		[TestMethod]&#xD;
