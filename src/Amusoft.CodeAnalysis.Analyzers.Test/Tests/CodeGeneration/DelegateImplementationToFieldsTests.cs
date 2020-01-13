@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestHelper;
+using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.MSTest.CodeFixVerifier<Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationToFields.Analyzer, Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationToFields.Fixer>;
 
 namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
 {
@@ -981,7 +982,7 @@ namespace ConsoleApplication1
         }
     }
 }";
-			VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
+			Verifier.VerifyCodeFixAsync(test, fixtest);
 		}
 
 

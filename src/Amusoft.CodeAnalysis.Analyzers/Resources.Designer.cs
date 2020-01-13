@@ -89,6 +89,15 @@ namespace Amusoft.CodeAnalysis.Analyzers {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Generate alternate method stub for expression ähnelt.
+        /// </summary>
+        public static string GenerateMethodFixerMessageFormat {
+            get {
+                return ResourceManager.GetString("GenerateMethodFixerMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
         /// </summary>
         public static string GeneratePocoAnalyzerDescription {
@@ -112,6 +121,33 @@ namespace Amusoft.CodeAnalysis.Analyzers {
         public static string GeneratePocoAnalyzerTitle {
             get {
                 return ResourceManager.GetString("GeneratePocoAnalyzerTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Insert method stub similar to &apos;{0}&apos; with return type &apos;{1}&apos; ähnelt.
+        /// </summary>
+        public static string MessageFormat_CS0123_FixByInsertingMethodStub_0_1 {
+            get {
+                return ResourceManager.GetString("MessageFormat_CS0123_FixByInsertingMethodStub_0_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Alter parameter types of &apos;{0}&apos; to match expected signature ähnelt.
+        /// </summary>
+        public static string MessageFormat_CS0123_FixByRewritingParameters_0 {
+            get {
+                return ResourceManager.GetString("MessageFormat_CS0123_FixByRewritingParameters_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Alter return type of &apos;{0}&apos; to &apos;{1}&apos; ähnelt.
+        /// </summary>
+        public static string MessageFormat_CS0407_FixByRewritingReturnType_0_1_2 {
+            get {
+                return ResourceManager.GetString("MessageFormat_CS0407_FixByRewritingReturnType_0_1_2", resourceCulture);
             }
         }
         
