@@ -1,16 +1,22 @@
 # https://aka.ms/yaml
 
 trigger:
- branches:
-   include:
-     - master
-     - features/*
-     - feature/*
-     - releases/*
- paths:
-   exclude:
+  branches:
+    include:
+      - master
+      - features/*
+      - feature/*
+      - releases/*
+  paths:
+    exclude:
      - README.md
      - azure-pipelines.yml
+pr:
+  autoCancel: true
+  branches:
+    include:
+      - master
+      - releases/*
 
 variables:
   patch: $[counter('versioncounter', 100)]
