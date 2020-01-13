@@ -17,8 +17,8 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Amusoft.CodeAnalysis.Analyzers.CS0123
 {
-	[ExportCodeFixProvider(LanguageNames.CSharp, Name = "CS0123-FixByIntroducingMethod"), Shared]
-	public class FixByIntroducingMethod : CodeFixProviderBase
+	[ExportCodeFixProvider(LanguageNames.CSharp, Name = "CS0123-FixByRewritingParameters"), Shared]
+	public class FixByRewritingParameters : CodeFixProviderBase
 	{
 		/// <inheritdoc />
 		protected override string DiagnosticId { get; } = "CS0123";
@@ -26,15 +26,14 @@ namespace Amusoft.CodeAnalysis.Analyzers.CS0123
 		/// <inheritdoc />
 		protected override string GetEquivalenceKey(SyntaxNode rootNode)
 		{
-			return "CS0123-FixByIntroducingMethod";
+			return "CS0123-FixByRewritingParameters";
 		}
 
 		/// <inheritdoc />
 		protected override string GetTitle(SyntaxNode rootNode)
 		{
 			var member = GetAnnotationValue(rootNode, MemberAnnotation);
-			var typeName = GetAnnotationValue(rootNode, TypeAnnotation);
-			return string.Format(Resources.MessageFormat_CS0123_FixByInsertingMethodStub_0_1, member, typeName);
+			return string.Format(Resources.MessageFormat_CS0123_FixByRewritingParameters_0, member);
 		}
 
 		/// <inheritdoc />
@@ -46,19 +45,18 @@ namespace Amusoft.CodeAnalysis.Analyzers.CS0123
 
 			if (!SymbolHelper.TryGetExpectedMethodSymbol(out var methodSymbol, out var memberSymbolInfo, diagnosticNode, semanticModel))
 				return rootNode;
-			
+
 			if (memberSymbolInfo.CandidateReason == CandidateReason.OverloadResolutionFailure &&
-			    memberSymbolInfo.CandidateSymbols.Length > 0)
+				memberSymbolInfo.CandidateSymbols.Length > 0)
 			{
 				var methodDeclarationSyntax = memberSymbolInfo.CandidateSymbols[0].DeclaringSyntaxReferences[0].GetSyntax(cancellationToken) as MethodDeclarationSyntax;
 
 				var rewritten = methodDeclarationSyntax
-					.WithParameterList(CreateParameterList(semanticModel, methodSymbol, methodDeclarationSyntax))
-					.WithBody(MethodBodyThrowNotImplementedSyntax())
 					.WithReturnType(IdentifierName(methodSymbol.ReturnType.MetadataName))
+					.WithParameterList(CreateParameterList(semanticModel, methodSymbol, methodDeclarationSyntax))
 					.WithAdditionalAnnotations(SyntaxAnnotation.ElasticAnnotation, Formatter.Annotation, Simplifier.Annotation);
 
-				var newRoot = rootNode.InsertNodesAfter(methodDeclarationSyntax, new []{ rewritten })
+				var newRoot = rootNode.ReplaceNode(methodDeclarationSyntax, new[] { rewritten })
 					.WithAdditionalAnnotations(
 						new SyntaxAnnotation(MemberAnnotation, methodDeclarationSyntax.Identifier.Text),
 						new SyntaxAnnotation(TypeAnnotation, methodSymbol.ReturnType.Name)
@@ -81,7 +79,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.CS0123
 				var newParameter = originalParameter;
 				var targetTypeSymbol = methodSymbol.Parameters[index];
 				var sourceTypeSymbol = semanticModel.GetSymbolInfo(originalParameter.Type).Symbol;
-				if(sourceTypeSymbol == null)
+				if (sourceTypeSymbol == null)
 					goto add;
 				if (sourceTypeSymbol.Equals(targetTypeSymbol))
 					goto add;
@@ -93,17 +91,6 @@ namespace Amusoft.CodeAnalysis.Analyzers.CS0123
 			}
 
 			return parameterList.WithParameters(newParameters);
-		}
-
-		private static BlockSyntax MethodBodyThrowNotImplementedSyntax()
-		{
-			return Block(
-				ThrowStatement(
-						ObjectCreationExpression(
-								IdentifierName(nameof(NotImplementedException)))
-							.WithArgumentList(
-								ArgumentList()))
-					.NormalizeWhitespace());
 		}
 	}
 }

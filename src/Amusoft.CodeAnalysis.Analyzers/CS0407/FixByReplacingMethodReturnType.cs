@@ -30,7 +30,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.CS0407
 		{
 			var member = GetAnnotationValue(rootNode, MemberAnnotation);
 			var typeName = GetAnnotationValue(rootNode, TypeAnnotation);
-			return string.Format(Resources.MessageFormat_CS0407_FixMethodReturnType_0_1, member, typeName);
+			return string.Format(Resources.MessageFormat_CS0407_FixByRewritingReturnType_0_1_2, member, typeName);
 		}
 
 		/// <inheritdoc />
