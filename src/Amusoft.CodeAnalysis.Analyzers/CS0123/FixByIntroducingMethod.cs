@@ -2,12 +2,18 @@
 // // This file is a part of Amusoft.CodeAnalysis.Analyzers and is licensed under Apache 2.0
 // // See https://github.com/taori/Amusoft.CodeAnalysis.Analyzers/blob/master/LICENSE for details
 
+using System;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Amusoft.CodeAnalysis.Analyzers.Shared;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
+using Microsoft.CodeAnalysis.Simplification;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Amusoft.CodeAnalysis.Analyzers.CS0123
 {
@@ -28,7 +34,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.CS0123
 		{
 			var member = GetAnnotationValue(rootNode, MemberAnnotation);
 			var typeName = GetAnnotationValue(rootNode, TypeAnnotation);
-			return string.Format(Resources.MessageFormat_CS0407_FixMethodReturnType_0_1, member, typeName);
+			return string.Format(Resources.MessageFormat_CS0123_FixMethodReturnType_0_1, member, typeName);
 		}
 
 		/// <inheritdoc />
@@ -36,7 +42,71 @@ namespace Amusoft.CodeAnalysis.Analyzers.CS0123
 			CodeFixContext context,
 			CancellationToken cancellationToken)
 		{
+			var semanticModel = await context.Document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+
+			if (!SymbolHelper.TryGetExpectedMethodSymbol(out var methodSymbol, out var memberSymbolInfo, diagnosticNode, semanticModel))
+				return rootNode;
+			
+			if (memberSymbolInfo.CandidateReason == CandidateReason.OverloadResolutionFailure &&
+			    memberSymbolInfo.CandidateSymbols.Length > 0)
+			{
+				var methodDeclarationSyntax = memberSymbolInfo.CandidateSymbols[0].DeclaringSyntaxReferences[0].GetSyntax(cancellationToken) as MethodDeclarationSyntax;
+
+				var rewritten = methodDeclarationSyntax
+					.WithParameterList(CreateParameterList(semanticModel, methodSymbol, methodDeclarationSyntax))
+					.WithBody(MethodBodyThrowNotImplementedSyntax())
+					.WithAdditionalAnnotations(SyntaxAnnotation.ElasticAnnotation, Formatter.Annotation, Simplifier.Annotation);
+
+				var newRoot = rootNode.InsertNodesAfter(methodDeclarationSyntax, new []{ rewritten })
+					.WithAdditionalAnnotations(
+						new SyntaxAnnotation(MemberAnnotation, methodDeclarationSyntax.Identifier.Text),
+						new SyntaxAnnotation(TypeAnnotation, methodSymbol.ReturnType.Name)
+					);
+
+				var d = newRoot.ToFullString();
+				return newRoot;
+			}
+
 			return rootNode;
+		}
+
+		private ParameterListSyntax CreateParameterList(SemanticModel semanticModel, IMethodSymbol methodSymbol,
+			MethodDeclarationSyntax methodDeclarationSyntax)
+		{
+			var parameterList = methodDeclarationSyntax.ParameterList;
+			// parameterList.WithParameters()
+			var rewrite = new SeparatedSyntaxList<ParameterSyntax>();
+			for (var index = 0; index < parameterList.Parameters.Count; index++)
+			{
+				var targetTypeSymbol = methodSymbol.Parameters[index];
+				var parameter = parameterList.Parameters[index];
+				var sourceTypeSymbol = semanticModel.GetSymbolInfo(parameter.Type).Symbol;
+				if(sourceTypeSymbol == null)
+					goto add;
+
+				if(sourceTypeSymbol.Equals(targetTypeSymbol))
+					goto add;
+
+				parameter = parameter.WithType(IdentifierName(targetTypeSymbol.Type.MetadataName));
+
+				add:
+				rewrite = rewrite.Add(parameter);
+				// parameter.Type
+			}
+
+			return parameterList.WithParameters(rewrite);
+			// throw new NotImplementedException();
+		}
+
+		private static BlockSyntax MethodBodyThrowNotImplementedSyntax()
+		{
+			return Block(
+				ThrowStatement(
+						ObjectCreationExpression(
+								IdentifierName(nameof(NotImplementedException)))
+							.WithArgumentList(
+								ArgumentList()))
+					.NormalizeWhitespace());
 		}
 	}
 }

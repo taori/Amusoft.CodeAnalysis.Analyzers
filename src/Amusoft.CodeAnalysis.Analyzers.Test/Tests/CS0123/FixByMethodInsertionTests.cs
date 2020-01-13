@@ -42,7 +42,7 @@ namespace ConsoleApplication1
             var action = new Func<string, int>(TestMethod);
         }
 
-        private int TestMethod(int arg)
+        private int TestMethod(int param1)
         {
             throw new NotImplementedException();
         }
@@ -67,18 +67,18 @@ namespace ConsoleApplication1
             var action = new Func<string, int>(TestMethod);
         }
 
-        private int TestMethod(int arg)
+        private int TestMethod(int param1)
         {
             throw new NotImplementedException();
         }
 
-        private int TestMethod(string arg)
+        private int TestMethod(string param1)
         {
             throw new NotImplementedException();
         }
     }
 }";
-			var diagnostic1 = DiagnosticResult.CompilerError("CS0123").WithLocation(15, 26);
+			var diagnostic1 = CompilerError("CS0123").WithLocation(15, 26);
 
 			await CodeFixVerifier<EmptyDiagnosticAnalyzer, FixByIntroducingMethod>.VerifyCodeFixAsync(test, diagnostic1, fixtest);
 		}
