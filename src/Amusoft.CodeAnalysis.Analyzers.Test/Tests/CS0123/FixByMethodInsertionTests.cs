@@ -44,7 +44,8 @@ namespace ConsoleApplication1
 
         private int TestMethod(int param1)
         {
-            throw new NotImplementedException();
+            var something = 1;
+            return something;
         }
     }
 }";
@@ -69,7 +70,8 @@ namespace ConsoleApplication1
 
         private int TestMethod(int param1)
         {
-            throw new NotImplementedException();
+            var something = 1;
+            return something;
         }
 
         private int TestMethod(string param1)
@@ -80,7 +82,196 @@ namespace ConsoleApplication1
 }";
 			var diagnostic1 = CompilerError("CS0123").WithLocation(15, 26);
 
-			await CodeFixVerifier<EmptyDiagnosticAnalyzer, FixByIntroducingMethod>.VerifyCodeFixAsync(test, diagnostic1, fixtest);
+			await Verifier.VerifyCodeFixAsync(test, diagnostic1, fixtest);
 		}
+
+		[TestMethod]
+		public async Task DiagnosticAtObjectCreationExpressionPosition1ParameterTask()
+		{
+			var test = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    class TypeName
+    {
+        TypeName()
+        {
+            var action = new Func<string, bool, int>(TestMethod);
+        }
+
+        private int TestMethod(int param1, bool param2)
+        {
+            var something = 1;
+            return something;
+        }
     }
+}";
+
+
+			var fixtest = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    class TypeName
+    {
+        TypeName()
+        {
+            var action = new Func<string, bool, int>(TestMethod);
+        }
+
+        private int TestMethod(int param1, bool param2)
+        {
+            var something = 1;
+            return something;
+        }
+
+        private int TestMethod(string param1, bool param2)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+			var diagnostic1 = CompilerError("CS0123").WithLocation(15, 26);
+
+			await Verifier.VerifyCodeFixAsync(test, diagnostic1, fixtest);
+		}
+
+		[TestMethod]
+		public async Task DiagnosticAtObjectCreationExpressionPosition2ParameterTask()
+		{
+			var test = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    class TypeName
+    {
+        TypeName()
+        {
+            var action = new Func<string, int, int>(TestMethod);
+        }
+
+        private int TestMethod(string param1, bool param2)
+        {
+            var something = 1;
+            return something;
+        }
+    }
+}";
+
+
+			var fixtest = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    class TypeName
+    {
+        TypeName()
+        {
+            var action = new Func<string, int, int>(TestMethod);
+        }
+
+        private int TestMethod(string param1, bool param2)
+        {
+            var something = 1;
+            return something;
+        }
+
+        private int TestMethod(string param1, int param2)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+			var diagnostic1 = CompilerError("CS0123").WithLocation(15, 26);
+
+			await Verifier.VerifyCodeFixAsync(test, diagnostic1, fixtest);
+		}
+
+		[TestMethod]
+		public async Task DiagnosticAtObjectCreationExpressionPosition1And2ParameterTask()
+		{
+			var test = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    class TypeName
+    {
+        TypeName()
+        {
+            var action = new Func<string, string, int>(TestMethod);
+        }
+
+        private int TestMethod(bool param1, bool param2)
+        {
+            var something = 1;
+            return something;
+        }
+    }
+}";
+
+
+			var fixtest = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    class TypeName
+    {
+        TypeName()
+        {
+            var action = new Func<string, string, int>(TestMethod);
+        }
+
+        private int TestMethod(bool param1, bool param2)
+        {
+            var something = 1;
+            return something;
+        }
+
+        private int TestMethod(string param1, string param2)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+			var diagnostic1 = CompilerError("CS0123").WithLocation(15, 26);
+
+			await Verifier.VerifyCodeFixAsync(test, diagnostic1, fixtest);
+		}
+	}
 }

@@ -74,28 +74,25 @@ namespace Amusoft.CodeAnalysis.Analyzers.CS0123
 			MethodDeclarationSyntax methodDeclarationSyntax)
 		{
 			var parameterList = methodDeclarationSyntax.ParameterList;
-			// parameterList.WithParameters()
-			var rewrite = new SeparatedSyntaxList<ParameterSyntax>();
+			var newParameters = new SeparatedSyntaxList<ParameterSyntax>();
 			for (var index = 0; index < parameterList.Parameters.Count; index++)
 			{
+				var originalParameter = parameterList.Parameters[index];
+				var newParameter = originalParameter;
 				var targetTypeSymbol = methodSymbol.Parameters[index];
-				var parameter = parameterList.Parameters[index];
-				var sourceTypeSymbol = semanticModel.GetSymbolInfo(parameter.Type).Symbol;
+				var sourceTypeSymbol = semanticModel.GetSymbolInfo(originalParameter.Type).Symbol;
 				if(sourceTypeSymbol == null)
 					goto add;
-
-				if(sourceTypeSymbol.Equals(targetTypeSymbol))
+				if (sourceTypeSymbol.Equals(targetTypeSymbol))
 					goto add;
 
-				parameter = parameter.WithType(IdentifierName(targetTypeSymbol.Type.MetadataName));
+				newParameter = originalParameter.WithType(IdentifierName(targetTypeSymbol.Type.MetadataName));
 
 				add:
-				rewrite = rewrite.Add(parameter);
-				// parameter.Type
+				newParameters = newParameters.Add(newParameter);
 			}
 
-			return parameterList.WithParameters(rewrite);
-			// throw new NotImplementedException();
+			return parameterList.WithParameters(newParameters);
 		}
 
 		private static BlockSyntax MethodBodyThrowNotImplementedSyntax()
