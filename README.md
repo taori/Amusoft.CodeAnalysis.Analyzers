@@ -10,6 +10,11 @@
 |---|---|
 |[Download](https://marketplace.visualstudio.com/items?itemName=Amusoft.Amusoft-CodeAnalysis-Analyzers)|[Download](https://github.com/taori/Amusoft.CodeAnalysis.Analyzers/releases/latest)|
 
+## Codefixes
+
+- CS0407
+- CS0123
+
 ## References
 - [Repository docs](https://github.com/taori/Amusoft.CodeAnalysis.Analyzers/tree/master/docs)
 - [Features](https://github.com/taori/Amusoft.CodeAnalysis.Analyzers/tree/master/docs/FEATURES.md)
