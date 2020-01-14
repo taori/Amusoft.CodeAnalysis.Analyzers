@@ -152,6 +152,15 @@ namespace Amusoft.CodeAnalysis.Analyzers {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Wrap method exit points in Task.FromResult() ähnelt.
+        /// </summary>
+        public static string MessageFormat_CS1998_FixByWrappingInTaskResult {
+            get {
+                return ResourceManager.GetString("MessageFormat_CS1998_FixByWrappingInTaskResult", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
         /// </summary>
         public static string ResxEntryAnalyzerDescription {
