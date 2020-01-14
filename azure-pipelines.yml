@@ -59,6 +59,7 @@ jobs:
 
 
   - task: VSTest@2
+    enabled: false
     inputs:
       testSelector: 'testAssemblies'
       testAssemblyVer2: |
@@ -66,6 +67,12 @@ jobs:
         !**\*TestAdapter.dll
         !**\obj\**
       searchFolder: '$(System.DefaultWorkingDirectory)'
+      
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: 'test'
+      projects: '**/*test*/*.csproj'
+      publishTestResults: true
       
   - task: PublishTestResults@2
     inputs:
