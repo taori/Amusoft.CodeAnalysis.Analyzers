@@ -57,28 +57,11 @@ jobs:
       configuration: '$(buildConfiguration)'
       maximumCpuCount: true
 
-
-  - task: VSTest@2
-    enabled: false
-    inputs:
-      testSelector: 'testAssemblies'
-      testAssemblyVer2: |
-        **\*test*.dll
-        !**\*TestAdapter.dll
-        !**\obj\**
-      searchFolder: '$(System.DefaultWorkingDirectory)'
-      
   - task: DotNetCoreCLI@2
     inputs:
       command: 'test'
       projects: '**/*test*/*.csproj'
       publishTestResults: true
-      
-  - task: PublishTestResults@2
-    inputs:
-      testResultsFormat: 'VSTest'
-      testResultsFiles: '$(Agent.TempDirectory)\TestResults\*.trx'
-      failTaskOnFailedTests: true
 
   - task: CopyFiles@2
     inputs:
