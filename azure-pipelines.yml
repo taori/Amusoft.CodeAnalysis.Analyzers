@@ -75,6 +75,12 @@ jobs:
         !**\obj\**
       searchFolder: '$(System.DefaultWorkingDirectory)'
 
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFormat: 'VSTest'
+      testResultsFiles: '**/TEST-*.xml'
+      failTaskOnFailedTests: true
+
   - task: PublishPipelineArtifact@0
     inputs:
       artifactName: 'drop'
