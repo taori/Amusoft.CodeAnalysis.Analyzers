@@ -78,8 +78,10 @@ jobs:
   - task: PublishTestResults@2
     inputs:
       testResultsFormat: 'VSTest'
-      testResultsFiles: '$(Agent.TempDirectory)\TestResults*.trx'
+      testResultsFiles: '$(Agent.TempDirectory)\TestResults\*.trx'
       failTaskOnFailedTests: true
+
+  
 
   - task: PublishPipelineArtifact@0
     inputs:
