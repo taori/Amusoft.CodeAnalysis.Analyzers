@@ -57,14 +57,6 @@ jobs:
       configuration: '$(buildConfiguration)'
       maximumCpuCount: true
 
-  - task: CopyFiles@2
-    inputs:
-      SourceFolder: '$(Build.SourcesDirectory)'
-      Contents: |
-        README.md
-        build/**
-        **/*.vsix
-      TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
   - task: VSTest@2
     inputs:
@@ -74,14 +66,21 @@ jobs:
         !**\*TestAdapter.dll
         !**\obj\**
       searchFolder: '$(System.DefaultWorkingDirectory)'
-
+      
   - task: PublishTestResults@2
     inputs:
       testResultsFormat: 'VSTest'
       testResultsFiles: '$(Agent.TempDirectory)\TestResults\*.trx'
       failTaskOnFailedTests: true
 
-  
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: '$(Build.SourcesDirectory)'
+      Contents: |
+        README.md
+        build/**
+        **/*.vsix
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
   - task: PublishPipelineArtifact@0
     inputs:
