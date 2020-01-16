@@ -41,7 +41,6 @@ namespace Amusoft.CodeAnalysis.Analyzers.CS1998
 		{
 			if (diagnosticNode.Parent is MethodDeclarationSyntax methodDeclarationSyntax)
 			{
-
 			}
 			return rootNode;
 		}
