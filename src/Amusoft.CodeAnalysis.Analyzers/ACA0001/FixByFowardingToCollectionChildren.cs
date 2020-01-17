@@ -2,7 +2,6 @@
 // This file is a part of Amusoft.Roslyn.Analyzers and is licensed under Apache 2.0
 // See https://github.com/taori/Amusoft.Roslyn.Analyzers/blob/master/LICENSE for details
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
@@ -17,10 +16,10 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationToFields
+namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 {
 	[ExportCodeFixProvider(LanguageNames.CSharp, Name = "DelegateImplementationToFieldsRefactoring"), Shared]
-	public class Fixer : CodeFixProvider 
+	public class FixByFowardingToCollectionChildren : CodeFixProvider 
 	{
 		private const string CodeFixUniqueKey = "DelegateImplementationFixer";
 
@@ -57,9 +56,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationTo
 				if (!diagnostic.Properties.TryGetValue(Analyzer.Properties.MemberName, out var memberName))
 					return context.Document;
 
-				if (!context.Document.TryGetSemanticModel(out var semanticModel))
-					return context.Document;
-
+				var semanticModel = await context.Document.GetSemanticModelAsync(cancellationToken);
 				var newMethod = RewriteMethod(semanticModel, methodNode, memberName);
 
 				var replacedRoot = root.ReplaceNode(methodNode.Body, newMethod.Body.WithAdditionalAnnotations(Formatter.Annotation));

@@ -1,140 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationToFields;
+﻿using System.Threading.Tasks;
+using Amusoft.CodeAnalysis.Analyzers.ACA0001;
+using Amusoft.CodeAnalysis.Analyzers.Test.Helpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestHelper;
-using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.MSTest.CodeFixVerifier<Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationToFields.Analyzer, Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationToFields.Fixer>;
+using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.MSTest.CodeFixVerifier<Amusoft.CodeAnalysis.Analyzers.ACA0001.Analyzer, Amusoft.CodeAnalysis.Analyzers.ACA0001.FixByFowardingToCollectionChildren>;
 
-namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CodeGeneration
+namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.ACA0001
 {
     [TestClass]
-	public class DelegateImplementationToFieldsTests : TestHelper.CodeFixVerifier
+	public class FixByForwardingToCollectionChildrenTests 
 	{
 		[TestMethod]
 		public void EmptyNoAction()
 		{
-			var test = @"";
-
-			VerifyCSharpDiagnostic(test);
+			Verifier.VerifyCodeFixAsync(string.Empty, string.Empty);
 		}
 
 		[TestMethod]
-		public void FieldButNoDelegation()
-		{
-			var test = @"
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Diagnostics;
-
-    namespace ConsoleApplication1
-    {
-        class TypeName
-        {
-             private ICollection<IDisposable> _disposables;
-        }
-    }";
-
-			VerifyCSharpDiagnostic(test);
-		}
-
-		[TestMethod]
-		public void FieldWithDelegation()
-		{
-			var test = @"
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Diagnostics;
-
-    namespace ConsoleApplication1
-    {
-        class TypeName : IDisposable
-        {
-             private ICollection<IDisposable> _disposables;
-        }
-    }";
-
-			VerifyCSharpDiagnostic(test);
-		}
-
-		[TestMethod]
-		public void FieldAsListWithDelegation()
-		{
-			var test = @"
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Diagnostics;
-
-    namespace ConsoleApplication1
-    {
-        class TypeName : IDisposable
-        {
-             private List<IDisposable> _disposables;
-        }
-    }";
-
-			VerifyCSharpDiagnostic(test);
-		}
-
-		[TestMethod]
-		public void FieldWithInvalidDelegation()
-		{
-			var test = @"
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Diagnostics;
-
-    namespace ConsoleApplication1
-    {
-        class TypeName : ISomethingElse
-        {
-             private List<IDisposable> _disposables;
-        }
-
-        public interface ISomethingElse {}
-    }";
-
-			VerifyCSharpDiagnostic(test);
-		}
-
-		[TestMethod]
-		public void PropertyWithDelegation()
-		{
-			var test = @"
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Diagnostics;
-
-    namespace ConsoleApplication1
-    {
-        class TypeName : IDisposable
-        {
-             private ICollection<IDisposable> _disposables;
-        }
-    }";
-
-			VerifyCSharpDiagnostic(test);
-		}
-
-		[TestMethod]
-		public void VerifyReturnBoolSupportedType()
+		public async Task VerifyReturnBoolSupportedType()
 		{
 			var test = @"
 using System;
@@ -161,18 +46,6 @@ namespace ConsoleApplication1
         }
     }
 }";
-			var expected = new[]
-			{
-				new DiagnosticResult
-				{
-					Id = Analyzer.DiagnosticId,
-					Message = string.Format(Resources.DelegateImplementationToFieldAnalyzerMessageFormat, "Method1", "_disposables"),
-					Severity = DiagnosticSeverity.Info,
-					Locations = new DiagnosticResultLocation[]{ ("Test0.cs", 20, 21) }
-				},
-			};
-
-			VerifyCSharpDiagnostic(test, expected);
 
 			var fixtest = @"
 using System;
@@ -199,7 +72,15 @@ namespace ConsoleApplication1
         }
     }
 }";
-			VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
+			var expectedDiagnostics = new[]
+			{
+				Verifier.Diagnostic(Analyzer.DiagnosticId)
+					.WithSpan(20, 21, 20, 28)
+					.WithArguments("Method1", "_disposables")
+					.WithSeverity(DiagnosticSeverity.Info),
+			};
+
+            await Verifier.VerifyCodeFixAsync(test, expectedDiagnostics, fixtest);
 		}
 
 		[TestMethod]
@@ -272,41 +153,6 @@ namespace ConsoleApplication1
 		}
 
 
-        [TestMethod]
-		public void VerifyReturnTaskNonBoolSupportedType()
-		{
-			var test = @"
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
-
-namespace ConsoleApplication1
-{
-    public interface ICustomInterface
-    {
-        Task<string> Method1(object p1);
-    }
-
-    class TypeName : ICustomInterface
-    {
-        private ICollection<ICustomInterface> _disposables;
-
-        public Task<string> Method1(object p1)
-        {
-            throw new NotImplementedException();
-        }
-    }
-}";
-			var expected = new DiagnosticResult[]
-			{
-			};
-
-			VerifyCSharpDiagnostic(test, expected);
-		}
-
 		[TestMethod]
 		public void VerifyReturnTaskBoolAsyncSupportedType()
 		{
@@ -378,38 +224,6 @@ namespace ConsoleApplication1
 
 
 
-        [TestMethod]
-		public void VerifyReturnNoFixUnsupportedType()
-		{
-			var test = @"
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
-
-namespace ConsoleApplication1
-{
-    public interface ICustomInterface
-    {
-        string Method1(object p1);
-    }
-
-    class TypeName : ICustomInterface
-    {
-        private ICollection<ICustomInterface> _disposables;
-
-        public string Method1(object p1)
-        {
-            throw new NotImplementedException();
-        }
-    }
-}";
-			var expected = new DiagnosticResult[0];
-
-			VerifyCSharpDiagnostic(test, expected);
-		}
 
 
         [TestMethod]
@@ -1384,15 +1198,5 @@ namespace ConsoleApplication1
             VerifyCSharpFix(test, fixtest2, allowNewCompilerDiagnostics: true, skippedFixIndices:new []{0,1,2,3});
         }
 
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-		{
-			return new Fixer();
-		}
-
-		protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-		{
-			return new Analyzer();
-		}
 	}
 }

@@ -58,6 +58,7 @@ jobs:
       maximumCpuCount: true
 
   - task: DotNetCoreCLI@2
+    displayName: dotnet test *.csproj
     inputs:
       command: 'test'
       projects: '**/*test*/*.csproj'
