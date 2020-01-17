@@ -282,11 +282,11 @@ namespace ConsoleApplication1
 					.WithSeverity(DiagnosticSeverity.Info),
 			};
 
-			await AnalyzerVerifier.VerifyAnalyzerAsync(test, expectedDiagnostics);
+			// await AnalyzerVerifier.VerifyAnalyzerAsync(test, expectedDiagnostics);
 
             await new Helpers.AnalyzerTest<Analyzer>()
 			{
-				CompilerDiagnostics = CompilerDiagnostics.Suggestions | CompilerDiagnostics.Warnings,
+				CompilerDiagnostics = CompilerDiagnostics.Warnings | CompilerDiagnostics.Suggestions,
 				TestState =
 				{
 					Sources = {test},
