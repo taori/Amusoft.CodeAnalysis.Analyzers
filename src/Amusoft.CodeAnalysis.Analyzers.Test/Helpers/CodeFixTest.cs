@@ -14,4 +14,9 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Helpers
 		where TCodeFix : CodeFixProvider, new()
 	{
 	}
+
+	public class AnalyzerTest<TAnalyzer> : CSharpAnalyzerTest<TAnalyzer, MSTestVerifier> 
+		where TAnalyzer : DiagnosticAnalyzer, new() 
+	{
+	}
 }

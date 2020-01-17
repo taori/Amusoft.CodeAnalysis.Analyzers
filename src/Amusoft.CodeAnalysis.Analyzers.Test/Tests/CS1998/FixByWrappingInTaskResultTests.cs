@@ -153,51 +153,10 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CS1998
 		}
 	}
 }";
-
-			await new CodeFixTest<EmptyDiagnosticAnalyzer,
-				Amusoft.CodeAnalysis.Analyzers.CS1998.FixByWrappingInTaskResult>()
-			{
-				CompilerDiagnostics = CompilerDiagnostics.Errors | CompilerDiagnostics.Warnings,
-				TestState =
-				{
-					Sources = { test },
-					ExpectedDiagnostics =
-					{
-						CompilerWarning("CS1591").WithSpan(11, 15, 11, 24),
-						CompilerWarning("CS0649").WithSpan(13, 18, 13, 32),
-						CompilerWarning("CS1591").WithSpan(15, 38, 15, 61),
-						CompilerWarning("CS1998").WithLocation(15,38),
-						CompilerWarning("CS1591").WithSpan(39, 16, 39, 19),
-						CompilerWarning("CS1591").WithSpan(41, 23, 41, 28),
-						CompilerWarning("CS1591").WithSpan(46, 23, 46, 28),
-						CompilerWarning("CS1591").WithSpan(52, 16, 52, 23),
-						CompilerWarning("CS1591").WithSpan(54, 27, 54, 41),
-						CompilerWarning("CS1591").WithSpan(56, 16, 56, 29),
-						CompilerWarning("CS1591").WithSpan(58, 16, 58, 18),
-						CompilerWarning("CS1591").WithSpan(59, 18, 59, 35),
-					},
-				},
-				FixedState =
-				{
-					ExpectedDiagnostics =
-					{
-						CompilerWarning("CS1591").WithSpan(11, 15, 11, 24),
-						CompilerWarning("CS0649").WithSpan(13, 18, 13, 32),
-						// CompilerWarning("CS1998").WithLocation(15,38),
-						CompilerWarning("CS1591").WithSpan(15, 32, 15, 55),
-						CompilerWarning("CS1591").WithSpan(39, 16, 39, 19),
-						CompilerWarning("CS1591").WithSpan(41, 23, 41, 28),
-						CompilerWarning("CS1591").WithSpan(46, 23, 46, 28),
-						CompilerWarning("CS1591").WithSpan(52, 16, 52, 23),
-						CompilerWarning("CS1591").WithSpan(54, 27, 54, 41),
-						CompilerWarning("CS1591").WithSpan(56, 16, 56, 29),
-						CompilerWarning("CS1591").WithSpan(58, 16, 58, 18),
-						CompilerWarning("CS1591").WithSpan(59, 18, 59, 35),
-					},
-					Sources = { fixtest }
-				},
-			}.RunAsync();
+			
+			await Verifier.VerifyCodeFixAsync(test, CompilerWarning("CS1998").WithLocation(15, 38), fixtest);
 		}
+
 		[TestMethod]
 		public async Task MixedMethodsWithPartialFix()
 		{
@@ -342,7 +301,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CS1998
 						CompilerWarning("CS1591").WithSpan(15, 38, 15, 61),
 						CompilerWarning("CS1998").WithLocation(15,38),
 						CompilerError("CS4016").WithSpan(29, 13, 29, 62).WithArguments("ConsoleApplication1.TestClass.Configuration[]"),
-
+			
 						CompilerWarning("CS1591").WithSpan(39, 16, 39, 19),
 						CompilerWarning("CS1591").WithSpan(41, 23, 41, 28),
 						CompilerWarning("CS1591").WithSpan(46, 23, 46, 28),
@@ -359,7 +318,6 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CS1998
 					{
 						CompilerWarning("CS1591").WithSpan(11, 15, 11, 24),
 						CompilerWarning("CS0649").WithSpan(13, 18, 13, 32),
-						// CompilerWarning("CS1998").WithLocation(15,38),
 						CompilerWarning("CS1591").WithSpan(15, 32, 15, 55),
 						CompilerWarning("CS1591").WithSpan(39, 16, 39, 19),
 						CompilerWarning("CS1591").WithSpan(41, 23, 41, 28),
@@ -373,6 +331,15 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CS1998
 					Sources = { fixtest }
 				},
 			}.RunAsync();
+
+			// var expected = new[]
+			// {
+			// 	CompilerWarning("CS1998").WithLocation(15, 38),
+			// 	CompilerError("CS4016").WithSpan(29, 13, 29, 62)
+			// 		.WithArguments("ConsoleApplication1.TestClass.Configuration[]"),
+			// };
+			//
+			// await Verifier.VerifyCodeFixAsync(test, expected, fixtest);
 		}
 
 	}

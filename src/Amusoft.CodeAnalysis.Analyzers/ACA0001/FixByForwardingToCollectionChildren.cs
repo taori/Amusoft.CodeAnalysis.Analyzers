@@ -18,10 +18,10 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 {
-	[ExportCodeFixProvider(LanguageNames.CSharp, Name = "DelegateImplementationToFieldsRefactoring"), Shared]
-	public class FixByFowardingToCollectionChildren : CodeFixProvider 
+	[ExportCodeFixProvider(LanguageNames.CSharp, Name = "ACA0001-FixByForwardingToCollectionChildren"), Shared]
+	public class FixByForwardingToCollectionChildren : CodeFixProvider 
 	{
-		private const string CodeFixUniqueKey = "DelegateImplementationFixer";
+		private const string CodeFixUniqueKey = "ACA0001-FixByForwardingToCollectionChildren";
 
 		public sealed override ImmutableArray<string> FixableDiagnosticIds
 		{
