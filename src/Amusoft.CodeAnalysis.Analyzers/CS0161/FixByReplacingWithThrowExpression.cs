@@ -16,11 +16,12 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Simplification;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Amusoft.CodeAnalysis.Analyzers.CS0161
 {
 	[ExportCodeFixProvider(LanguageNames.CSharp, Name = "CS0161-FixByReplacingWithThrowExpression"), Shared]
-	public class FixByReplacingWithThrowExpression : CodeFixProviderBase
+	public class FixByReplacingWithThrowExpression : SingleDiagnosticDocumentCodeFixProviderBase
 	{
 		/// <inheritdoc />
 		protected override string DiagnosticId { get; } = "CS0161";
@@ -40,43 +41,46 @@ namespace Amusoft.CodeAnalysis.Analyzers.CS0161
 		}
 
 		/// <inheritdoc />
-		protected override async Task<SyntaxNode> FixedDiagnosticAsync(SyntaxNode rootNode, SyntaxNode diagnosticNode,
-			CodeFixContext context,
-			CancellationToken cancellationToken)
+		protected override async Task<Document> GetFixedDiagnosticAsync(Document document, TextSpan span, CancellationToken cancellationToken)
 		{
-			var semanticModel = await context.Document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+			var semanticModel = await document.GetSemanticModelAsync(cancellationToken)
+				.ConfigureAwait(false);
+			var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken)
+				.ConfigureAwait(false);
+			var diagnosticNode = syntaxRoot.FindNode(span);
+
 			if (diagnosticNode is MethodDeclarationSyntax methodDeclarationSyntax)
 			{
-				return await FixMethodAsync(context, semanticModel, methodDeclarationSyntax);
+				return await FixMethodAsync(document, semanticModel, methodDeclarationSyntax);
 			}
 
-			return rootNode;
+			return document;
 		}
-
-		private async Task<SyntaxNode> FixMethodAsync(CodeFixContext context, SemanticModel semanticModel,
+		
+		private async Task<Document> FixMethodAsync(Document document, SemanticModel semanticModel,
 			MethodDeclarationSyntax methodDeclarationSyntax)
 		{
-			var editor = await DocumentEditor.CreateAsync(context.Document);
+			var editor = await DocumentEditor.CreateAsync(document);
 			foreach (var conditionStatement in methodDeclarationSyntax.DescendantNodes().OfType<IfStatementSyntax>())
 			{
 				if (RequiresFix(semanticModel, conditionStatement.Statement))
 				{
 					editor.ReplaceNode(conditionStatement.Statement,
-						GetFixedStatement(semanticModel, conditionStatement.Statement));
+						GetFixedStatement(conditionStatement.Statement));
 				}
 
 				if (RequiresFix(semanticModel, conditionStatement.Else.Statement))
 				{
-					var fixedStatement = GetFixedStatement(semanticModel, conditionStatement.Else.Statement);
+					var fixedStatement = GetFixedStatement(conditionStatement.Else.Statement);
 					editor.ReplaceNode(conditionStatement.Else.Statement,
 						fixedStatement);
 				}
 			}
 
-			return editor.GetChangedRoot();
+			return editor.GetChangedDocument();
 		}
 
-		private SyntaxNode GetFixedStatement(SemanticModel semanticModel, StatementSyntax statementSyntax)
+		private SyntaxNode GetFixedStatement(StatementSyntax statementSyntax)
 		{
 			if (statementSyntax is BlockSyntax blockSyntax)
 			{
@@ -111,22 +115,4 @@ namespace Amusoft.CodeAnalysis.Analyzers.CS0161
 			return controlFlow.ExitPoints.Length == 0;
 		}
 	}
-
-	//
-	// public class Test
-	// {
-	// 	public static int Main() // CS0161
-	// 	{
-	// 		int i = 5;
-	// 		if (i < 10)
-	// 		{
-	// 			return i;
-	// 		}
-	// 		else
-	// 		{
-	// 			// Uncomment the following line to resolve.
-	// 			// return 1;  
-	// 		}
-	// 	}
-	// }
 }

@@ -16,11 +16,12 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Simplification;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Amusoft.CodeAnalysis.Analyzers.CS1998
 {
 	[ExportCodeFixProvider(LanguageNames.CSharp, Name = "CS1998-FixByWrappingInTaskResult"), Shared]
-	public class FixByWrappingInTaskResult : CodeFixProviderBase
+	public class FixByWrappingInTaskResult : SingleDiagnosticDocumentCodeFixProviderBase
 	{
 		/// <inheritdoc />
 		protected override string DiagnosticId { get; } = "CS1998";
@@ -38,18 +39,19 @@ namespace Amusoft.CodeAnalysis.Analyzers.CS1998
 		}
 
 		/// <inheritdoc />
-		protected override async Task<SyntaxNode> FixedDiagnosticAsync(SyntaxNode rootNode, SyntaxNode diagnosticNode,
-			CodeFixContext context,
-			CancellationToken cancellationToken)
+		protected override async Task<Document> GetFixedDiagnosticAsync(Document document, TextSpan span, CancellationToken cancellationToken)
 		{
-			var semanticModel = await context.Document.GetSemanticModelAsync(cancellationToken)
+			var semanticModel = await document.GetSemanticModelAsync(cancellationToken)
 				.ConfigureAwait(false);
+			var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken);
+			var diagnosticNode = syntaxRoot.FindNode(span);
+
 			if (diagnosticNode is MethodDeclarationSyntax methodDeclarationSyntax)
 			{
 				var controlFlowAnalysis = semanticModel.AnalyzeControlFlow(methodDeclarationSyntax.Body);
 				if (controlFlowAnalysis.ReturnStatements.Length > 0)
 				{
-					var documentEditor = await DocumentEditor.CreateAsync(context.Document, cancellationToken)
+					var documentEditor = await DocumentEditor.CreateAsync(document, cancellationToken)
 						.ConfigureAwait(false);
 
 					RemoveAsyncFromMethod(documentEditor, methodDeclarationSyntax, semanticModel);
@@ -65,11 +67,11 @@ namespace Amusoft.CodeAnalysis.Analyzers.CS1998
 						}
 					}
 
-					return await documentEditor.GetChangedDocument().GetSyntaxRootAsync(cancellationToken);
+					return documentEditor.GetChangedDocument();
 				}
 			}
 
-			return rootNode;
+			return document;
 		}
 
 		private static void RemoveAsyncFromMethod(DocumentEditor documentEditor, MethodDeclarationSyntax methodDeclarationSyntax, SemanticModel semanticModel)

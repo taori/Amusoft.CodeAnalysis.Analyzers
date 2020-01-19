@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Amusoft.CodeAnalysis.Analyzers.Shared
 {
 	/// <summary>
 	/// <inheritdoc />
 	/// </summary>
-	public abstract class CodeFixProviderBase : CodeFixProvider
+	public abstract class SingleDiagnosticDocumentCodeFixProviderBase : CodeFixProvider
 	{
 		public sealed override FixAllProvider GetFixAllProvider()
 		{
@@ -35,17 +36,13 @@ namespace Amusoft.CodeAnalysis.Analyzers.Shared
 		protected virtual async Task<Document> GetFixedDocumentAsync(CodeFixContext context,
 			CancellationToken cancellationToken, Diagnostic diagnostic)
 		{
-			var rootNode = await context.Document.GetSyntaxRootAsync(cancellationToken)
-				.ConfigureAwait(false);
-			var fixedRoot = await FixedDiagnosticAsync(rootNode, rootNode.FindNode(diagnostic.Location.SourceSpan), context, cancellationToken)
+			var fixedDocument = await GetFixedDiagnosticAsync(context.Document, diagnostic.Location.SourceSpan, cancellationToken)
 				.ConfigureAwait(false);
 
-			return context.Document
-				.WithSyntaxRoot(fixedRoot);
+			return fixedDocument;
 		}
 
-		protected abstract Task<SyntaxNode> FixedDiagnosticAsync(SyntaxNode rootNode, SyntaxNode diagnosticNode,
-			CodeFixContext context, CancellationToken cancellationToken);
+		protected abstract Task<Document> GetFixedDiagnosticAsync(Document document, TextSpan span, CancellationToken cancellationToken);
 
 		/// <inheritdoc />
 		public override async Task RegisterCodeFixesAsync(CodeFixContext context)

@@ -13,12 +13,13 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Simplification;
+using Microsoft.CodeAnalysis.Text;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Amusoft.CodeAnalysis.Analyzers.CS0123
 {
 	[ExportCodeFixProvider(LanguageNames.CSharp, Name = "CS0123-FixByIntroducingMethod"), Shared]
-	public class FixByIntroducingMethod : CodeFixProviderBase
+	public class FixByIntroducingMethod : SingleDiagnosticDocumentCodeFixProviderBase
 	{
 		/// <inheritdoc />
 		protected override string DiagnosticId { get; } = "CS0123";
@@ -38,15 +39,17 @@ namespace Amusoft.CodeAnalysis.Analyzers.CS0123
 		}
 
 		/// <inheritdoc />
-		protected override async Task<SyntaxNode> FixedDiagnosticAsync(SyntaxNode rootNode, SyntaxNode diagnosticNode,
-			CodeFixContext context,
-			CancellationToken cancellationToken)
+		protected override async Task<Document> GetFixedDiagnosticAsync(Document document, TextSpan span, CancellationToken cancellationToken)
 		{
-			var semanticModel = await context.Document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+			var semanticModel = await document.GetSemanticModelAsync(cancellationToken)
+				.ConfigureAwait(false);
+			var rootNode = await document.GetSyntaxRootAsync(cancellationToken)
+				.ConfigureAwait(false);
+			var diagnosticNode = rootNode.FindNode(span);
 
 			if (!SymbolHelper.TryGetExpectedMethodSymbol(out var methodSymbol, out var memberSymbolInfo, diagnosticNode, semanticModel))
-				return rootNode;
-			
+				return document;
+
 			if (memberSymbolInfo.CandidateReason == CandidateReason.OverloadResolutionFailure &&
 			    memberSymbolInfo.CandidateSymbols.Length > 0)
 			{
@@ -58,16 +61,16 @@ namespace Amusoft.CodeAnalysis.Analyzers.CS0123
 					.WithReturnType(IdentifierName(methodSymbol.ReturnType.MetadataName))
 					.WithAdditionalAnnotations(SyntaxAnnotation.ElasticAnnotation, Formatter.Annotation, Simplifier.Annotation);
 
-				var newRoot = rootNode.InsertNodesAfter(methodDeclarationSyntax, new []{ rewritten })
+				var newRoot = rootNode.InsertNodesAfter(methodDeclarationSyntax, new[] { rewritten })
 					.WithAdditionalAnnotations(
 						new SyntaxAnnotation(MemberAnnotation, methodDeclarationSyntax.Identifier.Text),
 						new SyntaxAnnotation(TypeAnnotation, methodSymbol.ReturnType.Name)
 					);
 
-				return newRoot;
+				return document.WithSyntaxRoot(newRoot);
 			}
 
-			return rootNode;
+			return document;
 		}
 
 		private ParameterListSyntax CreateParameterList(SemanticModel semanticModel, IMethodSymbol methodSymbol,

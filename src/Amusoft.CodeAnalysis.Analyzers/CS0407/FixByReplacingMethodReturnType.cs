@@ -1,5 +1,6 @@
 ﻿using System.Composition;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Amusoft.CodeAnalysis.Analyzers.Shared;
@@ -10,11 +11,12 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Simplification;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Amusoft.CodeAnalysis.Analyzers.CS0407
 {
 	[ExportCodeFixProvider(LanguageNames.CSharp, Name = "CS0407-FixByReplacingMethodReturnType"), Shared]
-	public class FixByReplacingMethodReturnType : CodeFixProviderBase
+	public class FixByReplacingMethodReturnType : SingleDiagnosticDocumentCodeFixProviderBase
 	{
 		/// <inheritdoc />
 		protected override string DiagnosticId { get; } = "CS0407";
@@ -34,13 +36,15 @@ namespace Amusoft.CodeAnalysis.Analyzers.CS0407
 		}
 
 		/// <inheritdoc />
-		protected override async Task<SyntaxNode> FixedDiagnosticAsync(SyntaxNode rootNode, SyntaxNode diagnosticNode, CodeFixContext context,
-			CancellationToken cancellationToken)
+		protected override async Task<Document> GetFixedDiagnosticAsync(Document document, TextSpan span, CancellationToken cancellationToken)
 		{
-			var semanticModel = await context.Document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+			var semanticModel = await document.GetSemanticModelAsync(cancellationToken)
+				.ConfigureAwait(false);
+			var rootNode = await document.GetSyntaxRootAsync(cancellationToken);
+			var diagnosticNode = rootNode.FindNode(span);
 
 			if (!SymbolHelper.TryGetExpectedMethodSymbol(out var typeSymbol, out var memberSymbolInfo, diagnosticNode, semanticModel))
-				return rootNode;
+				return document;
 
 			if (memberSymbolInfo.CandidateReason == CandidateReason.OverloadResolutionFailure &&
 			    memberSymbolInfo.CandidateSymbols.Length > 0)
@@ -57,10 +61,10 @@ namespace Amusoft.CodeAnalysis.Analyzers.CS0407
 						new SyntaxAnnotation(TypeAnnotation, typeSymbol.ReturnType.Name)
 					);
 
-				return newRoot;
+				return document.WithSyntaxRoot(newRoot);
 			}
 
-			return rootNode;
+			return document;
 		}
 	}
 }
