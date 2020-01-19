@@ -15,6 +15,7 @@
 - CS0407
 - CS0123
 - CS1998
+- CS0161
 
 ## References
 - [Repository docs](https://github.com/taori/Amusoft.CodeAnalysis.Analyzers/tree/master/docs)

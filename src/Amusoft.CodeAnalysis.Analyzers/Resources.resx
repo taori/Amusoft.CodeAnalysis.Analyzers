@@ -144,6 +144,9 @@
   <data name="MessageFormat_CS0123_FixByRewritingParameters_0" xml:space="preserve">
     <value>Alter parameter types of '{0}' to match expected signature</value>
   </data>
+  <data name="MessageFormat_CS0161_FixByReplacingWithThrowExpression" xml:space="preserve">
+    <value>throw new NotImplementedException();</value>
+  </data>
   <data name="MessageFormat_CS0407_FixByRewritingReturnType_0_1_2" xml:space="preserve">
     <value>Alter return type of '{0}' to '{1}'</value>
   </data>
