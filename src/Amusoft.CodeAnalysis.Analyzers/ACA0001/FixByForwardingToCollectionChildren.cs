@@ -19,7 +19,7 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 {
 	[ExportCodeFixProvider(LanguageNames.CSharp, Name = "ACA0001-FixByForwardingToCollectionChildren"), Shared]
-	public class FixByForwardingToCollectionChildren : CodeFixProvider 
+	public class FixByForwardingToCollectionChildren : CodeFixProvider
 	{
 		private const string CodeFixUniqueKey = "ACA0001-FixByForwardingToCollectionChildren";
 
@@ -40,13 +40,16 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 			{
 				var title = diagnostic.Descriptor.MessageFormat.ToString();
 				if (diagnostic.Properties.TryGetValue(Analyzer.Properties.MemberName, out var memberName))
-					context.RegisterCodeFix(CodeAction.Create(title, c => CreateChangedDocument(context, c, diagnostic), CodeFixUniqueKey + memberName), diagnostic);
+					context.RegisterCodeFix(
+						CodeAction.Create(title, c => CreateChangedDocument(context, c, diagnostic),
+							CodeFixUniqueKey + memberName), diagnostic);
 			}
 
 			return Task.CompletedTask;
 		}
 
-		private async Task<Document> CreateChangedDocument(CodeFixContext context, CancellationToken cancellationToken, Diagnostic diagnostic)
+		private async Task<Document> CreateChangedDocument(CodeFixContext context, CancellationToken cancellationToken,
+			Diagnostic diagnostic)
 		{
 			var root = await context.Document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var node = root.FindNode(diagnostic.Location.SourceSpan);
@@ -59,7 +62,8 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 				var semanticModel = await context.Document.GetSemanticModelAsync(cancellationToken);
 				var newMethod = RewriteMethod(semanticModel, methodNode, memberName);
 
-				var replacedRoot = root.ReplaceNode(methodNode.Body, newMethod.Body.WithAdditionalAnnotations(Formatter.Annotation));
+				var replacedRoot = root.ReplaceNode(methodNode.Body,
+					newMethod.Body.WithAdditionalAnnotations(Formatter.Annotation));
 
 				return context.Document.WithSyntaxRoot(replacedRoot);
 			}
@@ -67,12 +71,14 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 			return context.Document;
 		}
 
-		private static MethodDeclarationSyntax RewriteMethod(SemanticModel semanticModel, MethodDeclarationSyntax methodNode, string memberName)
+		private static MethodDeclarationSyntax RewriteMethod(SemanticModel semanticModel,
+			MethodDeclarationSyntax methodNode, string memberName)
 		{
 			if (!(semanticModel.GetDeclaredSymbol(methodNode) is IMethodSymbol methodSymbol))
 				return methodNode;
 
-			if (!Analyzer.DiagnosticHelper.TryAnalyzeMethod(semanticModel, methodSymbol, out var returnTask, out var returnBool))
+			if (!Analyzer.DiagnosticHelper.TryAnalyzeMethod(semanticModel, methodSymbol, out var returnTask,
+				out var returnBool))
 				return methodNode;
 
 			if (returnBool)
@@ -88,42 +94,60 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 			return RewriteAsVoidMethod(methodNode, memberName);
 		}
 
-		private static MethodDeclarationSyntax RewriteAsBoolMethod(MethodDeclarationSyntax methodNode, string memberName)
+		private static MethodDeclarationSyntax RewriteAsBoolMethod(MethodDeclarationSyntax methodNode,
+			string memberName)
 		{
 			return MethodDeclaration(methodNode.ReturnType, methodNode.Identifier).WithBody(
 				Block(
 					SingletonList<StatementSyntax>(
 						ReturnStatement(
-							InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName(memberName), IdentifierName("All")))
+							InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
+									IdentifierName(memberName), IdentifierName("All")))
 								.WithArgumentList(
 									ArgumentList(
-										SingletonSeparatedList(Argument(SimpleLambdaExpression(Parameter(Identifier("item")), CreateIterationCall(methodNode))))))
-							)
+										SingletonSeparatedList(Argument(
+											SimpleLambdaExpression(Parameter(Identifier("item")),
+												CreateIterationCall(methodNode))))))
+						)
 					)));
 		}
 
-		private static MethodDeclarationSyntax RewriteAsTaskMethod(MethodDeclarationSyntax methodNode, string memberName)
+		private static MethodDeclarationSyntax RewriteAsTaskMethod(MethodDeclarationSyntax methodNode,
+			string memberName)
 		{
 			if (methodNode.Modifiers.Any(SyntaxKind.AsyncKeyword))
 			{
-				return MethodDeclaration(methodNode.ReturnType, methodNode.Identifier).WithBody(
-					Block(
-						SingletonList<StatementSyntax>(
-							ReturnStatement(
-								InvocationExpression(
-									MemberAccessExpression(
-										SyntaxKind.SimpleMemberAccessExpression,
-										IdentifierName(memberName),
-										IdentifierName("All")
-									),
-									ArgumentList(
-										SingletonSeparatedList(
-											Argument(
-												SimpleLambdaExpression(
-													Parameter(
-														Identifier("item")
-													),
-													CreateIterationCall(methodNode)
+				return methodNode.WithBody(
+					Block(SingletonList<StatementSyntax>(
+							ExpressionStatement(
+								AwaitExpression(
+									InvocationExpression(
+										MemberAccessExpression(
+											SyntaxKind.SimpleMemberAccessExpression,
+											IdentifierName("Task"),
+											IdentifierName("WhenAll")
+										),
+										ArgumentList(
+											SingletonSeparatedList(
+												Argument(
+													InvocationExpression(
+														MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
+															IdentifierName(memberName),
+															IdentifierName("Select")
+														),
+														ArgumentList(
+															SingletonSeparatedList(
+																Argument(
+																	SimpleLambdaExpression(
+																		Parameter(
+																			Identifier("item")
+																		),
+																		CreateIterationCall(methodNode)
+																	)
+																)
+															)
+														)
+													)
 												)
 											)
 										)
@@ -136,24 +160,23 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 			}
 			else
 			{
-				return MethodDeclaration(methodNode.ReturnType, methodNode.Identifier).WithBody(
-					Block(
-						SingletonList<StatementSyntax>(
+				return methodNode.WithBody(
+					Block(SingletonList<StatementSyntax>(
 							ReturnStatement(
+
 								InvocationExpression(
 									MemberAccessExpression(
 										SyntaxKind.SimpleMemberAccessExpression,
 										IdentifierName("Task"),
-										IdentifierName("FromResult")
+										IdentifierName("WhenAll")
 									),
 									ArgumentList(
 										SingletonSeparatedList(
 											Argument(
 												InvocationExpression(
-													MemberAccessExpression(
-														SyntaxKind.SimpleMemberAccessExpression,
+													MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
 														IdentifierName(memberName),
-														IdentifierName("All")
+														IdentifierName("Select")
 													),
 													ArgumentList(
 														SingletonSeparatedList(
@@ -179,7 +202,8 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 			}
 		}
 
-		private static MethodDeclarationSyntax RewriteAsVoidMethod(MethodDeclarationSyntax methodNode, string memberName)
+		private static MethodDeclarationSyntax RewriteAsVoidMethod(MethodDeclarationSyntax methodNode,
+			string memberName)
 		{
 			return MethodDeclaration(methodNode.ReturnType, methodNode.Identifier).WithBody(
 				Block(
@@ -206,9 +230,9 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 						IdentifierName("item"),
 						IdentifierName(methodNode.Identifier.Text)
 					)).WithArgumentList(
-						ArgumentList(
-							SeparatedList<ArgumentSyntax>(CreateMethodArguments(methodNode)
-					)));
+					ArgumentList(
+						SeparatedList<ArgumentSyntax>(CreateMethodArguments(methodNode)
+						)));
 			}
 			else
 			{
