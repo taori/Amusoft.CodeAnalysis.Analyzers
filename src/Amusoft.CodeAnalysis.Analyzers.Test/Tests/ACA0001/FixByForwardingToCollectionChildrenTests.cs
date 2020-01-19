@@ -78,8 +78,9 @@ namespace ConsoleApplication1
 
 			var expected = new DiagnosticResult[]
 			{
-				
-			};
+				// Test0.cs(20,21): info ACA0001: Forward execution of "Method1" to member "_disposables"
+				Verifier.Diagnostic().WithSpan(20, 21, 20, 28).WithArguments("Method1", "_disposables")
+            };
 
 			await Verifier.VerifyCodeFixAsync(test, expected, fixtest);
 		}
@@ -140,8 +141,9 @@ namespace ConsoleApplication1
 
 			var expected = new DiagnosticResult[]
 			{
-				
-			};
+				// Test0.cs(20,27): info ACA0001: Forward execution of "Method1" to member "_disposables"
+				Verifier.Diagnostic().WithSpan(20, 27, 20, 34).WithArguments("Method1", "_disposables")
+            };
 
 			await Verifier.VerifyCodeFixAsync(test, expected, fixtest);
 		}

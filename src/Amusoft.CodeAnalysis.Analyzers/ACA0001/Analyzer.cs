@@ -156,11 +156,11 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 				}
 
 				var taskGenericType = semanticModel.Compilation.GetTypeByMetadataName("System.Threading.Tasks.Task`1");
-				if (methodSymbol.ReturnType is INamedTypeSymbol ntMethodSymbol && ntMethodSymbol.ConstructedFrom.Equals(taskGenericType))
+				var taskType = semanticModel.Compilation.GetTypeByMetadataName("System.Threading.Tasks.Task");
+				if (methodSymbol.ReturnType is INamedTypeSymbol ntMethodSymbol && ntMethodSymbol.Equals(taskType))
 				{
 					returnTask = true;
-					returnBool = ntMethodSymbol.TypeArguments[0].Equals(boolType);
-					return returnBool;
+					return true;
 				}
 
 				return false;
