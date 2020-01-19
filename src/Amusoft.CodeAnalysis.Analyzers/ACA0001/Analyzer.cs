@@ -39,6 +39,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 
 		public override void Initialize(AnalysisContext context)
 		{
+			context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 			context.RegisterSyntaxNodeAction(AnalyzeSyntax,SyntaxKind.ClassDeclaration);
 		}
 

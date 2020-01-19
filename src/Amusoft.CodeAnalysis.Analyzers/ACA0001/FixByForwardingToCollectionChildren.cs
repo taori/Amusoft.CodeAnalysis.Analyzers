@@ -79,7 +79,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 			{
 				if (returnTask)
 				{
-					return RewriteAsBoolTaskMethod(methodNode, memberName);
+					return RewriteAsTaskMethod(methodNode, memberName);
 				}
 				else
 				{
@@ -106,7 +106,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 					)));
 		}
 
-		private static MethodDeclarationSyntax RewriteAsBoolTaskMethod(MethodDeclarationSyntax methodNode, string memberName)
+		private static MethodDeclarationSyntax RewriteAsTaskMethod(MethodDeclarationSyntax methodNode, string memberName)
 		{
 			if (methodNode.Modifiers.Any(SyntaxKind.AsyncKeyword))
 			{

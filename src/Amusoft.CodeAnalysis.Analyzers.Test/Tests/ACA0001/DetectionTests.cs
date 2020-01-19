@@ -270,22 +270,9 @@ namespace ConsoleApplication1
     }
 }";
 
-			var expectedDiagnostics = new DiagnosticResult[]
-			{
-				Verifier.Diagnostic(Analyzer.DiagnosticId).WithLocation(24, 21).WithArguments("Method1", "_disposables")
-					.WithSeverity(DiagnosticSeverity.Info),
-				Verifier.Diagnostic(Analyzer.DiagnosticId).WithLocation(33, 21).WithArguments("Method2", "_disposables")
-					.WithSeverity(DiagnosticSeverity.Info),
-				Verifier.Diagnostic(Analyzer.DiagnosticId).WithLocation(38, 21).WithArguments("Method2", "_disposables")
-					.WithSeverity(DiagnosticSeverity.Info),
-				Verifier.Diagnostic(Analyzer.DiagnosticId).WithLocation(43, 21).WithArguments("Method3", "_disposables")
-					.WithSeverity(DiagnosticSeverity.Info),
-			};
-
-			// await AnalyzerVerifier.VerifyAnalyzerAsync(test, expectedDiagnostics);
-
             await new Helpers.AnalyzerTest<Analyzer>()
 			{
+                TestBehaviors = TestBehaviors.SkipGeneratedCodeCheck,
 				CompilerDiagnostics = CompilerDiagnostics.Warnings | CompilerDiagnostics.Suggestions,
 				TestState =
 				{

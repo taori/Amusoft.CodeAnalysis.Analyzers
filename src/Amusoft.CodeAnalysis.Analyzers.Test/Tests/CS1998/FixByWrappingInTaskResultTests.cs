@@ -331,16 +331,6 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CS1998
 					Sources = { fixtest }
 				},
 			}.RunAsync();
-
-			// var expected = new[]
-			// {
-			// 	CompilerWarning("CS1998").WithLocation(15, 38),
-			// 	CompilerError("CS4016").WithSpan(29, 13, 29, 62)
-			// 		.WithArguments("ConsoleApplication1.TestClass.Configuration[]"),
-			// };
-			//
-			// await Verifier.VerifyCodeFixAsync(test, expected, fixtest);
 		}
-
 	}
 }
