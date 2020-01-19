@@ -2,7 +2,6 @@
 // This file is a part of Amusoft.Roslyn.Analyzers and is licensed under Apache 2.0
 // See https://github.com/taori/Amusoft.Roslyn.Analyzers/blob/master/LICENSE for details
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
@@ -17,12 +16,12 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationToFields
+namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 {
-	[ExportCodeFixProvider(LanguageNames.CSharp, Name = "DelegateImplementationToFieldsRefactoring"), Shared]
-	public class Fixer : CodeFixProvider 
+	[ExportCodeFixProvider(LanguageNames.CSharp, Name = "ACA0001-FixByForwardingToCollectionChildren"), Shared]
+	public class FixByForwardingToCollectionChildren : CodeFixProvider 
 	{
-		private const string CodeFixUniqueKey = "DelegateImplementationFixer";
+		private const string CodeFixUniqueKey = "ACA0001-FixByForwardingToCollectionChildren";
 
 		public sealed override ImmutableArray<string> FixableDiagnosticIds
 		{
@@ -57,9 +56,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationTo
 				if (!diagnostic.Properties.TryGetValue(Analyzer.Properties.MemberName, out var memberName))
 					return context.Document;
 
-				if (!context.Document.TryGetSemanticModel(out var semanticModel))
-					return context.Document;
-
+				var semanticModel = await context.Document.GetSemanticModelAsync(cancellationToken);
 				var newMethod = RewriteMethod(semanticModel, methodNode, memberName);
 
 				var replacedRoot = root.ReplaceNode(methodNode.Body, newMethod.Body.WithAdditionalAnnotations(Formatter.Annotation));
@@ -82,7 +79,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationTo
 			{
 				if (returnTask)
 				{
-					return RewriteAsBoolTaskMethod(methodNode, memberName);
+					return RewriteAsTaskMethod(methodNode, memberName);
 				}
 				else
 				{
@@ -109,7 +106,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationTo
 					)));
 		}
 
-		private static MethodDeclarationSyntax RewriteAsBoolTaskMethod(MethodDeclarationSyntax methodNode, string memberName)
+		private static MethodDeclarationSyntax RewriteAsTaskMethod(MethodDeclarationSyntax methodNode, string memberName)
 		{
 			if (methodNode.Modifiers.Any(SyntaxKind.AsyncKeyword))
 			{

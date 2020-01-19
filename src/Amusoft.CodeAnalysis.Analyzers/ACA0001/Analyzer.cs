@@ -2,19 +2,16 @@
 // This file is a part of Amusoft.Roslyn.Analyzers and is licensed under Apache 2.0
 // See https://github.com/taori/Amusoft.Roslyn.Analyzers/blob/master/LICENSE for details
 
-using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Threading;
 using Amusoft.CodeAnalysis.Analyzers.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationToFields
+namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 {
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
 	public class Analyzer : DiagnosticAnalyzer
@@ -24,7 +21,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationTo
 			public const string MemberName = "MemberName";
 		}
 		
-		public const string DiagnosticId = "ACACG0003";
+		public const string DiagnosticId = "ACA0001";
 
 		// You can change these strings in the Resources.resx file. If you do not want your analyzer to be localize-able, you can use regular strings for Title and MessageFormat.
 		// See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Localizing%20Analyzers.md for more on localization
@@ -42,6 +39,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.CodeGeneration.DelegateImplementationTo
 
 		public override void Initialize(AnalysisContext context)
 		{
+			context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 			context.RegisterSyntaxNodeAction(AnalyzeSyntax,SyntaxKind.ClassDeclaration);
 		}
 

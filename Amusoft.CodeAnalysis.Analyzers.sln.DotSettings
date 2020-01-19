@@ -2,6 +2,39 @@
 	<s:String x:Key="/Default/CodeStyle/FileHeader/FileHeaderText/@EntryValue">Copyright $CREATED_YEAR$ Andreas Müller&#xD;
 This file is a part of Amusoft.CodeAnalysis.Analyzers and is licensed under Apache 2.0&#xD;
 See https://github.com/taori/Amusoft.CodeAnalysis.Analyzers/blob/master/LICENSE for details</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=059C687F40E9A548ADF8B7D42F0A6BF8/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=059C687F40E9A548ADF8B7D42F0A6BF8/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=059C687F40E9A548ADF8B7D42F0A6BF8/Field/=codeFix/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=059C687F40E9A548ADF8B7D42F0A6BF8/Field/=codeFix/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=059C687F40E9A548ADF8B7D42F0A6BF8/Reformat/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=059C687F40E9A548ADF8B7D42F0A6BF8/Scope/=2C285F182AC98D44B0B4F29D4D2149EC/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=059C687F40E9A548ADF8B7D42F0A6BF8/Scope/=2C285F182AC98D44B0B4F29D4D2149EC/CustomProperties/=minimumLanguageVersion/@EntryIndexedValue">2.0</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=059C687F40E9A548ADF8B7D42F0A6BF8/Scope/=2C285F182AC98D44B0B4F29D4D2149EC/Type/@EntryValue">InCSharpStatement</s:String>
+	
+	
+	
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=059C687F40E9A548ADF8B7D42F0A6BF8/Shortcut/@EntryValue">testCodeFix</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=059C687F40E9A548ADF8B7D42F0A6BF8/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=059C687F40E9A548ADF8B7D42F0A6BF8/Text/@EntryValue">await new Amusoft.CodeAnalysis.Analyzers.Test.Helpers.CodeFixTest&lt;EmptyDiagnosticAnalyzer, $codeFix$&gt;()&#xD;
+{&#xD;
+    TestBehaviors = TestBehaviors.SkipGeneratedCodeCheck,&#xD;
+	CompilerDiagnostics = CompilerDiagnostics.Errors | CompilerDiagnostics.Warnings,&#xD;
+	TestState =&#xD;
+	{&#xD;
+		Sources = { test },&#xD;
+		ExpectedDiagnostics =&#xD;
+		{&#xD;
+			$END$&#xD;
+		},&#xD;
+	},&#xD;
+	FixedState =&#xD;
+	{&#xD;
+		ExpectedDiagnostics =&#xD;
+		{&#xD;
+		},&#xD;
+		Sources = { fixtest }&#xD;
+	},&#xD;
+}.RunAsync();</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Description/@EntryValue">&amp;CodeFixTest</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=CLASS/Expression/@EntryValue">getAlphaNumericFileNameWithoutExtension()</s:String>
@@ -106,6 +139,20 @@ namespace ConsoleApplication1&#xD;
 	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=NAMESPACE/Order/@EntryValue">1</s:Int64>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=CLASS/@KeyIndexDefined">True</s:Boolean>
 	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=CLASS/Order/@EntryValue">2</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=44E679DCDD48FA49A9713D37E6668B2D/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=44E679DCDD48FA49A9713D37E6668B2D/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=44E679DCDD48FA49A9713D37E6668B2D/Reformat/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=44E679DCDD48FA49A9713D37E6668B2D/Scope/=E6E678D4B937A84D8C4585DDD2F27DB0/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=44E679DCDD48FA49A9713D37E6668B2D/Scope/=E6E678D4B937A84D8C4585DDD2F27DB0/CustomProperties/=minimumLanguageVersion/@EntryIndexedValue">2.0</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=44E679DCDD48FA49A9713D37E6668B2D/Scope/=E6E678D4B937A84D8C4585DDD2F27DB0/Type/@EntryValue">InCSharpExpression</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=44E679DCDD48FA49A9713D37E6668B2D/Shortcut/@EntryValue">testSimpleCodeFix</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=44E679DCDD48FA49A9713D37E6668B2D/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=44E679DCDD48FA49A9713D37E6668B2D/Text/@EntryValue">var expected = new DiagnosticResult[]&#xD;
+{&#xD;
+	$END$&#xD;
+};&#xD;
+&#xD;
+await Verifier.VerifyCodeFixAsync(test, expected, fixtest);</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Applicability/=File/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/CustomProperties/=Extension/@EntryIndexedValue">cs</s:String>
@@ -173,4 +220,30 @@ namespace $NAMESPACE$&#xD;
 			return rootNode;&#xD;
 		}&#xD;
 	}&#xD;
-}</s:String></wpf:ResourceDictionary>
+}</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FBFED94699A2CE49BB04B55CA7B6FBFF/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FBFED94699A2CE49BB04B55CA7B6FBFF/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FBFED94699A2CE49BB04B55CA7B6FBFF/Field/=analyzer/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FBFED94699A2CE49BB04B55CA7B6FBFF/Field/=analyzer/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FBFED94699A2CE49BB04B55CA7B6FBFF/Reformat/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FBFED94699A2CE49BB04B55CA7B6FBFF/Scope/=2C285F182AC98D44B0B4F29D4D2149EC/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FBFED94699A2CE49BB04B55CA7B6FBFF/Scope/=2C285F182AC98D44B0B4F29D4D2149EC/CustomProperties/=minimumLanguageVersion/@EntryIndexedValue">2.0</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FBFED94699A2CE49BB04B55CA7B6FBFF/Scope/=2C285F182AC98D44B0B4F29D4D2149EC/Type/@EntryValue">InCSharpStatement</s:String>
+	
+	
+	
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FBFED94699A2CE49BB04B55CA7B6FBFF/Shortcut/@EntryValue">testAnalyzer</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FBFED94699A2CE49BB04B55CA7B6FBFF/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=FBFED94699A2CE49BB04B55CA7B6FBFF/Text/@EntryValue">await new Amusoft.CodeAnalysis.Analyzers.Test.Helpers.AnalyzerTest&lt;$analyzer$&gt;()&#xD;
+{&#xD;
+    TestBehaviors = TestBehaviors.SkipGeneratedCodeCheck,&#xD;
+	CompilerDiagnostics = CompilerDiagnostics.Warnings | CompilerDiagnostics.Suggestions,&#xD;
+	TestState =&#xD;
+	{&#xD;
+		Sources = {test},&#xD;
+		ExpectedDiagnostics =&#xD;
+		{&#xD;
+			$END$&#xD;
+		},&#xD;
+	}&#xD;
+}.RunAsync();</s:String></wpf:ResourceDictionary>
