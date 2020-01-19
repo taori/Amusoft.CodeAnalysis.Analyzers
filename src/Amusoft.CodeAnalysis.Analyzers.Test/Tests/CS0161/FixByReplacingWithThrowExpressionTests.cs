@@ -23,7 +23,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.CS0161
 		}
 
 		[TestMethod]
-		public async Task DiagnosticAtObjectCreationExpression()
+		public async Task RewriteElseBranch()
 		{
 			
 			var test = @"
@@ -36,22 +36,22 @@ using System.Diagnostics;
 
 namespace ConsoleApplication1
 {
-	public class Test
-	{
-	    public static int Main() // CS0161
-	    {
-	        int i = 5;
-	        if (i < 10)
-	        {
-	            return i;
-	        }
-	        else
-	        {
-	            // Uncomment the following line to resolve.
-	            // return 1;  
-	        }
-	    }
-	}
+    public class Test
+    {
+        public static int Main() // CS0161
+        {
+            int i = 5;
+            if (i < 10)
+            {
+                return i;
+            }
+            else
+            {
+                // Uncomment the following line to resolve.
+                // return 1;
+            }
+        }
+    }
 }";
 
 
@@ -65,29 +65,186 @@ using System.Diagnostics;
 
 namespace ConsoleApplication1
 {
-	public class Test
-	{
-	    public static int Main() // CS0161
-	    {
-	        int i = 5;
-	        if (i < 10)
-	        {
-	            return i;
-	        }
-	        else
-	        {
-	            throw new NotImplementedException();
-	            // Uncomment the following line to resolve.
-	            // return 1;  
-	        }
-	    }
-	}
+    public class Test
+    {
+        public static int Main() // CS0161
+        {
+            int i = 5;
+            if (i < 10)
+            {
+                return i;
+            }
+            else
+            {
+                throw new NotImplementedException();
+                // Uncomment the following line to resolve.
+                // return 1;
+            }
+        }
+    }
 }";
 			var diagnostics = new DiagnosticResult[]
 			{
+				// Test0.cs(13,27): error CS0161: 'Test.Main()': not all code paths return a value
+				DiagnosticResult.CompilerError("CS0161").WithSpan(13, 27, 13, 31).WithArguments("ConsoleApplication1.Test.Main()")
+            };
+
+			await Verifier.VerifyCodeFixAsync(test, diagnostics, fixtest);
+		}
+
+        [TestMethod]
+		public async Task RewriteIfBranch()
+		{
+			var test = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    public class Test
+    {
+        public static int Main() // CS0161
+        {
+            int i = 5;
+            if (i < 10)
+            {
+                // return i;
+            }
+            else
+            {
+                // Uncomment the following line to resolve.
+                return 1;
+            }
+        }
+    }
+}";
+
+
+			var fixtest = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    public class Test
+    {
+        public static int Main() // CS0161
+        {
+            int i = 5;
+            if (i < 10)
+            {
+                throw new NotImplementedException();
+                // return i;
+            }
+            else
+            {
+                // Uncomment the following line to resolve.
+                return 1;
+            }
+        }
+    }
+}";
+			var diagnostics = new DiagnosticResult[]
+			{
+				// Test0.cs(13,27): error CS0161: 'Test.Main()': not all code paths return a value
+				DiagnosticResult.CompilerError("CS0161").WithSpan(13, 27, 13, 31).WithArguments("ConsoleApplication1.Test.Main()")
 			};
 
 			await Verifier.VerifyCodeFixAsync(test, diagnostics, fixtest);
 		}
-	}
+
+		[TestMethod]
+		public async Task RewriteDeepBranch()
+		{
+			var test = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    public class Test
+    {
+        public static int Main() // CS0161
+        {
+            int i = 5;
+            if (i < 10)
+            {
+                if (i < 10)
+                {
+                    // return i;
+                }
+                else
+                {
+                    // Uncomment the following line to resolve.
+                    return 1;
+                }
+            }
+            else
+            {
+                // Uncomment the following line to resolve.
+                return 1;
+            }
+        }
+    }
+}";
+
+
+			var fixtest = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    public class Test
+    {
+        public static int Main() // CS0161
+        {
+            int i = 5;
+            if (i < 10)
+            {
+                if (i < 10)
+                {
+                    throw new NotImplementedException();
+                    // return i;
+                }
+                else
+                {
+                    // Uncomment the following line to resolve.
+                    return 1;
+                }
+            }
+            else
+            {
+                // Uncomment the following line to resolve.
+                return 1;
+            }
+        }
+    }
+}";
+			var diagnostics = new DiagnosticResult[]
+			{
+				// Test0.cs(13,27): error CS0161: 'Test.Main()': not all code paths return a value
+				DiagnosticResult.CompilerError("CS0161").WithSpan(13, 27, 13, 31).WithArguments("ConsoleApplication1.Test.Main()")
+			};
+
+			await Verifier.VerifyCodeFixAsync(test, diagnostics, fixtest);
+		}
+
+    }
 }
