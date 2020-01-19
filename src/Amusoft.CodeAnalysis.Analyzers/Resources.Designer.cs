@@ -143,6 +143,15 @@ namespace Amusoft.CodeAnalysis.Analyzers {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die throw new NotImplementedException(); ähnelt.
+        /// </summary>
+        public static string MessageFormat_CS0161_FixByReplacingWithThrowExpression {
+            get {
+                return ResourceManager.GetString("MessageFormat_CS0161_FixByReplacingWithThrowExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Alter return type of &apos;{0}&apos; to &apos;{1}&apos; ähnelt.
         /// </summary>
         public static string MessageFormat_CS0407_FixByRewritingReturnType_0_1_2 {
