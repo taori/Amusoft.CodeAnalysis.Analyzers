@@ -77,19 +77,15 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 
 			if (returnBool)
 			{
-				if (returnTask)
-				{
-					return RewriteAsTaskMethod(methodNode, memberName);
-				}
-				else
-				{
-					return RewriteAsBoolMethod(methodNode, memberName);
-				}
+				return RewriteAsBoolMethod(methodNode, memberName);
 			}
-			else
+
+			if (returnTask)
 			{
-				return RewriteAsVoidMethod(methodNode, memberName);
+				return RewriteAsTaskMethod(methodNode, memberName);
 			}
+
+			return RewriteAsVoidMethod(methodNode, memberName);
 		}
 
 		private static MethodDeclarationSyntax RewriteAsBoolMethod(MethodDeclarationSyntax methodNode, string memberName)
