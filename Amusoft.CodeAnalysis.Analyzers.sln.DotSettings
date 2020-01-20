@@ -35,6 +35,84 @@ See https://github.com/taori/Amusoft.CodeAnalysis.Analyzers/blob/master/LICENSE 
 		Sources = { fixtest }&#xD;
 	},&#xD;
 }.RunAsync();</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=211FAF7F1279B04CAA442CA9B37CF79A/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=211FAF7F1279B04CAA442CA9B37CF79A/Applicability/=File/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=211FAF7F1279B04CAA442CA9B37CF79A/CustomProperties/=Extension/@EntryIndexedValue">cs</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=211FAF7F1279B04CAA442CA9B37CF79A/CustomProperties/=FileName/@EntryIndexedValue">Analyzer</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=211FAF7F1279B04CAA442CA9B37CF79A/CustomProperties/=ValidateFileName/@EntryIndexedValue">True</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=211FAF7F1279B04CAA442CA9B37CF79A/Description/@EntryValue">&amp;Analyzer</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=211FAF7F1279B04CAA442CA9B37CF79A/Field/=CLASS/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=211FAF7F1279B04CAA442CA9B37CF79A/Field/=CLASS/Expression/@EntryValue">getAlphaNumericFileNameWithoutExtension()</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=211FAF7F1279B04CAA442CA9B37CF79A/Field/=CLASS/InitialRange/@EntryValue">-1</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=211FAF7F1279B04CAA442CA9B37CF79A/Field/=CLASS/Order/@EntryValue">2</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=211FAF7F1279B04CAA442CA9B37CF79A/Field/=HEADER/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=211FAF7F1279B04CAA442CA9B37CF79A/Field/=HEADER/Expression/@EntryValue">fileheader()</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=211FAF7F1279B04CAA442CA9B37CF79A/Field/=HEADER/InitialRange/@EntryValue">-1</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=211FAF7F1279B04CAA442CA9B37CF79A/Field/=HEADER/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=211FAF7F1279B04CAA442CA9B37CF79A/Field/=NAMESPACE/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=211FAF7F1279B04CAA442CA9B37CF79A/Field/=NAMESPACE/Expression/@EntryValue">fileDefaultNamespace()</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=211FAF7F1279B04CAA442CA9B37CF79A/Field/=NAMESPACE/InitialRange/@EntryValue">-1</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=211FAF7F1279B04CAA442CA9B37CF79A/Field/=NAMESPACE/Order/@EntryValue">1</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=211FAF7F1279B04CAA442CA9B37CF79A/Reformat/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=211FAF7F1279B04CAA442CA9B37CF79A/Scope/=E8F0594528C33E45BBFEC6CFE851095D/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=211FAF7F1279B04CAA442CA9B37CF79A/Scope/=E8F0594528C33E45BBFEC6CFE851095D/Type/@EntryValue">InCSharpProjectFile</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=211FAF7F1279B04CAA442CA9B37CF79A/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=211FAF7F1279B04CAA442CA9B37CF79A/Text/@EntryValue">$HEADER$using System.Collections.Immutable;&#xD;
+using Amusoft.CodeAnalysis.Analyzers.Shared;&#xD;
+using Microsoft.CodeAnalysis;&#xD;
+using Microsoft.CodeAnalysis.Diagnostics;&#xD;
+using Microsoft.CodeAnalysis.CSharp;&#xD;
+using Microsoft.CodeAnalysis.CSharp.Syntax;&#xD;
+using Microsoft.CodeAnalysis.Formatting;&#xD;
+using Microsoft.CodeAnalysis.Simplification;&#xD;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;&#xD;
+&#xD;
+namespace $NAMESPACE$&#xD;
+{&#xD;
+	[DiagnosticAnalyzer(LanguageNames.CSharp)]&#xD;
+	public class $CLASS$ : DiagnosticAnalyzer&#xD;
+	{&#xD;
+		#region PrimaryRule&#xD;
+&#xD;
+		private static readonly LocalizableString PrimaryRuleTitle = new LocalizableResourceString(&#xD;
+			nameof(Resources.$CLASS$_PrimaryRuleTitle),&#xD;
+			Resources.ResourceManager,&#xD;
+			typeof(Resources));&#xD;
+&#xD;
+		private static readonly LocalizableString PrimaryRuleMessageFormat = new LocalizableResourceString(&#xD;
+			nameof(Resources.$CLASS$_PrimaryRuleMessageFormat),&#xD;
+			Resources.ResourceManager,&#xD;
+			typeof(Resources));&#xD;
+&#xD;
+		private static readonly LocalizableString PrimaryRuleDescription = new LocalizableResourceString(&#xD;
+			nameof(Resources.$CLASS$_PrimaryRuleDescription),&#xD;
+			Resources.ResourceManager,&#xD;
+			typeof(Resources));&#xD;
+&#xD;
+		private static readonly DiagnosticDescriptor PrimaryRule = new DiagnosticDescriptor(&#xD;
+			DiagnosticIds.ACA0002.$END$, PrimaryRuleTitle, PrimaryRuleMessageFormat,&#xD;
+			"ACA Diagnostics", DiagnosticSeverity.Info, isEnabledByDefault: true, description: PrimaryRuleDescription);&#xD;
+&#xD;
+		#endregion&#xD;
+		/// &lt;inheritdoc /&gt;&#xD;
+		public override void Initialize(AnalysisContext context)&#xD;
+		{&#xD;
+			context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);&#xD;
+			context.RegisterSyntaxNodeAction(AnalyzeClass, syntaxKinds: SyntaxKind.ClassDeclaration);&#xD;
+		}&#xD;
+&#xD;
+		/// &lt;inheritdoc /&gt;&#xD;
+		public override ImmutableArray&lt;DiagnosticDescriptor&gt; SupportedDiagnostics&#xD;
+		{&#xD;
+			get { return ImmutableArray.Create(PrimaryRule); }&#xD;
+		}&#xD;
+&#xD;
+		private void AnalyzeClass(SyntaxNodeAnalysisContext context)&#xD;
+		{&#xD;
+			throw new System.NotImplementedException();&#xD;
+		}&#xD;
+	}&#xD;
+}</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Description/@EntryValue">&amp;CodeFixTest</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=21CCC48EE521CF46B74D3A0C28EEFF1E/Field/=CLASS/Expression/@EntryValue">getAlphaNumericFileNameWithoutExtension()</s:String>
@@ -153,6 +231,44 @@ namespace ConsoleApplication1&#xD;
 };&#xD;
 &#xD;
 await Verifier.VerifyCodeFixAsync(test, expected, fixtest);</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=69AF852163625840B2613F739ACE8A8C/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=69AF852163625840B2613F739ACE8A8C/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=69AF852163625840B2613F739ACE8A8C/Field/=className/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=69AF852163625840B2613F739ACE8A8C/Field/=className/Expression/@EntryValue">typeName()</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=69AF852163625840B2613F739ACE8A8C/Field/=className/InitialRange/@EntryValue">-1</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=69AF852163625840B2613F739ACE8A8C/Field/=className/Order/@EntryValue">2</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=69AF852163625840B2613F739ACE8A8C/Field/=Name/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=69AF852163625840B2613F739ACE8A8C/Field/=Name/Order/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=69AF852163625840B2613F739ACE8A8C/Field/=severity/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=69AF852163625840B2613F739ACE8A8C/Field/=severity/Expression/@EntryValue">completeSmart()</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=69AF852163625840B2613F739ACE8A8C/Field/=severity/Order/@EntryValue">1</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=69AF852163625840B2613F739ACE8A8C/Reformat/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=69AF852163625840B2613F739ACE8A8C/Scope/=B68999B9D6B43E47A02B22C12A54C3CC/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=69AF852163625840B2613F739ACE8A8C/Scope/=B68999B9D6B43E47A02B22C12A54C3CC/CustomProperties/=minimumLanguageVersion/@EntryIndexedValue">2.0</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=69AF852163625840B2613F739ACE8A8C/Scope/=B68999B9D6B43E47A02B22C12A54C3CC/Type/@EntryValue">InCSharpTypeMember</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=69AF852163625840B2613F739ACE8A8C/Shortcut/@EntryValue">diagnosticRule</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=69AF852163625840B2613F739ACE8A8C/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=69AF852163625840B2613F739ACE8A8C/Text/@EntryValue">#region $Name$&#xD;
+&#xD;
+private static readonly LocalizableString $Name$Title = new LocalizableResourceString(&#xD;
+	nameof(Amusoft.CodeAnalysis.Analyzers.Resources.$className$_$Name$Title),&#xD;
+	Amusoft.CodeAnalysis.Analyzers.Resources.ResourceManager,&#xD;
+	typeof(Amusoft.CodeAnalysis.Analyzers.Resources));&#xD;
+&#xD;
+private static readonly LocalizableString $Name$MessageFormat = new LocalizableResourceString(&#xD;
+	nameof(Amusoft.CodeAnalysis.Analyzers.Resources.$className$_$Name$MessageFormat),&#xD;
+	Amusoft.CodeAnalysis.Analyzers.Resources.ResourceManager,&#xD;
+	typeof(Amusoft.CodeAnalysis.Analyzers.Resources));&#xD;
+&#xD;
+private static readonly LocalizableString $Name$Description = new LocalizableResourceString(&#xD;
+	nameof(Amusoft.CodeAnalysis.Analyzers.Resources.$className$_$Name$Description),&#xD;
+	Amusoft.CodeAnalysis.Analyzers.Resources.ResourceManager,&#xD;
+	typeof(Amusoft.CodeAnalysis.Analyzers.Resources));&#xD;
+&#xD;
+private static readonly DiagnosticDescriptor $Name$ = new DiagnosticDescriptor(&#xD;
+	Amusoft.CodeAnalysis.Analyzers.Shared.DiagnosticIds.ACA0002.DiagnosticOnArray, $Name$Title, $Name$MessageFormat, "ACA Diagnostics", DiagnosticSeverity.$severity$, isEnabledByDefault: true, description: $Name$Description);&#xD;
+&#xD;
+#endregion</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Applicability/=File/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/CustomProperties/=Extension/@EntryIndexedValue">cs</s:String>
@@ -163,6 +279,10 @@ await Verifier.VerifyCodeFixAsync(test, expected, fixtest);</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=CLASS/Expression/@EntryValue">getAlphaNumericFileNameWithoutExtension()</s:String>
 	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=CLASS/InitialRange/@EntryValue">-1</s:Int64>
 	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=CLASS/Order/@EntryValue">2</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=complete/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=complete/Expression/@EntryValue">completeSmart()</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=complete/InitialRange/@EntryValue">-1</s:Int64>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=complete/Order/@EntryValue">4</s:Int64>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=diagnosticId/@KeyIndexDefined">True</s:Boolean>
 	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=diagnosticId/InitialRange/@EntryValue">1</s:Int64>
 	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=EF22B9F0D1F98943AB7B20E28E6E8504/Field/=diagnosticId/Order/@EntryValue">3</s:Int64>
@@ -190,19 +310,20 @@ using Microsoft.CodeAnalysis.CSharp;&#xD;
 using Microsoft.CodeAnalysis.CSharp.Syntax;&#xD;
 using Microsoft.CodeAnalysis.Formatting;&#xD;
 using Microsoft.CodeAnalysis.Simplification;&#xD;
+using Microsoft.CodeAnalysis.Text;&#xD;
 &#xD;
 namespace $NAMESPACE$&#xD;
 {&#xD;
-	[ExportCodeFixProvider(LanguageNames.CSharp, Name = "$diagnosticId$-$CLASS$"), Shared]&#xD;
-	public class $CLASS$ : Amusoft.CodeAnalysis.Analyzers.Shared.CodeFixProviderBase&#xD;
+	[ExportCodeFixProvider(LanguageNames.CSharp, Name = "$NAMESPACE$-$CLASS$"), Shared]&#xD;
+	public class $CLASS$ : Amusoft.CodeAnalysis.Analyzers.Shared.SingleDiagnosticDocumentCodeFixProviderBase&#xD;
 	{&#xD;
 		/// &lt;inheritdoc /&gt;&#xD;
-		protected override string DiagnosticId { get; } = "$diagnosticId$";&#xD;
+		protected override string DiagnosticId { get; } = $SELSTART$Amusoft.CodeAnalysis.Analyzers.Shared.DiagnosticIds.$complete$$SELEND$;&#xD;
 &#xD;
 		/// &lt;inheritdoc /&gt;&#xD;
 		protected override string GetEquivalenceKey(SyntaxNode rootNode)&#xD;
 		{&#xD;
-			return "$diagnosticId$-$CLASS$";&#xD;
+			return $"{DiagnosticId}-$CLASS$";&#xD;
 		}&#xD;
 &#xD;
 		/// &lt;inheritdoc /&gt;&#xD;
@@ -214,10 +335,16 @@ namespace $NAMESPACE$&#xD;
 		}&#xD;
 &#xD;
 		/// &lt;inheritdoc /&gt;&#xD;
-		protected override async Task&lt;SyntaxNode&gt; FixedDiagnosticAsync(SyntaxNode rootNode, SyntaxNode diagnosticNode, CodeFixContext context,&#xD;
+		protected override async Task&lt;Document&gt; GetFixedDiagnosticAsync(Document document, TextSpan span,&#xD;
 			CancellationToken cancellationToken)&#xD;
 		{&#xD;
-			return rootNode;&#xD;
+			var semanticModel = await document.GetSemanticModelAsync(cancellationToken)&#xD;
+				.ConfigureAwait(false);&#xD;
+			var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken)&#xD;
+				.ConfigureAwait(false);&#xD;
+			var diagnosticNode = syntaxRoot.FindNode(span);&#xD;
+&#xD;
+			return document;&#xD;
 		}&#xD;
 	}&#xD;
 }</s:String>
