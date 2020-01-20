@@ -3,11 +3,12 @@
 // See https://github.com/taori/Amusoft.CodeAnalysis.Analyzers/blob/master/LICENSE for details
 
 using System.Threading.Tasks;
+using Amusoft.CodeAnalysis.Analyzers.ACA0002;
 using Microsoft.CodeAnalysis.CSharp.Testing.MSTest;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static Microsoft.CodeAnalysis.Testing.DiagnosticResult;
-using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.MSTest.CodeFixVerifier<Microsoft.CodeAnalysis.Testing.EmptyDiagnosticAnalyzer,
+using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.MSTest.CodeFixVerifier<Amusoft.CodeAnalysis.Analyzers.ACA0002.CommentAnalyzer,
 		Amusoft.CodeAnalysis.Analyzers.ACA0002.FixByRemovingArrayInitializerComments>;
 
 namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.ACA0002
@@ -22,9 +23,9 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.ACA0002
 		}
 
 		[TestMethod]
-		public async Task DiagnosticAtObjectCreationExpression()
+		public async Task SimpleRemoval()
 		{
-			
+
 			var test = @"
 using System;
 using System.Collections.Generic;
@@ -37,14 +38,19 @@ namespace ConsoleApplication1
 {
     class TypeName
     {
-        TypeName()
+        private int[] TestMethod(int arg)
         {
-            var action = new Func<int, string>(TestMethod);
-        }
+            var diagnostics = new[]
+            {
+                // Test0.cs(9,11): info ACA0004: Comments can be removed from this method.
+                1,
+                // Test0.cs(11,11): info ACA0004: Comments can be removed from this method.
+                2,
+                // Test0.cs(17,22): info ACA0004: Comments can be removed from this method.
+                3,
+            };
 
-        private int TestMethod(int arg)
-        {
-            throw new NotImplementedException();
+            return diagnostics;
         }
     }
 }";
@@ -62,21 +68,30 @@ namespace ConsoleApplication1
 {
     class TypeName
     {
-        TypeName()
+        private int[] TestMethod(int arg)
         {
-            var action = new Func<int, string>(TestMethod);
-        }
+            var diagnostics = new[]
+            {
+                1,
+                2,
+                3,
+            };
 
-        private string TestMethod(int arg)
-        {
-            throw new NotImplementedException();
+            return diagnostics;
         }
     }
 }";
 			var diagnostics = new[]
 			{
-				CompilerError("CS0407").WithLocation(15, 48),
-			};
+				// Test0.cs(9,11): info ACA0005: Comments can be removed from this namespace.
+				Verifier.Diagnostic(CommentAnalyzer.NamespaceRule).WithSpan(9, 11, 9, 30),
+				// Test0.cs(11,11): info ACA0002: Comments can be removed from this class.
+				Verifier.Diagnostic(CommentAnalyzer.ClassRule).WithSpan(11, 11, 11, 19),
+				// Test0.cs(13,23): info ACA0003: Comments can be removed from this method.
+				Verifier.Diagnostic(CommentAnalyzer.MethodRule).WithSpan(13, 23, 13, 33),
+				// Test0.cs(15,31): info ACA0004: Comments can be removed from this array.
+				Verifier.Diagnostic(CommentAnalyzer.ArrayRule).WithSpan(15, 31, 15, 34)
+            };
 
 			await Verifier.VerifyCodeFixAsync(test, diagnostics, fixtest);
 		}

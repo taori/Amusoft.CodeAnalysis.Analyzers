@@ -3,11 +3,12 @@
 // See https://github.com/taori/Amusoft.CodeAnalysis.Analyzers/blob/master/LICENSE for details
 
 using System.Threading.Tasks;
+using Amusoft.CodeAnalysis.Analyzers.ACA0002;
 using Microsoft.CodeAnalysis.CSharp.Testing.MSTest;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static Microsoft.CodeAnalysis.Testing.DiagnosticResult;
-using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.MSTest.CodeFixVerifier<Microsoft.CodeAnalysis.Testing.EmptyDiagnosticAnalyzer,
+using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.MSTest.CodeFixVerifier<Amusoft.CodeAnalysis.Analyzers.ACA0002.CommentAnalyzer,
 		Amusoft.CodeAnalysis.Analyzers.ACA0002.FixByRemovingNamespaceComments>;
 
 namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.ACA0002
@@ -22,9 +23,9 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.ACA0002
 		}
 
 		[TestMethod]
-		public async Task DiagnosticAtObjectCreationExpression()
+		public async Task SimpleRemoval()
 		{
-			
+
 			var test = @"
 using System;
 using System.Collections.Generic;
@@ -35,16 +36,17 @@ using System.Diagnostics;
 
 namespace ConsoleApplication1
 {
+    // some comment
+    public enum Bla{}
+
     class TypeName
     {
         TypeName()
         {
-            var action = new Func<int, string>(TestMethod);
         }
 
-        private int TestMethod(int arg)
+        private void TestMethod(int arg)
         {
-            throw new NotImplementedException();
         }
     }
 }";
@@ -60,22 +62,23 @@ using System.Diagnostics;
 
 namespace ConsoleApplication1
 {
+    public enum Bla{}
+
     class TypeName
     {
         TypeName()
         {
-            var action = new Func<int, string>(TestMethod);
         }
 
-        private string TestMethod(int arg)
+        private void TestMethod(int arg)
         {
-            throw new NotImplementedException();
         }
     }
 }";
 			var diagnostics = new[]
 			{
-				CompilerError("CS0407").WithLocation(15, 48),
+				// Test0.cs(9,11): info ACA0005: Comments can be removed from this namespace.
+				Verifier.Diagnostic(CommentAnalyzer.NamespaceRule).WithSpan(9, 11, 9, 30)
 			};
 
 			await Verifier.VerifyCodeFixAsync(test, diagnostics, fixtest);

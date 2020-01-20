@@ -265,7 +265,7 @@ private static readonly LocalizableString $Name$Description = new LocalizableRes
 	Amusoft.CodeAnalysis.Analyzers.Resources.ResourceManager,&#xD;
 	typeof(Amusoft.CodeAnalysis.Analyzers.Resources));&#xD;
 &#xD;
-private static readonly DiagnosticDescriptor $Name$ = new DiagnosticDescriptor(&#xD;
+public static readonly DiagnosticDescriptor $Name$ = new DiagnosticDescriptor(&#xD;
 	Amusoft.CodeAnalysis.Analyzers.Shared.DiagnosticIds.ACA0002.DiagnosticOnArray, $Name$Title, $Name$MessageFormat, "ACA Diagnostics", DiagnosticSeverity.$severity$, isEnabledByDefault: true, description: $Name$Description);&#xD;
 &#xD;
 #endregion</s:String>
@@ -373,4 +373,5 @@ namespace $NAMESPACE$&#xD;
 			$END$&#xD;
 		},&#xD;
 	}&#xD;
-}.RunAsync();</s:String></wpf:ResourceDictionary>
+}.RunAsync();</s:String>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Rewriter/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

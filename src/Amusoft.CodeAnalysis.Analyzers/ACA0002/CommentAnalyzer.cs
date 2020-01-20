@@ -33,8 +33,8 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0002
 			Resources.ResourceManager,
 			typeof(Resources));
 
-		private static readonly DiagnosticDescriptor NamespaceRule = new DiagnosticDescriptor(
-			DiagnosticIds.ACA0002.DiagnosticOnArray, NamespaceRuleTitle, NamespaceRuleMessageFormat,
+		public static readonly DiagnosticDescriptor NamespaceRule = new DiagnosticDescriptor(
+			DiagnosticIds.ACA0002.DiagnosticOnNamespace, NamespaceRuleTitle, NamespaceRuleMessageFormat,
 			"ACA Diagnostics", DiagnosticSeverity.Info, isEnabledByDefault: true,
 			description: NamespaceRuleDescription);
 
@@ -57,8 +57,8 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0002
 			Resources.ResourceManager,
 			typeof(Resources));
 
-		private static readonly DiagnosticDescriptor ClassRule = new DiagnosticDescriptor(
-			DiagnosticIds.ACA0002.DiagnosticOnArray, ClassRuleTitle, ClassRuleMessageFormat,
+		public static readonly DiagnosticDescriptor ClassRule = new DiagnosticDescriptor(
+			DiagnosticIds.ACA0002.DiagnosticOnClass, ClassRuleTitle, ClassRuleMessageFormat,
 			"ACA Diagnostics", DiagnosticSeverity.Info, isEnabledByDefault: true, description: ClassRuleDescription);
 
 		#endregion
@@ -80,8 +80,8 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0002
 			Resources.ResourceManager,
 			typeof(Resources));
 
-		private static readonly DiagnosticDescriptor MethodRule = new DiagnosticDescriptor(
-			DiagnosticIds.ACA0002.DiagnosticOnArray, MethodRuleTitle, MethodRuleMessageFormat,
+		public static readonly DiagnosticDescriptor MethodRule = new DiagnosticDescriptor(
+			DiagnosticIds.ACA0002.DiagnosticOnMethod, MethodRuleTitle, MethodRuleMessageFormat,
 			"ACA Diagnostics", DiagnosticSeverity.Info, isEnabledByDefault: true, description: MethodRuleDescription);
 
 		#endregion
@@ -103,7 +103,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0002
 			Resources.ResourceManager,
 			typeof(Resources));
 
-		private static readonly DiagnosticDescriptor ArrayRule = new DiagnosticDescriptor(
+		public static readonly DiagnosticDescriptor ArrayRule = new DiagnosticDescriptor(
 			DiagnosticIds.ACA0002.DiagnosticOnArray, ArrayRuleTitle, ArrayRuleMessageFormat,
 			"ACA Diagnostics", DiagnosticSeverity.Info, isEnabledByDefault: true, description: ArrayRuleDescription);
 
@@ -119,7 +119,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0002
 			context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 			context.RegisterSyntaxNodeAction(AnalyzeNamespace, syntaxKinds: SyntaxKind.NamespaceDeclaration);
 			context.RegisterSyntaxNodeAction(AnalyzeClass, syntaxKinds: SyntaxKind.ClassDeclaration);
-			context.RegisterSyntaxNodeAction(AnalyzeMethod, syntaxKinds: SyntaxKind.ClassDeclaration);
+			context.RegisterSyntaxNodeAction(AnalyzeMethod, syntaxKinds: SyntaxKind.MethodDeclaration);
 			context.RegisterSyntaxNodeAction(AnalyzeArrayInitializer,
 				syntaxKinds: SyntaxKind.ArrayInitializerExpression);
 		}
@@ -144,15 +144,18 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0002
 		{
 			if (HasTrivia(context.Node) && context.Node is NamespaceDeclarationSyntax syntax)
 			{
-				context.ReportDiagnostic(Diagnostic.Create(MethodRule, syntax.Name.GetLocation()));
+				context.ReportDiagnostic(Diagnostic.Create(NamespaceRule, syntax.Name.GetLocation()));
 			}
 		}
 
 		private void AnalyzeArrayInitializer(SyntaxNodeAnalysisContext context)
 		{
-			if (HasTrivia(context.Node) && context.Node is ArrayCreationExpressionSyntax syntax)
+			if (HasTrivia(context.Node) && context.Node is InitializerExpressionSyntax syntax)
 			{
-				context.ReportDiagnostic(Diagnostic.Create(MethodRule, syntax.NewKeyword.GetLocation()));
+				if (syntax.Parent is ImplicitArrayCreationExpressionSyntax implicitArray)
+					context.ReportDiagnostic(Diagnostic.Create(ArrayRule, implicitArray.NewKeyword.GetLocation()));
+				if (syntax.Parent is ArrayCreationExpressionSyntax explicitArray)
+					context.ReportDiagnostic(Diagnostic.Create(ArrayRule, explicitArray.NewKeyword.GetLocation()));
 			}
 		}
 
@@ -160,7 +163,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0002
 		{
 			if (HasTrivia(context.Node) && context.Node is ClassDeclarationSyntax syntax)
 			{
-				context.ReportDiagnostic(Diagnostic.Create(MethodRule, syntax.Identifier.GetLocation()));
+				context.ReportDiagnostic(Diagnostic.Create(ClassRule, syntax.Identifier.GetLocation()));
 			}
 		}
 	}

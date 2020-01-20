@@ -33,20 +33,19 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0002
 		/// <inheritdoc />
 		protected override string GetTitle(SyntaxNode rootNode)
 		{
-			var member = GetAnnotationValue(rootNode, MemberAnnotation);
-			var typeName = GetAnnotationValue(rootNode, TypeAnnotation);
-			return string.Format(Resources.CommentAnalyzer_NamespaceRuleMessageFormat, member, typeName);
+			return Resources.CommentAnalyzer_NamespaceRuleMessageFormat;
 		}
 
 		/// <inheritdoc />
 		protected override async Task<Document> GetFixedDiagnosticAsync(Document document, TextSpan span,
 			CancellationToken cancellationToken)
 		{
-			var semanticModel = await document.GetSemanticModelAsync(cancellationToken)
-				.ConfigureAwait(false);
 			var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken)
 				.ConfigureAwait(false);
 			var diagnosticNode = syntaxRoot.FindNode(span);
+
+			if (diagnosticNode?.Parent is NamespaceDeclarationSyntax namespaceDeclarationSyntax)
+				return CommentRemovalUtility.RewriteDocument(document, syntaxRoot, namespaceDeclarationSyntax);
 
 			return document;
 		}
