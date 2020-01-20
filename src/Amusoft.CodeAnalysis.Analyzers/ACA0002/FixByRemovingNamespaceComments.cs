@@ -35,7 +35,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0002
 		{
 			var member = GetAnnotationValue(rootNode, MemberAnnotation);
 			var typeName = GetAnnotationValue(rootNode, TypeAnnotation);
-			return string.Format(Resources.MessageFormat_ACA0005_FixByRemovingNamespaceComments, member, typeName);
+			return string.Format(Resources.CommentAnalyzer_NamespaceRuleMessageFormat, member, typeName);
 		}
 
 		/// <inheritdoc />

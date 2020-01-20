@@ -3,10 +3,12 @@
 // See https://github.com/taori/Amusoft.CodeAnalysis.Analyzers/blob/master/LICENSE for details
 
 using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
 using Amusoft.CodeAnalysis.Analyzers.Shared;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Amusoft.CodeAnalysis.Analyzers.ACA0002
@@ -33,7 +35,8 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0002
 
 		private static readonly DiagnosticDescriptor NamespaceRule = new DiagnosticDescriptor(
 			DiagnosticIds.ACA0002.DiagnosticOnArray, NamespaceRuleTitle, NamespaceRuleMessageFormat,
-			"ACA Diagnostics", DiagnosticSeverity.Info, isEnabledByDefault: true, description: NamespaceRuleDescription);
+			"ACA Diagnostics", DiagnosticSeverity.Info, isEnabledByDefault: true,
+			description: NamespaceRuleDescription);
 
 		#endregion
 
@@ -57,6 +60,29 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0002
 		private static readonly DiagnosticDescriptor ClassRule = new DiagnosticDescriptor(
 			DiagnosticIds.ACA0002.DiagnosticOnArray, ClassRuleTitle, ClassRuleMessageFormat,
 			"ACA Diagnostics", DiagnosticSeverity.Info, isEnabledByDefault: true, description: ClassRuleDescription);
+
+		#endregion
+
+		#region MethodRule
+
+		private static readonly LocalizableString MethodRuleTitle = new LocalizableResourceString(
+			nameof(Resources.CommentAnalyzer_MethodRuleTitle),
+			Resources.ResourceManager,
+			typeof(Resources));
+
+		private static readonly LocalizableString MethodRuleMessageFormat = new LocalizableResourceString(
+			nameof(Resources.CommentAnalyzer_MethodRuleMessageFormat),
+			Resources.ResourceManager,
+			typeof(Resources));
+
+		private static readonly LocalizableString MethodRuleDescription = new LocalizableResourceString(
+			nameof(Resources.CommentAnalyzer_MethodRuleDescription),
+			Resources.ResourceManager,
+			typeof(Resources));
+
+		private static readonly DiagnosticDescriptor MethodRule = new DiagnosticDescriptor(
+			DiagnosticIds.ACA0002.DiagnosticOnArray, MethodRuleTitle, MethodRuleMessageFormat,
+			"ACA Diagnostics", DiagnosticSeverity.Info, isEnabledByDefault: true, description: MethodRuleDescription);
 
 		#endregion
 
@@ -84,33 +110,58 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0002
 		#endregion
 
 		/// <inheritdoc />
+		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => 
+			ImmutableArray.Create(NamespaceRule, ClassRule, MethodRule, ArrayRule);
+
+		/// <inheritdoc />
 		public override void Initialize(AnalysisContext context)
 		{
 			context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-			context.RegisterSyntaxNodeAction(AnalyzeClass, syntaxKinds: SyntaxKind.ClassDeclaration);
-			context.RegisterSyntaxNodeAction(AnalyzeArrayInitializer, syntaxKinds: SyntaxKind.ArrayInitializerExpression);
 			context.RegisterSyntaxNodeAction(AnalyzeNamespace, syntaxKinds: SyntaxKind.NamespaceDeclaration);
+			context.RegisterSyntaxNodeAction(AnalyzeClass, syntaxKinds: SyntaxKind.ClassDeclaration);
+			context.RegisterSyntaxNodeAction(AnalyzeMethod, syntaxKinds: SyntaxKind.ClassDeclaration);
+			context.RegisterSyntaxNodeAction(AnalyzeArrayInitializer,
+				syntaxKinds: SyntaxKind.ArrayInitializerExpression);
+		}
+
+		private bool HasTrivia(SyntaxNode node)
+		{
+			return node.DescendantTrivia().Any(d =>
+				d.IsKind(SyntaxKind.MultiLineCommentTrivia)
+				|| d.IsKind(SyntaxKind.SingleLineCommentTrivia)
+			);
+		}
+
+		private void AnalyzeMethod(SyntaxNodeAnalysisContext context)
+		{
+			if (HasTrivia(context.Node) && context.Node is MethodDeclarationSyntax syntax)
+			{
+				context.ReportDiagnostic(Diagnostic.Create(MethodRule, syntax.Identifier.GetLocation()));
+			}
 		}
 
 		private void AnalyzeNamespace(SyntaxNodeAnalysisContext context)
 		{
-			throw new System.NotImplementedException();
+			if (HasTrivia(context.Node) && context.Node is NamespaceDeclarationSyntax syntax)
+			{
+				context.ReportDiagnostic(Diagnostic.Create(MethodRule, syntax.Name.GetLocation()));
+			}
 		}
 
 		private void AnalyzeArrayInitializer(SyntaxNodeAnalysisContext context)
 		{
-			throw new System.NotImplementedException();
-		}
-
-		/// <inheritdoc />
-		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-		{
-			get { return ImmutableArray.Create(PrimaryRule); }
+			if (HasTrivia(context.Node) && context.Node is ArrayCreationExpressionSyntax syntax)
+			{
+				context.ReportDiagnostic(Diagnostic.Create(MethodRule, syntax.NewKeyword.GetLocation()));
+			}
 		}
 
 		private void AnalyzeClass(SyntaxNodeAnalysisContext context)
 		{
-			throw new System.NotImplementedException();
+			if (HasTrivia(context.Node) && context.Node is ClassDeclarationSyntax syntax)
+			{
+				context.ReportDiagnostic(Diagnostic.Create(MethodRule, syntax.Identifier.GetLocation()));
+			}
 		}
 	}
 }
