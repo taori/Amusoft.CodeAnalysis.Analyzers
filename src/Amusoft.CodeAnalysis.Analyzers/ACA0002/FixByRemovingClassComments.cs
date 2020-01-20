@@ -33,9 +33,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0002
 		/// <inheritdoc />
 		protected override string GetTitle(SyntaxNode rootNode)
 		{
-			var member = GetAnnotationValue(rootNode, MemberAnnotation);
-			var typeName = GetAnnotationValue(rootNode, TypeAnnotation);
-			return string.Format(Resources.CommentAnalyzer_ClassRuleMessageFormat, member, typeName);
+			return Resources.CommentAnalyzer_ClassRuleCodeFixMessage;
 		}
 
 		/// <inheritdoc />

@@ -33,7 +33,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0002
 		/// <inheritdoc />
 		protected override string GetTitle(SyntaxNode rootNode)
 		{
-			return Resources.CommentAnalyzer_NamespaceRuleMessageFormat;
+			return Resources.CommentAnalyzer_NamespaceRuleCodeFixMessage;
 		}
 
 		/// <inheritdoc />
