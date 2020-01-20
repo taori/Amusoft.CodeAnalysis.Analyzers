@@ -23,7 +23,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.ACA0002
 			await Verifier.VerifyCodeFixAsync(string.Empty, string.Empty);
 		}
 
-		[TestMethod, Ignore("Test framework can't handle the properly right now.")]
+		[TestMethod]
 		public async Task SimpleRemoval()
 		{
 
@@ -60,16 +60,6 @@ namespace ConsoleApplication1
         public enum Bla{}
     }
 }";
-			var diagnostics = new DiagnosticResult[]
-			{
-				// Test0.cs(9,11): info ACA0005: Comments can be removed from this namespace.
-				Verifier.Diagnostic(CommentAnalyzer.NamespaceRule).WithSpan(9, 11, 9, 30),
-// Test0.cs(11,11): info ACA0002: Comments can be removed from this class.
-				Verifier.Diagnostic(CommentAnalyzer.ClassRule).WithSpan(11, 11, 11, 19)
-			};
-
-			// await Verifier.VerifyCodeFixAsync(test, diagnostics, fixtest);
-
 			await new CodeFixTest<CommentAnalyzer, FixByRemovingClassComments>()
 			{
 				TestBehaviors = TestBehaviors.SkipGeneratedCodeCheck,
@@ -87,9 +77,7 @@ namespace ConsoleApplication1
 				},
 				FixedState =
 				{
-					ExpectedDiagnostics =
-					{
-					},
+					InheritanceMode = StateInheritanceMode.Explicit,
 					Sources = {fixtest}
 				},
 			}.RunAsync();

@@ -42,11 +42,15 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0002
 		protected override async Task<Document> GetFixedDiagnosticAsync(Document document, TextSpan span,
 			CancellationToken cancellationToken)
 		{
-			var semanticModel = await document.GetSemanticModelAsync(cancellationToken)
-				.ConfigureAwait(false);
 			var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken)
 				.ConfigureAwait(false);
-			var diagnosticNode = syntaxRoot.FindNode(span);
+
+			if (syntaxRoot.FindNode(span) is ImplicitArrayCreationExpressionSyntax implicitSyntaxNode)
+				return CommentRemovalUtility.RewriteDocument(document, syntaxRoot, implicitSyntaxNode);
+			if (syntaxRoot.FindNode(span) is ArrayCreationExpressionSyntax arrayCreationSyntax)
+				return CommentRemovalUtility.RewriteDocument(document, syntaxRoot, arrayCreationSyntax);
+			if (syntaxRoot.FindNode(span) is StackAllocArrayCreationExpressionSyntax stackAllocExpressionSyntax)
+				return CommentRemovalUtility.RewriteDocument(document, syntaxRoot, stackAllocExpressionSyntax);
 
 			return document;
 		}

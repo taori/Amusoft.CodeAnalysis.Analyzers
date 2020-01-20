@@ -120,8 +120,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0002
 			context.RegisterSyntaxNodeAction(AnalyzeNamespace, syntaxKinds: SyntaxKind.NamespaceDeclaration);
 			context.RegisterSyntaxNodeAction(AnalyzeClass, syntaxKinds: SyntaxKind.ClassDeclaration);
 			context.RegisterSyntaxNodeAction(AnalyzeMethod, syntaxKinds: SyntaxKind.MethodDeclaration);
-			context.RegisterSyntaxNodeAction(AnalyzeArrayInitializer,
-				syntaxKinds: SyntaxKind.ArrayInitializerExpression);
+			context.RegisterSyntaxNodeAction(AnalyzeArrayInitializer, syntaxKinds: SyntaxKind.ArrayInitializerExpression);
 		}
 
 		private bool HasTrivia(SyntaxNode node)
@@ -156,6 +155,8 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0002
 					context.ReportDiagnostic(Diagnostic.Create(ArrayRule, implicitArray.NewKeyword.GetLocation()));
 				if (syntax.Parent is ArrayCreationExpressionSyntax explicitArray)
 					context.ReportDiagnostic(Diagnostic.Create(ArrayRule, explicitArray.NewKeyword.GetLocation()));
+				if (syntax.Parent is StackAllocArrayCreationExpressionSyntax stackAllocArray)
+					context.ReportDiagnostic(Diagnostic.Create(ArrayRule, stackAllocArray.StackAllocKeyword.GetLocation()));
 			}
 		}
 

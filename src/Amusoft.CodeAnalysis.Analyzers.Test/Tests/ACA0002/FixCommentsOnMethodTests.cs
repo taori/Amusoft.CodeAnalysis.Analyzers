@@ -5,6 +5,7 @@
 using System.Threading.Tasks;
 using Amusoft.CodeAnalysis.Analyzers.ACA0002;
 using Amusoft.CodeAnalysis.Analyzers.Shared;
+using Amusoft.CodeAnalysis.Analyzers.Test.Helpers;
 using Microsoft.CodeAnalysis.CSharp.Testing.MSTest;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -23,7 +24,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.ACA0002
 			await Verifier.VerifyCodeFixAsync(string.Empty, string.Empty);
 		}
 
-		[TestMethod, Ignore("Test framework can't handle the properly right now.")]
+		[TestMethod]
 		public async Task SimpleRemoval()
 		{
 
@@ -75,18 +76,30 @@ namespace ConsoleApplication1
         }
     }
 }";
-			var diagnostics = new DiagnosticResult[]
+
+			await new CodeFixTest<CommentAnalyzer, FixByRemovingMethodComments>()
 			{
-				// Test0.cs(9,11): info ACA0005: Comments can be removed from this namespace.
-				Verifier.Diagnostic(CommentAnalyzer.NamespaceRule).WithSpan(9, 11, 9, 30),
-				// Test0.cs(11,11): info ACA0002: Comments can be removed from this class.
-				Verifier.Diagnostic(CommentAnalyzer.ClassRule).WithSpan(11, 11, 11, 19),
-				// Test0.cs(17,22): info ACA0003: Comments can be removed from this method.
-				Verifier.Diagnostic(CommentAnalyzer.MethodRule).WithSpan(17, 22, 17, 32)
-
-			};
-
-			await Verifier.VerifyCodeFixAsync(test, diagnostics, fixtest);
+				TestBehaviors = TestBehaviors.SkipGeneratedCodeCheck,
+				CompilerDiagnostics = CompilerDiagnostics.Errors | CompilerDiagnostics.Warnings,
+				TestState =
+				{
+					Sources = {test},
+					ExpectedDiagnostics =
+					{
+						// Test0.cs(9,11): info ACA0005: Comments can be removed from this namespace.
+						Verifier.Diagnostic(CommentAnalyzer.NamespaceRule).WithSpan(9, 11, 9, 30),
+						// Test0.cs(11,11): info ACA0002: Comments can be removed from this class.
+						Verifier.Diagnostic(CommentAnalyzer.ClassRule).WithSpan(11, 11, 11, 19),
+						// Test0.cs(17,22): info ACA0003: Comments can be removed from this method.
+						Verifier.Diagnostic(CommentAnalyzer.MethodRule).WithSpan(17, 22, 17, 32)
+					},
+				},
+				FixedState =
+				{
+					InheritanceMode = StateInheritanceMode.Explicit,
+					Sources = {fixtest}
+				},
+			}.RunAsync();
 		}
 	}
 }
