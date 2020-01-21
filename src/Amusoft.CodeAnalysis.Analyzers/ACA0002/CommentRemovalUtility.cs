@@ -17,8 +17,8 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0002
 		{
 			replacementTrivia = replacementTrivia ?? SyntaxFactory.ElasticMarker;
 
-			var rewritten = new CommentRemovalRewriter(replacementTrivia.Value).Visit(targetNode)
-				.WithAdditionalAnnotations(Microsoft.CodeAnalysis.Formatting.Formatter.Annotation);
+			var rewritten = new CommentRemovalRewriter(replacementTrivia.Value).Visit(targetNode);
+
 			return document.WithSyntaxRoot(root.ReplaceNode(targetNode, rewritten));
 		}
 	}

@@ -45,7 +45,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0002
 			var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken)
 				.ConfigureAwait(false);
 
-			SyntaxTrivia replacementTrivia = ElasticCarriageReturnLineFeed;
+			// SyntaxTrivia replacementTrivia = ElasticCarriageReturnLineFeed;
 			var comments = syntaxRoot.DescendantTrivia().Where(trivia => trivia.IsKind(SyntaxKind.SingleLineCommentTrivia) || trivia.IsKind(SyntaxKind.MultiLineCommentTrivia));
 
 			var replaced = syntaxRoot
@@ -53,16 +53,16 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0002
 			
 			return document.WithSyntaxRoot(replaced);
 
-			if (syntaxRoot.FindNode(span) is ImplicitArrayCreationExpressionSyntax implicitSyntaxNode)
-				return CommentRemovalUtility.RewriteDocument(document, syntaxRoot, implicitSyntaxNode, replacementTrivia);
-
-			if (syntaxRoot.FindNode(span) is ArrayCreationExpressionSyntax arrayCreationSyntax)
-				return CommentRemovalUtility.RewriteDocument(document, syntaxRoot, arrayCreationSyntax, replacementTrivia);
-
-			if (syntaxRoot.FindNode(span) is StackAllocArrayCreationExpressionSyntax stackAllocExpressionSyntax)
-				return CommentRemovalUtility.RewriteDocument(document, syntaxRoot, stackAllocExpressionSyntax, replacementTrivia);
-
-			return document;
+			// if (syntaxRoot.FindNode(span) is ImplicitArrayCreationExpressionSyntax implicitSyntaxNode)
+			// 	return CommentRemovalUtility.RewriteDocument(document, syntaxRoot, implicitSyntaxNode, replacementTrivia);
+			//
+			// if (syntaxRoot.FindNode(span) is ArrayCreationExpressionSyntax arrayCreationSyntax)
+			// 	return CommentRemovalUtility.RewriteDocument(document, syntaxRoot, arrayCreationSyntax, replacementTrivia);
+			//
+			// if (syntaxRoot.FindNode(span) is StackAllocArrayCreationExpressionSyntax stackAllocExpressionSyntax)
+			// 	return CommentRemovalUtility.RewriteDocument(document, syntaxRoot, stackAllocExpressionSyntax, replacementTrivia);
+			//
+			// return document;
 		}
 	}
 }
