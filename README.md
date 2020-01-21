@@ -31,6 +31,7 @@
 |ACA0003|Suggestion|Removes all comments within a method.|
 |ACA0004|Suggestion|Removes all comments within an array.|
 |ACA0005|Suggestion|Removes all comments within a namespace.|
+|ACA0006|Suggestion|Imports type as using static import.|
 
 ## References
 - [Repository docs](https://github.com/taori/Amusoft.CodeAnalysis.Analyzers/tree/master/docs)

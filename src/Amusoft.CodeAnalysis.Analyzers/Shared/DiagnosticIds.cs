@@ -19,5 +19,10 @@ namespace Amusoft.CodeAnalysis.Analyzers.Shared
 			public const string DiagnosticOnArray = "ACA0004";
 			public const string DiagnosticOnNamespace = "ACA0005";
 		}
+
+		public partial class ACA0006
+		{
+			public const string DiagnosticOnStaticClass = "ACA0006";
+		}
 	}
 }
