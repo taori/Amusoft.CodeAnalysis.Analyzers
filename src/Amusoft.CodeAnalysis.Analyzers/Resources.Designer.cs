@@ -314,6 +314,15 @@ namespace Amusoft.CodeAnalysis.Analyzers {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Unwrap Task.FromResult(); ähnelt.
+        /// </summary>
+        public static string MessageFormat_CS4016_FixByUnwrappingTaskFromResult {
+            get {
+                return ResourceManager.GetString("MessageFormat_CS4016_FixByUnwrappingTaskFromResult", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die  ähnelt.
         /// </summary>
         public static string ResxEntryAnalyzerDescription {

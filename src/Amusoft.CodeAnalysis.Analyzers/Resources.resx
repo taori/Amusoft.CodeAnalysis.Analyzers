@@ -201,6 +201,9 @@
   <data name="MessageFormat_CS1998_FixByWrappingInTaskResult" xml:space="preserve">
     <value>Wrap method exit points in Task.FromResult()</value>
   </data>
+  <data name="MessageFormat_CS4016_FixByUnwrappingTaskFromResult" xml:space="preserve">
+    <value>Unwrap Task.FromResult();</value>
+  </data>
   <data name="ResxEntryAnalyzerDescription" xml:space="preserve">
     <value />
   </data>
