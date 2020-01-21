@@ -14,13 +14,15 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Simplification;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Amusoft.CodeAnalysis.Analyzers.CS4016
 {
-	[ExportCodeFixProvider(LanguageNames.CSharp, Name = "Amusoft.CodeAnalysis.Analyzers.CS4016-FixByUnwrappingTaskFromResult"), Shared]
+	[ExportCodeFixProvider(LanguageNames.CSharp,
+		 Name = "Amusoft.CodeAnalysis.Analyzers.CS4016-FixByUnwrappingTaskFromResult"), Shared]
 	public class FixByUnwrappingTaskFromResult : SingleDiagnosticDocumentCodeFixProviderBase
 	{
 		/// <inheritdoc />
@@ -42,11 +44,25 @@ namespace Amusoft.CodeAnalysis.Analyzers.CS4016
 		protected override async Task<Document> GetFixedDiagnosticAsync(Document document, TextSpan span,
 			CancellationToken cancellationToken)
 		{
-			var semanticModel = await document.GetSemanticModelAsync(cancellationToken)
-				.ConfigureAwait(false);
 			var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken)
 				.ConfigureAwait(false);
 			var diagnosticNode = syntaxRoot.FindNode(span);
+
+			if (diagnosticNode is InvocationExpressionSyntax invocationExpression
+			    && invocationExpression.Expression is MemberAccessExpressionSyntax memberAccessExpression
+			    && memberAccessExpression.Name.Identifier.Text.Equals("FromResult")
+			    && memberAccessExpression.Expression is IdentifierNameSyntax nameSyntax
+			    && nameSyntax.Identifier.Text.Equals("Task"))
+			{
+				var argumentSyntax = invocationExpression.ArgumentList.Arguments.FirstOrDefault();
+				if (argumentSyntax != null)
+				{
+					var replaced = syntaxRoot.ReplaceNode(invocationExpression,
+						argumentSyntax.Expression);
+
+					return document.WithSyntaxRoot(replaced);
+				}
+			}
 
 			return document;
 		}
