@@ -117,6 +117,54 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CommentAnalyzer_ArrayRuleCodeFixMessage" xml:space="preserve">
+    <value>Remove all comments from array</value>
+  </data>
+  <data name="CommentAnalyzer_ArrayRuleDescription" xml:space="preserve">
+    <value>Comments can be removed from this array.</value>
+  </data>
+  <data name="CommentAnalyzer_ArrayRuleMessageFormat" xml:space="preserve">
+    <value>Comments can be removed from this array.</value>
+  </data>
+  <data name="CommentAnalyzer_ArrayRuleTitle" xml:space="preserve">
+    <value>Comments can be removed from this array.</value>
+  </data>
+  <data name="CommentAnalyzer_ClassRuleCodeFixMessage" xml:space="preserve">
+    <value>Remove all comments from class</value>
+  </data>
+  <data name="CommentAnalyzer_ClassRuleDescription" xml:space="preserve">
+    <value>Comments can be removed from this class.</value>
+  </data>
+  <data name="CommentAnalyzer_ClassRuleMessageFormat" xml:space="preserve">
+    <value>Comments can be removed from this class.</value>
+  </data>
+  <data name="CommentAnalyzer_ClassRuleTitle" xml:space="preserve">
+    <value>Comments can be removed from this class.</value>
+  </data>
+  <data name="CommentAnalyzer_MethodRuleCodeFixMessage" xml:space="preserve">
+    <value>Remove all comments from method</value>
+  </data>
+  <data name="CommentAnalyzer_MethodRuleDescription" xml:space="preserve">
+    <value>Comments can be removed from this method.</value>
+  </data>
+  <data name="CommentAnalyzer_MethodRuleMessageFormat" xml:space="preserve">
+    <value>Comments can be removed from this method.</value>
+  </data>
+  <data name="CommentAnalyzer_MethodRuleTitle" xml:space="preserve">
+    <value>Comments can be removed from this method.</value>
+  </data>
+  <data name="CommentAnalyzer_NamespaceRuleCodeFixMessage" xml:space="preserve">
+    <value>Remove all comments from namespace</value>
+  </data>
+  <data name="CommentAnalyzer_NamespaceRuleDescription" xml:space="preserve">
+    <value>Comments can be removed from this namespace.</value>
+  </data>
+  <data name="CommentAnalyzer_NamespaceRuleMessageFormat" xml:space="preserve">
+    <value>Comments can be removed from this namespace.</value>
+  </data>
+  <data name="CommentAnalyzer_NamespaceRuleTitle" xml:space="preserve">
+    <value>Comments can be removed from this namespace.</value>
+  </data>
   <data name="DelegateImplementationToFieldAnalyzerDescription" xml:space="preserve">
     <value>Delegates execution to collection member of class</value>
   </data>

@@ -62,6 +62,150 @@ namespace Amusoft.CodeAnalysis.Analyzers {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Remove all comments from array ähnelt.
+        /// </summary>
+        public static string CommentAnalyzer_ArrayRuleCodeFixMessage {
+            get {
+                return ResourceManager.GetString("CommentAnalyzer_ArrayRuleCodeFixMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Comments can be removed from this array. ähnelt.
+        /// </summary>
+        public static string CommentAnalyzer_ArrayRuleDescription {
+            get {
+                return ResourceManager.GetString("CommentAnalyzer_ArrayRuleDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Comments can be removed from this array. ähnelt.
+        /// </summary>
+        public static string CommentAnalyzer_ArrayRuleMessageFormat {
+            get {
+                return ResourceManager.GetString("CommentAnalyzer_ArrayRuleMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Comments can be removed from this array. ähnelt.
+        /// </summary>
+        public static string CommentAnalyzer_ArrayRuleTitle {
+            get {
+                return ResourceManager.GetString("CommentAnalyzer_ArrayRuleTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Remove all comments from class ähnelt.
+        /// </summary>
+        public static string CommentAnalyzer_ClassRuleCodeFixMessage {
+            get {
+                return ResourceManager.GetString("CommentAnalyzer_ClassRuleCodeFixMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Comments can be removed from this class. ähnelt.
+        /// </summary>
+        public static string CommentAnalyzer_ClassRuleDescription {
+            get {
+                return ResourceManager.GetString("CommentAnalyzer_ClassRuleDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Comments can be removed from this class. ähnelt.
+        /// </summary>
+        public static string CommentAnalyzer_ClassRuleMessageFormat {
+            get {
+                return ResourceManager.GetString("CommentAnalyzer_ClassRuleMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Comments can be removed from this class. ähnelt.
+        /// </summary>
+        public static string CommentAnalyzer_ClassRuleTitle {
+            get {
+                return ResourceManager.GetString("CommentAnalyzer_ClassRuleTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Remove all comments from method ähnelt.
+        /// </summary>
+        public static string CommentAnalyzer_MethodRuleCodeFixMessage {
+            get {
+                return ResourceManager.GetString("CommentAnalyzer_MethodRuleCodeFixMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Comments can be removed from this method. ähnelt.
+        /// </summary>
+        public static string CommentAnalyzer_MethodRuleDescription {
+            get {
+                return ResourceManager.GetString("CommentAnalyzer_MethodRuleDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Comments can be removed from this method. ähnelt.
+        /// </summary>
+        public static string CommentAnalyzer_MethodRuleMessageFormat {
+            get {
+                return ResourceManager.GetString("CommentAnalyzer_MethodRuleMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Comments can be removed from this method. ähnelt.
+        /// </summary>
+        public static string CommentAnalyzer_MethodRuleTitle {
+            get {
+                return ResourceManager.GetString("CommentAnalyzer_MethodRuleTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Remove all comments from namespace ähnelt.
+        /// </summary>
+        public static string CommentAnalyzer_NamespaceRuleCodeFixMessage {
+            get {
+                return ResourceManager.GetString("CommentAnalyzer_NamespaceRuleCodeFixMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Comments can be removed from this namespace. ähnelt.
+        /// </summary>
+        public static string CommentAnalyzer_NamespaceRuleDescription {
+            get {
+                return ResourceManager.GetString("CommentAnalyzer_NamespaceRuleDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Comments can be removed from this namespace. ähnelt.
+        /// </summary>
+        public static string CommentAnalyzer_NamespaceRuleMessageFormat {
+            get {
+                return ResourceManager.GetString("CommentAnalyzer_NamespaceRuleMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Comments can be removed from this namespace. ähnelt.
+        /// </summary>
+        public static string CommentAnalyzer_NamespaceRuleTitle {
+            get {
+                return ResourceManager.GetString("CommentAnalyzer_NamespaceRuleTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Delegates execution to collection member of class ähnelt.
         /// </summary>
         public static string DelegateImplementationToFieldAnalyzerDescription {

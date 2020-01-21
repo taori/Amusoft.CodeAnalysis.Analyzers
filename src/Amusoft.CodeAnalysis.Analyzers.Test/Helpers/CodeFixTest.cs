@@ -3,8 +3,10 @@
 // See https://github.com/taori/Amusoft.CodeAnalysis.Analyzers/blob/master/LICENSE for details
 
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
 
 namespace Amusoft.CodeAnalysis.Analyzers.Test.Helpers
@@ -13,6 +15,10 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Helpers
 		where TAnalyzer : DiagnosticAnalyzer, new() 
 		where TCodeFix : CodeFixProvider, new()
 	{
+		public CodeFixTest()
+		{
+			this.TestBehaviors = TestBehaviors.SkipGeneratedCodeCheck;
+		}
 	}
 
 	public class AnalyzerTest<TAnalyzer> : CSharpAnalyzerTest<TAnalyzer, MSTestVerifier> 

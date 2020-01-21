@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Amusoft.CodeAnalysis.Analyzers.ACA0001;
 using Amusoft.CodeAnalysis.Analyzers.Test.Helpers;
@@ -896,6 +897,7 @@ namespace ConsoleApplication1
 		// [TestMethod]
 		public void MultipleMemberVerification()
 		{
+#pragma warning disable 219
 			var test = @"
 using System;
 using System.Collections.Generic;
@@ -1073,5 +1075,6 @@ namespace ConsoleApplication1
 }";
 
 		}
-	}
+#pragma warning restore 219
+    }
 }
