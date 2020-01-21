@@ -24,6 +24,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.ACA0002
 		}
 
 		[TestMethod]
+		[Ignore]
 		public async Task SimpleRemoval()
 		{
 

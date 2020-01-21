@@ -5,6 +5,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Amusoft.CodeAnalysis.Analyzers.ACA0002
@@ -12,9 +13,12 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0002
 	internal static class CommentRemovalUtility
 	{
 		public static Document RewriteDocument(Document document, SyntaxNode root,
-			SyntaxNode targetNode)
+			SyntaxNode targetNode, SyntaxTrivia? replacementTrivia = null)
 		{
-			var rewritten = new CommentRemovalRewriter().Visit(targetNode);
+			replacementTrivia = replacementTrivia ?? SyntaxFactory.ElasticMarker;
+
+			var rewritten = new CommentRemovalRewriter(replacementTrivia.Value).Visit(targetNode)
+				.WithAdditionalAnnotations(Microsoft.CodeAnalysis.Formatting.Formatter.Annotation);
 			return document.WithSyntaxRoot(root.ReplaceNode(targetNode, rewritten));
 		}
 	}
