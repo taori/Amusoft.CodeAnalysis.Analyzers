@@ -12,11 +12,25 @@
 
 ## Codefixes
 
-- CS0123
-- CS0161
-- CS0407
-- CS1998
-- CS4016
+### CSharp Diagnostics
+
+|ID|Level|Description|
+|---|---|---|
+|CS0123|Error|Rewrites method signature or creates a signature which matches the requirement.|
+|CS0161|Error|Inserts throws NotImplementedException();|
+|CS0407|Error|Rewrites method signature to match the requirement.|
+|CS1998|Error|Wraps expression in Task.FromResult()|
+|CS4016|Error|Unwraps expression in Task.FromResult()|
+
+### Project Diagnostics
+
+|ID|Level|Description|
+|---|---|---|
+|ACA0001|Suggestion|Delegates implementation of an interface to a field/property with a collection type that also implements that interface.|
+|ACA0002|Suggestion|Removes all comments within a class.|
+|ACA0003|Suggestion|Removes all comments within a method.|
+|ACA0004|Suggestion|Removes all comments within an array.|
+|ACA0005|Suggestion|Removes all comments within a namespace.|
 
 ## References
 - [Repository docs](https://github.com/taori/Amusoft.CodeAnalysis.Analyzers/tree/master/docs)
