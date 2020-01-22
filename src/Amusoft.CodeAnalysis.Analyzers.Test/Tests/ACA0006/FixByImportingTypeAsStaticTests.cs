@@ -25,7 +25,7 @@ namespace ConsoleApplication1
     public static class Helper
     {
         public static void Method1() {}
-        public static void Method2() {}
+        public static void Method2(string value1, string value2) {}
         public static void Method3() {}
         public static void Method4() {}
     }
@@ -39,7 +39,7 @@ namespace ConsoleApplication1
     public static class Helper
     {
         public static void Method1() {}
-        public static void Method2() {}
+        public static void Method2(string value1, string value2) {}
         public static void Method3() {}
         public static void Method4() {}
         public static void Method5() {}
@@ -54,7 +54,7 @@ namespace ConsoleApplication1
     public static class Helper
     {
         public static void Method1() {}
-        public static void Method2() {}
+        public static void Method2(string value1, string value2) {}
         public static void Method3() {}
         public static readonly string Member1;
         public static string Member2 {get;} = ""somevalue"";
@@ -67,12 +67,147 @@ namespace ConsoleApplication1
 			await Verifier.VerifyCodeFixAsync(string.Empty, string.Empty);
 		}
 
-		// [DataTestMethod]
-		// [DataRow(LibraryFileCandidate, DisplayName = "MethodsOnly")]
-		// [DataRow(LibraryFileCandidate2, DisplayName = "MixedMembers")]
+		[DataTestMethod]
+		[DataRow(LibraryFileCandidate2, "Member1", DisplayName = "MemberAccess Member1")]
+		[DataRow(LibraryFileCandidate2, "Member2", DisplayName = "MemberAccess Member2")]
 		[TestMethod]
-		public async Task RewriteIfFiveOrMore()
-		// public async Task RewriteIfFiveOrMore(string libraryFile)
+		public async Task RewriteNonMethodAccess(string libraryFile, string memberName)
+		{
+			var test = $@"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using ConsoleApplication1;
+
+namespace ConsoleApplication1
+{{
+    class TypeName
+    {{
+        private string GetTypeName()
+        {{
+            return Helper.{memberName};
+        }}
+    }}
+}}";
+
+
+			var fixtest = $@"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using ConsoleApplication1;
+using static ConsoleApplication1.Helper;
+
+namespace ConsoleApplication1
+{{
+    class TypeName
+    {{
+        private string GetTypeName()
+        {{
+            return {memberName};
+        }}
+    }}
+}}";
+
+			await new CodeFixTest<StaticImportAnalyzer, FixByImportingTypeAsStatic>()
+			{
+				CompilerDiagnostics = CompilerDiagnostics.Errors,
+				TestState =
+				{
+					Sources = {test, libraryFile},
+					ExpectedDiagnostics =
+					{
+						// Test0.cs(16,20): info ACA0006: Import type "Helper" as static.
+						Verifier.Diagnostic().WithSpan(16, 20, 16, 26).WithArguments("Helper")
+
+					},
+				},
+				FixedState =
+				{
+					Sources = {fixtest, libraryFile},
+				},
+			}.RunAsync();
+		}
+
+
+		[DataTestMethod]
+		[DataRow(LibraryFileCandidate, DisplayName = "MethodsOnly")]
+		[DataRow(LibraryFileCandidate2, DisplayName = "MixedMembers")]
+		[TestMethod]
+		public async Task RewriteIfFiveOrMoreWithParameters(string libraryFile)
+		{
+			var test = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using ConsoleApplication1;
+
+namespace ConsoleApplication1
+{
+    class TypeName
+    {
+        TypeName()
+        {
+            Helper.Method2(""value1"", ""value2"");
+        }
+    }
+}";
+
+
+			var fixtest = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using ConsoleApplication1;
+using static ConsoleApplication1.Helper;
+
+namespace ConsoleApplication1
+{
+    class TypeName
+    {
+        TypeName()
+        {
+            Method2(""value1"", ""value2"");
+        }
+    }
+}";
+
+			await new CodeFixTest<StaticImportAnalyzer, FixByImportingTypeAsStatic>()
+			{
+				CompilerDiagnostics = CompilerDiagnostics.Errors,
+				TestState =
+				{
+					Sources = {test, libraryFile},
+					ExpectedDiagnostics =
+					{
+						// Test0.cs(16,13): info ACA0006: Import type "Helper" as static.
+						Verifier.Diagnostic().WithSpan(16, 13, 16, 19).WithArguments("Helper")
+					},
+				},
+				FixedState =
+				{
+					Sources = {fixtest, libraryFile},
+				},
+			}.RunAsync();
+		}
+
+		[DataTestMethod]
+		[DataRow(LibraryFileCandidate, DisplayName = "MethodsOnly")]
+		[DataRow(LibraryFileCandidate2, DisplayName = "MixedMembers")]
+		[TestMethod]
+		public async Task RewriteIfFiveOrMore(string libraryFile)
 		{
 			var test = @"
 using System;
@@ -121,7 +256,7 @@ namespace ConsoleApplication1
 				CompilerDiagnostics = CompilerDiagnostics.Errors,
 				TestState =
 				{
-					Sources = {test, LibraryFileCandidate},
+					Sources = {test, libraryFile},
 					ExpectedDiagnostics =
 					{
 						// Test0.cs(16,13): info ACA0006: Import type "Helper" as static.
@@ -130,10 +265,79 @@ namespace ConsoleApplication1
 				},
 				FixedState =
 				{
-					Sources = {fixtest, LibraryFileCandidate},
+					Sources = {fixtest, libraryFile},
 				},
 			}.RunAsync();
 		}
+
+		[DataTestMethod]
+		[DataRow(LibraryFileCandidate, DisplayName = "MethodsOnly")]
+		[DataRow(LibraryFileCandidate2, DisplayName = "MixedMembers")]
+		[TestMethod]
+		public async Task DoNotDuplicateUsingstatements(string libraryFile)
+		{
+			var test = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using ConsoleApplication1;
+using static ConsoleApplication1.Helper;
+
+namespace ConsoleApplication1
+{
+    class TypeName
+    {
+        TypeName()
+        {
+            Helper.Method1();
+        }
+    }
+}";
+
+
+			var fixtest = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using ConsoleApplication1;
+using static ConsoleApplication1.Helper;
+
+namespace ConsoleApplication1
+{
+    class TypeName
+    {
+        TypeName()
+        {
+            Method1();
+        }
+    }
+}";
+
+			await new CodeFixTest<StaticImportAnalyzer, FixByImportingTypeAsStatic>()
+			{
+				CompilerDiagnostics = CompilerDiagnostics.Errors,
+				TestState =
+				{
+					Sources = {test, libraryFile},
+					ExpectedDiagnostics =
+					{
+						// Test0.cs(16,13): info ACA0006: Import type "Helper" as static.
+						Verifier.Diagnostic().WithSpan(17, 13, 17, 19).WithArguments("Helper")
+					},
+				},
+				FixedState =
+				{
+					Sources = {fixtest, libraryFile},
+				},
+			}.RunAsync();
+		}
+
 
 		[TestMethod]
 		public async Task DoNotRewriteIfLessThan5Methods()

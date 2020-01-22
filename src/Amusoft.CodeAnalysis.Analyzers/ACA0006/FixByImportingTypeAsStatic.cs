@@ -61,28 +61,29 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0006
 			if (typeSymbol == null)
 				return document;
 
+			var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
+				.ConfigureAwait(false);
+
 			var usingDirective = UsingDirective(
 					ParseName(typeSymbol.ToString()))
 				.WithStaticKeyword(Token(SyntaxKind.StaticKeyword))
 				.WithAdditionalAnnotations(Formatter.Annotation);
 
-			IdentifierNameSyntax s = IdentifierName("bla");
 			var lastDirective = syntaxRoot.DescendantNodes().OfType<UsingDirectiveSyntax>().LastOrDefault();
-			var replacedEnd = InvocationExpression(
-				ParseExpression(accessExpressionSyntax.Name.Identifier.Text), ArgumentList()
-			);
 
-			var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
-				.ConfigureAwait(false);
+			if(!(accessExpressionSyntax.Parent is InvocationExpressionSyntax parentExpressionSyntax))
+				return document;
+
+			var staticCallReplacement = InvocationExpression(
+					IdentifierName(accessExpressionSyntax.Name.Identifier.Text),
+					parentExpressionSyntax.ArgumentList
+				)
+				.WithAdditionalAnnotations(Formatter.Annotation);
+
+			editor.ReplaceNode(accessExpressionSyntax.Parent,
+				staticCallReplacement);
 			editor.InsertAfter(lastDirective, usingDirective);
-			editor.ReplaceNode(accessExpressionSyntax,
-				replacedEnd);
 
-			var updated = syntaxRoot
-				.InsertNodesAfter(lastDirective, new[] {usingDirective})
-				.ReplaceNode(accessExpressionSyntax, replacedEnd);
-
-			return document.WithSyntaxRoot(updated);
 			return editor.GetChangedDocument();
 		}
 	}
