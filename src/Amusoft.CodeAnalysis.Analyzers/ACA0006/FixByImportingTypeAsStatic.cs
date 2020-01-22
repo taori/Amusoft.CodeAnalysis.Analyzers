@@ -2,6 +2,8 @@
 // This file is a part of Amusoft.CodeAnalysis.Analyzers and is licensed under Apache 2.0
 // See https://github.com/taori/Amusoft.CodeAnalysis.Analyzers/blob/master/LICENSE for details
 
+using System;
+using System.Collections.Generic;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using System.Composition;
 using System.Linq;
@@ -69,22 +71,64 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0006
 				.WithStaticKeyword(Token(SyntaxKind.StaticKeyword))
 				.WithAdditionalAnnotations(Formatter.Annotation);
 
-			var lastDirective = syntaxRoot.DescendantNodes().OfType<UsingDirectiveSyntax>().LastOrDefault();
-
-			if(!(accessExpressionSyntax.Parent is InvocationExpressionSyntax parentExpressionSyntax))
+			var replacement = GetReplacementNode(semanticModel, accessExpressionSyntax);
+			if (replacement == null)
 				return document;
 
-			var staticCallReplacement = InvocationExpression(
-					IdentifierName(accessExpressionSyntax.Name.Identifier.Text),
-					parentExpressionSyntax.ArgumentList
-				)
-				.WithAdditionalAnnotations(Formatter.Annotation);
+			var lastDirective = syntaxRoot.DescendantNodes().OfType<UsingDirectiveSyntax>().LastOrDefault();
 
-			editor.ReplaceNode(accessExpressionSyntax.Parent,
-				staticCallReplacement);
-			editor.InsertAfter(lastDirective, usingDirective);
+			editor.ReplaceNode(GetInvocationTarget(semanticModel, accessExpressionSyntax),
+				replacement);
+
+			if (!UsingDirectiveAlreadyExists(syntaxRoot, usingDirective))
+			{
+				editor.InsertAfter(lastDirective, usingDirective);
+			}
 
 			return editor.GetChangedDocument();
+		}
+
+		private bool UsingDirectiveAlreadyExists(SyntaxNode syntaxRoot,
+			UsingDirectiveSyntax newDirective)
+		{
+			return syntaxRoot
+				.DescendantNodes()
+				.OfType<UsingDirectiveSyntax>()
+				.Any(directive => !directive.StaticKeyword.IsMissing
+				                  && directive.Name.IsEquivalentTo(newDirective.Name));
+		}
+
+		private SyntaxNode GetInvocationTarget(SemanticModel semanticModel,
+			MemberAccessExpressionSyntax accessExpressionSyntax)
+		{
+			if (accessExpressionSyntax.Parent is InvocationExpressionSyntax parentInvocationExpressionSyntax)
+				return parentInvocationExpressionSyntax;
+
+			return accessExpressionSyntax;
+		}
+
+		private SyntaxNode GetReplacementNode(SemanticModel semanticModel,
+			MemberAccessExpressionSyntax accessExpressionSyntax)
+		{
+			var memberSymbol = semanticModel.GetSymbolInfo(accessExpressionSyntax.Name).Symbol;
+			if (memberSymbol != null)
+			{
+				if (memberSymbol is IMethodSymbol methodSymbol)
+				{
+					if (accessExpressionSyntax.Parent is InvocationExpressionSyntax invocationExpression)
+						return InvocationExpression(
+								IdentifierName(accessExpressionSyntax.Name.Identifier.Text),
+								invocationExpression.ArgumentList
+							)
+							.WithAdditionalAnnotations(Formatter.Annotation);
+				}
+
+				if (memberSymbol is IFieldSymbol || memberSymbol is IPropertySymbol)
+					return IdentifierName(accessExpressionSyntax.Name.Identifier)
+						.WithAdditionalAnnotations(Formatter.Annotation);
+			}
+
+			return null;
 		}
 	}
 }
