@@ -213,4 +213,13 @@
   <data name="ResxEntryAnalyzerTitle" xml:space="preserve">
     <value />
   </data>
+  <data name="StaticImportAnalyzer_PrimaryRuleDescription" xml:space="preserve">
+    <value>Static types with five or more static methods can be imported as static type declaration</value>
+  </data>
+  <data name="StaticImportAnalyzer_PrimaryRuleMessageFormat_0" xml:space="preserve">
+    <value>Import type "{0}" as static.</value>
+  </data>
+  <data name="StaticImportAnalyzer_PrimaryRuleTitle" xml:space="preserve">
+    <value>Type can be imported statically.</value>
+  </data>
 </root>

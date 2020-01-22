@@ -348,5 +348,32 @@ namespace Amusoft.CodeAnalysis.Analyzers {
                 return ResourceManager.GetString("ResxEntryAnalyzerTitle", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Static types with five or more static methods can be imported as static type declaration ähnelt.
+        /// </summary>
+        public static string StaticImportAnalyzer_PrimaryRuleDescription {
+            get {
+                return ResourceManager.GetString("StaticImportAnalyzer_PrimaryRuleDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Import type &quot;{0}&quot; as static. ähnelt.
+        /// </summary>
+        public static string StaticImportAnalyzer_PrimaryRuleMessageFormat_0 {
+            get {
+                return ResourceManager.GetString("StaticImportAnalyzer_PrimaryRuleMessageFormat_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Type can be imported statically. ähnelt.
+        /// </summary>
+        public static string StaticImportAnalyzer_PrimaryRuleTitle {
+            get {
+                return ResourceManager.GetString("StaticImportAnalyzer_PrimaryRuleTitle", resourceCulture);
+            }
+        }
     }
 }

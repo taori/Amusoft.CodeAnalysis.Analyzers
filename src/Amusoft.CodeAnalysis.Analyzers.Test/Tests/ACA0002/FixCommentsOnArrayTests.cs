@@ -24,7 +24,6 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.ACA0002
 		}
 
 		[TestMethod]
-		[Ignore]
 		public async Task SimpleRemoval()
 		{
 
@@ -74,8 +73,11 @@ namespace ConsoleApplication1
         {
             var diagnostics = new[]
             {
+
                 1,
+
                 2,
+
                 3,
             };
 
