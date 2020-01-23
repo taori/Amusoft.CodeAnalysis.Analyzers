@@ -28,6 +28,77 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.ACA0001
 		}
 
 
+
+		[TestMethod]
+		public async Task RespondsToNotImplemented()
+		{
+			var test = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    public interface ICustomInterface
+    {
+        Task Method1(object p1);
+    }
+
+    class TypeName : ICustomInterface
+    {
+        private ICollection<ICustomInterface> _disposables;
+
+        public async Task Method1(object p1) => throw new NotImplementedException();
+    }
+}";
+
+			await Verifier.VerifyAnalyzerAsync(test,
+				new[]
+				{
+					// Test0.cs(21,27): info ACA0001: Forward execution of "Method1" to member "_disposables"
+					Verifier.Diagnostic().WithSpan(21, 27, 21, 34).WithArguments("Method1", "_disposables")
+				}
+			);
+		}
+
+		[TestMethod]
+		public async Task DoesNotRespondToNonNotImplemented()
+		{
+			var testWithOtherException = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    public interface ICustomInterface
+    {
+        Task Method1(object p1);
+    }
+
+    class TypeName : ICustomInterface
+    {
+        private ICollection<ICustomInterface> _disposables;
+
+        public async Task Method1(object p1) => throw new Exception();
+    }
+}";
+
+			await Verifier.VerifyAnalyzerAsync(testWithOtherException,
+				new DiagnosticResult[]
+				{
+				}
+			);
+		}
+
 		[TestMethod]
 		public async Task FieldButNoDelegation()
 		{

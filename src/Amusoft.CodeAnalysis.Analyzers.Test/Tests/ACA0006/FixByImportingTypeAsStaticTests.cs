@@ -125,7 +125,6 @@ namespace ConsoleApplication1
 					{
 						// Test0.cs(16,20): info ACA0006: Import type "Helper" as static.
 						Verifier.Diagnostic().WithSpan(16, 20, 16, 26).WithArguments("Helper")
-
 					},
 				},
 				FixedState =
@@ -337,6 +336,49 @@ namespace ConsoleApplication1
 				},
 			}.RunAsync();
 		}
+
+		[TestMethod]
+		public async Task DoNotShowDiagnosticsForInstanceMethodInvocations()
+		{
+			var test = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using ConsoleApplication1;
+
+namespace ConsoleApplication1
+{
+    class TypeName
+    {
+        TypeName()
+        {
+            var someText = ""something"";
+            var bla = someText.ToString();
+        }
+    }
+}";
+
+			await new CodeFixTest<StaticImportAnalyzer, FixByImportingTypeAsStatic>()
+			{
+				CompilerDiagnostics = CompilerDiagnostics.Errors,
+				TestState =
+				{
+					Sources = {test, LibraryFileCandidate},
+					ExpectedDiagnostics =
+					{
+
+					},
+				},
+				FixedState =
+				{
+					Sources = {test, LibraryFileCandidate},
+				},
+			}.RunAsync();
+		}
+
 
 
 		[TestMethod]

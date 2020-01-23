@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
+using System.Linq.Expressions;
 using Amusoft.CodeAnalysis.Analyzers.Extensions;
 using Amusoft.CodeAnalysis.Analyzers.Shared;
 using Microsoft.CodeAnalysis;
@@ -22,17 +23,26 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 		{
 			public const string MemberName = "MemberName";
 		}
-		
+
 		public const string DiagnosticId = DiagnosticIds.ACA0001.FixByForwardingToCollectionChildren;
 
 		// You can change these strings in the Resources.resx file. If you do not want your analyzer to be localize-able, you can use regular strings for Title and MessageFormat.
 		// See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Localizing%20Analyzers.md for more on localization
-		private static readonly LocalizableString Title = new LocalizableResourceString(nameof(Resources.DelegateImplementationToFieldAnalyzerTitle), Resources.ResourceManager, typeof(Resources));
-		private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(Resources.DelegateImplementationToFieldAnalyzerMessageFormat), Resources.ResourceManager, typeof(Resources));
-		private static readonly LocalizableString Description = new LocalizableResourceString(nameof(Resources.DelegateImplementationToFieldAnalyzerDescription), Resources.ResourceManager, typeof(Resources));
+		private static readonly LocalizableString Title = new LocalizableResourceString(
+			nameof(Resources.DelegateImplementationToFieldAnalyzerTitle), Resources.ResourceManager, typeof(Resources));
+
+		private static readonly LocalizableString MessageFormat = new LocalizableResourceString(
+			nameof(Resources.DelegateImplementationToFieldAnalyzerMessageFormat), Resources.ResourceManager,
+			typeof(Resources));
+
+		private static readonly LocalizableString Description = new LocalizableResourceString(
+			nameof(Resources.DelegateImplementationToFieldAnalyzerDescription), Resources.ResourceManager,
+			typeof(Resources));
+
 		private const string Category = "CodeGeneration";
 
-		private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, "ACA Diagnostics", DiagnosticSeverity.Info, isEnabledByDefault: true, description: Description);
+		private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat,
+			"ACA Diagnostics", DiagnosticSeverity.Info, isEnabledByDefault: true, description: Description);
 
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
 		{
@@ -42,7 +52,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 		public override void Initialize(AnalysisContext context)
 		{
 			context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-			context.RegisterSyntaxNodeAction(AnalyzeSyntax,SyntaxKind.ClassDeclaration);
+			context.RegisterSyntaxNodeAction(AnalyzeSyntax, SyntaxKind.ClassDeclaration);
 		}
 
 		private static void AnalyzeSyntax(SyntaxNodeAnalysisContext context)
@@ -51,12 +61,14 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 				AnalyzeClass(context);
 		}
 
-		private static Dictionary<ITypeSymbol, HashSet<ISymbol>> GetMemberCandidates(SyntaxNodeAnalysisContext context, ClassDeclarationSyntax classDeclarationSyntax)
+		private static Dictionary<ITypeSymbol, HashSet<ISymbol>> GetMemberCandidates(SyntaxNodeAnalysisContext context,
+			ClassDeclarationSyntax classDeclarationSyntax)
 		{
 			var fieldSymbols = classDeclarationSyntax
 				.ChildNodes()
 				.OfType<FieldDeclarationSyntax>()
-				.Select(syntax => context.SemanticModel.GetDeclaredSymbol(syntax.Declaration.Variables.First()) as IFieldSymbol)
+				.Select(syntax =>
+					context.SemanticModel.GetDeclaredSymbol(syntax.Declaration.Variables.First()) as IFieldSymbol)
 				.ToImmutableArray();
 
 			var propertySymbols = classDeclarationSyntax
@@ -77,7 +89,8 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 
 			foreach (var propertySymbol in propertySymbols)
 			{
-				if (propertySymbol.GetMethod.ReturnType.TryGetEnumerableType(context.SemanticModel, out var implementationSymbol))
+				if (propertySymbol.GetMethod.ReturnType.TryGetEnumerableType(context.SemanticModel,
+					out var implementationSymbol))
 				{
 					var members = memberCandidates.GetOrInitialize(implementationSymbol, d => new HashSet<ISymbol>());
 					members.Add(propertySymbol);
@@ -87,13 +100,15 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 			return memberCandidates;
 		}
 
-		private static bool IsMethodCandidate(SyntaxNodeAnalysisContext context, MethodDeclarationSyntax methodSyntax, Dictionary<ITypeSymbol, HashSet<ISymbol>> memberCandidates)
+		private static bool IsMethodCandidate(SyntaxNodeAnalysisContext context, MethodDeclarationSyntax methodSyntax,
+			Dictionary<ITypeSymbol, HashSet<ISymbol>> memberCandidates)
 		{
 			bool IsMethodCandidate(ITypeSymbol interfaceSymbol, IMethodSymbol currentMethodSymbol)
 			{
 				foreach (var memberSymbol in interfaceSymbol.GetMembers())
 				{
-					if (currentMethodSymbol.ContainingType.FindImplementationForInterfaceMember(memberSymbol).Equals(currentMethodSymbol))
+					if (currentMethodSymbol.ContainingType.FindImplementationForInterfaceMember(memberSymbol)
+						.Equals(currentMethodSymbol))
 						return true;
 				}
 
@@ -110,21 +125,59 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 			return memberCandidates.Keys.Any(interfaceSymbol => IsMethodCandidate(interfaceSymbol, methodSymbol));
 		}
 
-
-		private static bool MethodIsEmptyOrNotImplemented(MethodDeclarationSyntax methodDeclarationSyntax)
+		private static bool MethodIsEmptyOrNotImplemented(SemanticModel semanticModel,
+			MethodDeclarationSyntax methodDeclarationSyntax)
 		{
-			if (methodDeclarationSyntax.Body.Statements.Count == 0)
-				return true;
-
-			if (methodDeclarationSyntax.Body.Statements.Count == 1 && methodDeclarationSyntax.Body.Statements[0] is ThrowStatementSyntax)
+			if (methodDeclarationSyntax.ExpressionBody != null)
 			{
-				return true;
+				if (methodDeclarationSyntax.ExpressionBody is ArrowExpressionClauseSyntax arrowExpressionClause)
+				{
+					var anyThrow = IsEmptyExpression(arrowExpressionClause.Expression)
+					               || IsNotImplementedExpression(semanticModel, arrowExpressionClause.Expression);
+
+					return anyThrow;
+				}
+			}
+
+			if (methodDeclarationSyntax.Body != null)
+			{
+				if (methodDeclarationSyntax.Body.Statements.Count == 0)
+					return true;
+
+				if (methodDeclarationSyntax.Body.Statements.Count == 1 &&
+				    methodDeclarationSyntax.Body.Statements[0] is ThrowStatementSyntax)
+				{
+					return true;
+				}
 			}
 
 			return false;
 		}
 
-		private static bool MethodCanBeFixed(SemanticModel semanticModel, MethodDeclarationSyntax methodDeclarationSyntax)
+		private static bool IsNotImplementedExpression(SemanticModel semanticModel, ExpressionSyntax expression)
+		{
+			return expression.IsKind(SyntaxKind.ThrowExpression)
+			       && expression is ThrowExpressionSyntax throwExpression
+			       && throwExpression.Expression is ObjectCreationExpressionSyntax objectCreationExpression
+			       && semanticModel.GetSymbolInfo(objectCreationExpression.Type).Symbol is INamedTypeSymbol
+				       initializerType
+			       && initializerType.Equals(
+				       semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException"));
+		}
+
+		private static bool IsEmptyExpression(ExpressionSyntax expression)
+		{
+			return expression is InvocationExpressionSyntax
+					invocationExpression && invocationExpression.Expression is MemberAccessExpressionSyntax
+						                     memberAccessExpression
+					                     && memberAccessExpression.Name.Identifier.Text.Equals(nameof(Expression.Empty))
+					                     && memberAccessExpression.Expression is IdentifierNameSyntax
+						                     identifierNameSyntax
+					                     && identifierNameSyntax.Identifier.Text.Equals(nameof(Expression));
+		}
+
+		private static bool MethodCanBeFixed(SemanticModel semanticModel,
+			MethodDeclarationSyntax methodDeclarationSyntax)
 		{
 			if (semanticModel.GetDeclaredSymbol(methodDeclarationSyntax) is IMethodSymbol methodSymbol)
 			{
@@ -139,7 +192,8 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 
 		public static class DiagnosticHelper
 		{
-			public static bool TryAnalyzeMethod(SemanticModel semanticModel, IMethodSymbol methodSymbol, out bool returnTask, out bool returnBool)
+			public static bool TryAnalyzeMethod(SemanticModel semanticModel, IMethodSymbol methodSymbol,
+				out bool returnTask, out bool returnBool)
 			{
 				returnTask = false;
 				returnBool = false;
@@ -170,7 +224,9 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 
 		private static void AnalyzeClass(SyntaxNodeAnalysisContext context)
 		{
-			if (context.Node is ClassDeclarationSyntax classDeclarationSyntax && context.SemanticModel.GetDeclaredSymbol(classDeclarationSyntax, context.CancellationToken) is var classSymbol)
+			if (context.Node is ClassDeclarationSyntax classDeclarationSyntax &&
+			    context.SemanticModel.GetDeclaredSymbol(classDeclarationSyntax, context.CancellationToken) is var
+				    classSymbol)
 			{
 				if (classSymbol.AllInterfaces.Length == 0)
 					return;
@@ -180,11 +236,11 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 				var methods = classDeclarationSyntax
 					.ChildNodes()
 					.OfType<MethodDeclarationSyntax>()
-					.Where(MethodIsEmptyOrNotImplemented)
-					.Where(d => MethodCanBeFixed(context.SemanticModel, d))
-					.Where(d => IsMethodCandidate(context, d, memberCandidates))
+					.Where(method => MethodIsEmptyOrNotImplemented(context.SemanticModel, method))
+					.Where(method => MethodCanBeFixed(context.SemanticModel, method))
+					.Where(method => IsMethodCandidate(context, method, memberCandidates))
 					.ToImmutableArray();
-				
+
 				foreach (var interfaceSymbol in classSymbol.AllInterfaces)
 				{
 					if (memberCandidates.TryGetValue(interfaceSymbol, out var matchingMembers))
@@ -198,7 +254,8 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 			}
 		}
 
-		private static void AttachDiagnostics(SyntaxNodeAnalysisContext context, ISymbol memberSymbol, ImmutableArray<MethodDeclarationSyntax> methods)
+		private static void AttachDiagnostics(SyntaxNodeAnalysisContext context, ISymbol memberSymbol,
+			ImmutableArray<MethodDeclarationSyntax> methods)
 		{
 			foreach (var methodDeclarationSyntax in methods)
 			{
@@ -209,9 +266,10 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 					if (syntax is VariableDeclaratorSyntax variableDeclarator)
 					{
 						context.ReportDiagnostic(Diagnostic.Create(
-							Rule, 
+							Rule,
 							methodDeclarationSyntax.Identifier.GetLocation(),
-							new Dictionary<string, string>(){{Properties.MemberName, variableDeclarator.Identifier.Text}}.ToImmutableDictionary(),
+							new Dictionary<string, string>()
+								{{Properties.MemberName, variableDeclarator.Identifier.Text}}.ToImmutableDictionary(),
 							methodDeclarationSyntax.Identifier.Text, variableDeclarator.Identifier.Text));
 					}
 
@@ -220,7 +278,9 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0001
 						context.ReportDiagnostic(Diagnostic.Create(
 							Rule,
 							methodDeclarationSyntax.Identifier.GetLocation(),
-							new Dictionary<string, string>() { { Properties.MemberName, propertyDeclarationSyntax.Identifier.Text } }.ToImmutableDictionary(),
+							new Dictionary<string, string>()
+									{{Properties.MemberName, propertyDeclarationSyntax.Identifier.Text}}
+								.ToImmutableDictionary(),
 							methodDeclarationSyntax.Identifier.Text, propertyDeclarationSyntax.Identifier.Text));
 					}
 				}
