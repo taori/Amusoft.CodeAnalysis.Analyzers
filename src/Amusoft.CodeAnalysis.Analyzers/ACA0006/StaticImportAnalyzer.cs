@@ -60,6 +60,9 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0006
 		{
 			if (context.Node is MemberAccessExpressionSyntax memberAccessExpression)
 			{
+				if (!(context.SemanticModel.GetSymbolInfo(memberAccessExpression.Expression).Symbol is INamedTypeSymbol))
+					return;
+
 				var methodSymbol = context.SemanticModel.GetSymbolInfo(memberAccessExpression.Name).Symbol;
 				if (methodSymbol?.ContainingType != null
 				    && methodSymbol.ContainingType.IsStatic
