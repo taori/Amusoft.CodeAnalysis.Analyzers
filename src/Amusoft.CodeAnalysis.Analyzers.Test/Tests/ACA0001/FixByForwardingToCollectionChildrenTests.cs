@@ -22,6 +22,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.ACA0001
 		{
 			Verifier.VerifyCodeFixAsync(string.Empty, string.Empty);
 		}
+
 		[TestMethod]
 		public async Task CanFixTask()
 		{
@@ -81,10 +82,136 @@ namespace ConsoleApplication1
 			{
 				// Test0.cs(20,21): info ACA0001: Forward execution of "Method1" to member "_disposables"
 				Verifier.Diagnostic().WithSpan(20, 21, 20, 28).WithArguments("Method1", "_disposables")
-            };
+			};
 
 			await Verifier.VerifyCodeFixAsync(test, expected, fixtest);
 		}
+
+		[TestMethod]
+		public async Task CanFixEmptyExpression()
+		{
+			var test = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    public interface ICustomInterface
+    {
+        Task Method1(object p1);
+    }
+
+    class TypeName : ICustomInterface
+    {
+        private ICollection<ICustomInterface> _disposables;
+
+        public async Task Method1(object p1) => Expression.Empty();
+    }
+}";
+			var fixtest = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    public interface ICustomInterface
+    {
+        Task Method1(object p1);
+    }
+
+    class TypeName : ICustomInterface
+    {
+        private ICollection<ICustomInterface> _disposables;
+
+        public async Task Method1(object p1)
+        {
+            await Task.WhenAll(_disposables.Select(item => item.Method1(p1)));
+        }
+    }
+}";
+
+			var expected = new DiagnosticResult[]
+			{
+				// Test0.cs(21,27): info ACA0001: Forward execution of "Method1" to member "_disposables"
+				Verifier.Diagnostic().WithSpan(21, 27, 21, 34).WithArguments("Method1", "_disposables")
+			};
+
+			await Verifier.VerifyCodeFixAsync(test, expected, fixtest);
+		}
+
+
+		[TestMethod]
+		public async Task CanFixArrowThrow()
+		{
+			var test = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    public interface ICustomInterface
+    {
+        Task Method1(object p1);
+    }
+
+    class TypeName : ICustomInterface
+    {
+        private ICollection<ICustomInterface> _disposables;
+
+        public async Task Method1(object p1) => throw new NotImplementedException();
+    }
+}";
+			var fixtest = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    public interface ICustomInterface
+    {
+        Task Method1(object p1);
+    }
+
+    class TypeName : ICustomInterface
+    {
+        private ICollection<ICustomInterface> _disposables;
+
+        public async Task Method1(object p1)
+        {
+            await Task.WhenAll(_disposables.Select(item => item.Method1(p1)));
+        }
+    }
+}";
+
+			var expected = new DiagnosticResult[]
+			{
+				// Test0.cs(21,27): info ACA0001: Forward execution of "Method1" to member "_disposables"
+				Verifier.Diagnostic().WithSpan(21, 27, 21, 34).WithArguments("Method1", "_disposables")
+			};
+
+			await Verifier.VerifyCodeFixAsync(test, expected, fixtest);
+		}
+
 
 		[TestMethod]
 		public async Task CanFixAsyncTask()
@@ -144,12 +271,12 @@ namespace ConsoleApplication1
 			{
 				// Test0.cs(20,27): info ACA0001: Forward execution of "Method1" to member "_disposables"
 				Verifier.Diagnostic().WithSpan(20, 27, 20, 34).WithArguments("Method1", "_disposables")
-            };
+			};
 
 			await Verifier.VerifyCodeFixAsync(test, expected, fixtest);
 		}
 
-        [TestMethod]
+		[TestMethod]
 		public async Task CanFixBool()
 		{
 			var test = @"
@@ -213,8 +340,8 @@ namespace ConsoleApplication1
 
 			await Verifier.VerifyCodeFixAsync(test, expectedDiagnostics, fixtest);
 		}
-        
-        [TestMethod]
+
+		[TestMethod]
 		public async Task VerifyFullRewrite()
 		{
 			var test = @"
@@ -530,7 +657,7 @@ namespace ConsoleApplication1
 // Test0.cs(43,21): info ACA0001: Forward execution of "Method3" to member "_disposables"
 				Verifier.Diagnostic().WithSpan(43, 21, 43, 28).WithArguments("Method3", "_disposables")
 			};
-            await Verifier.VerifyCodeFixAsync(test, expected, fixtest);
+			await Verifier.VerifyCodeFixAsync(test, expected, fixtest);
 
 			await new CodeFixTest<Analyzer, FixByForwardingToCollectionChildren>()
 			{
@@ -540,22 +667,22 @@ namespace ConsoleApplication1
 				{
 					Sources = {test},
 					ExpectedDiagnostics =
-                    {
-	                    // Test0.cs(24,21): info ACA0001: Forward execution of "Method1" to member "_disposables"
-	                    Verifier.Diagnostic().WithSpan(24, 21, 24, 28).WithArguments("Method1", "_disposables"),
+					{
+						// Test0.cs(24,21): info ACA0001: Forward execution of "Method1" to member "_disposables"
+						Verifier.Diagnostic().WithSpan(24, 21, 24, 28).WithArguments("Method1", "_disposables"),
 // Test0.cs(33,21): info ACA0001: Forward execution of "Method2" to member "_disposables"
-	                    Verifier.Diagnostic().WithSpan(33, 21, 33, 28).WithArguments("Method2", "_disposables"),
+						Verifier.Diagnostic().WithSpan(33, 21, 33, 28).WithArguments("Method2", "_disposables"),
 // Test0.cs(38,21): info ACA0001: Forward execution of "Method2" to member "_disposables"
-	                    Verifier.Diagnostic().WithSpan(38, 21, 38, 28).WithArguments("Method2", "_disposables"),
+						Verifier.Diagnostic().WithSpan(38, 21, 38, 28).WithArguments("Method2", "_disposables"),
 // Test0.cs(43,21): info ACA0001: Forward execution of "Method3" to member "_disposables"
-	                    Verifier.Diagnostic().WithSpan(43, 21, 43, 28).WithArguments("Method3", "_disposables")
-                    },
+						Verifier.Diagnostic().WithSpan(43, 21, 43, 28).WithArguments("Method3", "_disposables")
+					},
 				},
 				FixedState =
 				{
 					ExpectedDiagnostics =
 					{
-                    },
+					},
 					Sources = {fixtest}
 				},
 			}.RunAsync();
@@ -889,7 +1016,7 @@ namespace ConsoleApplication1
 				Verifier.Diagnostic().WithSpan(38, 21, 38, 28).WithArguments("Method2", "Disposables"),
 // Test0.cs(43,21): info ACA0001: Forward execution of "Method3" to member "Disposables"
 				Verifier.Diagnostic().WithSpan(43, 21, 43, 28).WithArguments("Method3", "Disposables")
-            };
+			};
 
 			await Verifier.VerifyCodeFixAsync(test, expected, fixtest);
 		}
@@ -1073,8 +1200,7 @@ namespace ConsoleApplication1
         }
     }
 }";
-
 		}
 #pragma warning restore 219
-    }
+	}
 }
