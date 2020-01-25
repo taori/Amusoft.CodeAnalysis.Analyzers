@@ -53,8 +53,6 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0006
 		{
 			context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 			context.RegisterSemanticModelAction(AnalyzeSemanticModel);
-			context.RegisterSyntaxNodeAction(AnalyzeMemberAccessExpression,
-				syntaxKinds: SyntaxKind.SimpleMemberAccessExpression);
 		}
 
 		private void AnalyzeSemanticModel(SemanticModelAnalysisContext context)
@@ -98,42 +96,6 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0006
 					}
 				}
 			}
-		}
-
-
-		private void AnalyzeMemberAccessExpression(SyntaxNodeAnalysisContext context)
-		{
-			return;
-			if (context.Node is MemberAccessExpressionSyntax memberAccessExpression)
-			{
-				if (!(context.SemanticModel.GetSymbolInfo(memberAccessExpression.Expression).Symbol is INamedTypeSymbol)
-				)
-					return;
-
-				var methodSymbol = context.SemanticModel.GetSymbolInfo(memberAccessExpression.Name).Symbol;
-				if (methodSymbol?.ContainingType != null
-				    && methodSymbol.ContainingType.IsStatic
-				    && methodSymbol.ContainingType.GetMembers()
-					    .Count(IsMethodSymbolCandidate) >= 5)
-				{
-					if (memberAccessExpression.Expression is IdentifierNameSyntax methodClassIdentifier)
-					{
-						context.ReportDiagnostic(
-							Diagnostic.Create(
-								PrimaryRule,
-								memberAccessExpression.Expression.GetLocation(),
-								methodClassIdentifier.Identifier.Text
-							)
-						);
-					}
-				}
-			}
-		}
-
-		private bool IsMethodSymbolCandidate(ISymbol methodSymbolCandidate)
-		{
-			return methodSymbolCandidate.IsStatic
-			       && methodSymbolCandidate.Kind == SymbolKind.Method;
 		}
 	}
 }
