@@ -5,7 +5,6 @@ trigger:
     include:
       - master
       - features/*
-      - feature/*
       - releases/*
   paths:
     exclude:
@@ -65,6 +64,7 @@ jobs:
       publishTestResults: true
 
   - task: CopyFiles@2
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/releases/'))
     inputs:
       SourceFolder: '$(Build.SourcesDirectory)'
       Contents: |
@@ -74,6 +74,7 @@ jobs:
       TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
   - task: PublishPipelineArtifact@0
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/releases/'))
     inputs:
       artifactName: 'drop'
       targetPath: '$(Build.ArtifactStagingDirectory)'
