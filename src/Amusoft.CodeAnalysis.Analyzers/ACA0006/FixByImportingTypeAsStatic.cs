@@ -51,38 +51,50 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0006
 				.ConfigureAwait(false);
 			var diagnosticNode = syntaxRoot.FindNode(span);
 
-			var accessExpressionSyntax = diagnosticNode
+			var diagnosticExpression = diagnosticNode
 				.AncestorsAndSelf()
 				.OfType<MemberAccessExpressionSyntax>()
 				.FirstOrDefault();
-
-			if (accessExpressionSyntax == null)
+			if (diagnosticExpression == null)
 				return document;
 
-			var typeSymbol = semanticModel.GetSymbolInfo(accessExpressionSyntax.Name).Symbol?.ContainingType;
-			if (typeSymbol == null)
-				return document;
+			var diagnosticTypeSymbol = semanticModel.GetSymbolInfo(diagnosticExpression.Name).Symbol?.ContainingSymbol;
+
+			var matchingExpressions = syntaxRoot
+				.DescendantNodes()
+				.OfType<MemberAccessExpressionSyntax>()
+				.Select(expression => (expression, methodSymbol: semanticModel.GetSymbolInfo(expression.Name).Symbol))
+				.Where(tuple => tuple.methodSymbol.IsStatic && tuple.methodSymbol.ContainingSymbol.Equals(diagnosticTypeSymbol));
 
 			var editor = await DocumentEditor.CreateAsync(document, cancellationToken)
 				.ConfigureAwait(false);
 
 			var usingDirective = UsingDirective(
-					ParseName(typeSymbol.ToString()))
+					ParseName(diagnosticTypeSymbol.ToString()))
 				.WithStaticKeyword(Token(SyntaxKind.StaticKeyword))
 				.WithAdditionalAnnotations(Formatter.Annotation);
-
-			var replacement = GetReplacementNode(semanticModel, accessExpressionSyntax);
-			if (replacement == null)
-				return document;
-
 			var lastDirective = syntaxRoot.DescendantNodes().OfType<UsingDirectiveSyntax>().LastOrDefault();
-
-			editor.ReplaceNode(GetInvocationTarget(semanticModel, accessExpressionSyntax),
-				replacement);
-
+			
 			if (!UsingDirectiveAlreadyExists(syntaxRoot, usingDirective))
 			{
 				editor.InsertAfter(lastDirective, usingDirective);
+			}
+
+			foreach (var accessExpressionTuple in matchingExpressions)
+			{
+				var accessExpressionSyntax = accessExpressionTuple.expression;
+				var accessExpressionMethodSymbol = accessExpressionTuple.methodSymbol;
+				var typeSymbol = accessExpressionMethodSymbol.ContainingType;
+				if (typeSymbol == null)
+					return document;
+
+				var replacement = GetReplacementNode(semanticModel, accessExpressionSyntax);
+				if (replacement == null)
+					return document;
+
+				var replacementTarget = GetInvocationTarget(semanticModel, accessExpressionSyntax);
+
+				editor.ReplaceNode(replacementTarget, replacement);
 			}
 
 			return editor.GetChangedDocument();

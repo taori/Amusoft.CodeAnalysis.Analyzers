@@ -19,12 +19,12 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0006
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
 	public class StaticImportAnalyzer : DiagnosticAnalyzer
 	{
-		#region PrimaryRule
-
 		private static readonly LocalizableString PrimaryRuleTitle = new LocalizableResourceString(
 			nameof(Resources.StaticImportAnalyzer_PrimaryRuleTitle),
 			Resources.ResourceManager,
 			typeof(Resources));
+
+		#region PrimaryRule
 
 		private static readonly LocalizableString PrimaryRuleMessageFormat = new LocalizableResourceString(
 			nameof(Resources.StaticImportAnalyzer_PrimaryRuleMessageFormat_0),
@@ -43,50 +43,59 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0006
 		#endregion
 
 		/// <inheritdoc />
-		public override void Initialize(AnalysisContext context)
-		{
-			context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-			context.RegisterSyntaxNodeAction(AnalyzeMemberAccessExpression,
-				syntaxKinds: SyntaxKind.SimpleMemberAccessExpression);
-		}
-
-		/// <inheritdoc />
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
 		{
 			get { return ImmutableArray.Create(PrimaryRule); }
 		}
 
-		private void AnalyzeMemberAccessExpression(SyntaxNodeAnalysisContext context)
+		/// <inheritdoc />
+		public override void Initialize(AnalysisContext context)
 		{
-			if (context.Node is MemberAccessExpressionSyntax memberAccessExpression)
-			{
-				if (!(context.SemanticModel.GetSymbolInfo(memberAccessExpression.Expression).Symbol is INamedTypeSymbol))
-					return;
+			context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+			context.RegisterSemanticModelAction(AnalyzeSemanticModel);
+		}
 
-				var methodSymbol = context.SemanticModel.GetSymbolInfo(memberAccessExpression.Name).Symbol;
-				if (methodSymbol?.ContainingType != null
-				    && methodSymbol.ContainingType.IsStatic
-				    && methodSymbol.ContainingType.GetMembers()
-					    .Count(IsMethodSymbolCandidate) >= 5)
+		private void AnalyzeSemanticModel(SemanticModelAnalysisContext context)
+		{
+			var model = context.SemanticModel;
+			var root = model.SyntaxTree.GetRoot(context.CancellationToken);
+			var memberAccessExpressions = root
+				.DescendantNodes()
+				.OfType<MemberAccessExpressionSyntax>();
+
+			var filteredSymbols = memberAccessExpressions
+				.Select(expression =>
+					(
+						typeSymbol: model.GetSymbolInfo(expression.Expression).Symbol as INamedTypeSymbol,
+						memberSymbol: model.GetSymbolInfo(expression.Name).Symbol,
+						expression: expression
+					)
+				)
+				.Where(tuple => tuple.typeSymbol != null
+				                && tuple.typeSymbol.IsStatic
+				                && tuple.memberSymbol != null
+				                && tuple.memberSymbol.IsStatic);
+
+			var grouped = filteredSymbols.ToLookup(tuple => tuple.typeSymbol);
+			foreach (var group in grouped)
+			{
+				if (grouped[group.Key].Count() > 4)
 				{
-					if (memberAccessExpression.Expression is IdentifierNameSyntax methodClassIdentifier)
+					if (grouped[group.Key].FirstOrDefault() is var firstType)
 					{
-						context.ReportDiagnostic(
-							Diagnostic.Create(
-								PrimaryRule,
-								memberAccessExpression.Expression.GetLocation(),
-								methodClassIdentifier.Identifier.Text
-							)
-						);
+						if (firstType.expression.Expression is IdentifierNameSyntax classNameSyntax)
+						{
+							context.ReportDiagnostic(
+								Diagnostic.Create(
+									PrimaryRule,
+									firstType.expression.Expression.GetLocation(),
+									classNameSyntax.Identifier.Text
+								)
+							);
+						}
 					}
 				}
 			}
-		}
-
-		private bool IsMethodSymbolCandidate(ISymbol methodSymbolCandidate)
-		{
-			return methodSymbolCandidate.IsStatic
-			       && methodSymbolCandidate.Kind == SymbolKind.Method;
 		}
 	}
 }
