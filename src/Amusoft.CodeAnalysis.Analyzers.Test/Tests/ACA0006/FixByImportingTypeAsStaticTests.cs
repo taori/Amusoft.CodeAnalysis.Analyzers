@@ -17,21 +17,7 @@ namespace Amusoft.CodeAnalysis.Analyzers.Test.Tests.ACA0006
 	[TestClass]
 	public class FixByImportingTypeAsStaticTests
 	{
-		private const string LibraryFileNoCandidate = @"
-using System;
-
-namespace ConsoleApplication1
-{
-    public static class Helper
-    {
-        public static void Method1() {}
-        public static void Method2(string value1, string value2) {}
-        public static void Method3() {}
-        public static void Method4() {}
-    }
-}";
-
-		private const string LibraryFileCandidate = @"
+		private const string LibraryFile = @"
 using System;
 
 namespace ConsoleApplication1
@@ -43,19 +29,19 @@ namespace ConsoleApplication1
         public static void Method3() {}
         public static void Method4() {}
         public static void Method5() {}
+        public static void Method6() {}
+        public static readonly string Member1;
+        public static string Member2 {get;} = ""somevalue"";
     }
-}";
 
-		private const string LibraryFileCandidate2 = @"
-using System;
-
-namespace ConsoleApplication1
-{
-    public static class Helper
+    public static class Helper2
     {
         public static void Method1() {}
         public static void Method2(string value1, string value2) {}
         public static void Method3() {}
+        public static void Method4() {}
+        public static void Method5() {}
+        public static void Method6() {}
         public static readonly string Member1;
         public static string Member2 {get;} = ""somevalue"";
     }
@@ -68,10 +54,9 @@ namespace ConsoleApplication1
 		}
 
 		[DataTestMethod]
-		[DataRow(LibraryFileCandidate2, "Member1", DisplayName = "MemberAccess Member1")]
-		[DataRow(LibraryFileCandidate2, "Member2", DisplayName = "MemberAccess Member2")]
-		[TestMethod]
-		public async Task RewriteNonMethodAccess(string libraryFile, string memberName)
+		[DataRow("Member1", DisplayName = "MemberAccess Member1")]
+		[DataRow("Member2", DisplayName = "MemberAccess Member2")]
+		public async Task RewriteNonMethodAccess(string memberName)
 		{
 			var test = $@"
 using System;
@@ -88,6 +73,10 @@ namespace ConsoleApplication1
     {{
         private string GetTypeName()
         {{
+            return Helper.{memberName};
+            return Helper.{memberName};
+            return Helper.{memberName};
+            return Helper.{memberName};
             return Helper.{memberName};
         }}
     }}
@@ -111,6 +100,10 @@ namespace ConsoleApplication1
         private string GetTypeName()
         {{
             return {memberName};
+            return {memberName};
+            return {memberName};
+            return {memberName};
+            return {memberName};
         }}
     }}
 }}";
@@ -120,7 +113,7 @@ namespace ConsoleApplication1
 				CompilerDiagnostics = CompilerDiagnostics.Errors,
 				TestState =
 				{
-					Sources = {test, libraryFile},
+					Sources = {test, LibraryFile},
 					ExpectedDiagnostics =
 					{
 						// Test0.cs(16,20): info ACA0006: Import type "Helper" as static.
@@ -129,17 +122,14 @@ namespace ConsoleApplication1
 				},
 				FixedState =
 				{
-					Sources = {fixtest, libraryFile},
+					Sources = {fixtest, LibraryFile},
 				},
 			}.RunAsync();
 		}
 
 
-		[DataTestMethod]
-		[DataRow(LibraryFileCandidate, DisplayName = "MethodsOnly")]
-		[DataRow(LibraryFileCandidate2, DisplayName = "MixedMembers")]
 		[TestMethod]
-		public async Task RewriteIfFiveOrMoreWithParameters(string libraryFile)
+		public async Task RewriteIfFiveOrMoreWithParameters()
 		{
 			var test = @"
 using System;
@@ -156,6 +146,10 @@ namespace ConsoleApplication1
     {
         TypeName()
         {
+            Helper.Method2(""value1"", ""value2"");
+            Helper.Method2(""value1"", ""value2"");
+            Helper.Method2(""value1"", ""value2"");
+            Helper.Method2(""value1"", ""value2"");
             Helper.Method2(""value1"", ""value2"");
         }
     }
@@ -179,6 +173,10 @@ namespace ConsoleApplication1
         TypeName()
         {
             Method2(""value1"", ""value2"");
+            Method2(""value1"", ""value2"");
+            Method2(""value1"", ""value2"");
+            Method2(""value1"", ""value2"");
+            Method2(""value1"", ""value2"");
         }
     }
 }";
@@ -188,25 +186,23 @@ namespace ConsoleApplication1
 				CompilerDiagnostics = CompilerDiagnostics.Errors,
 				TestState =
 				{
-					Sources = {test, libraryFile},
+					Sources = {test, LibraryFile},
 					ExpectedDiagnostics =
 					{
 						// Test0.cs(16,13): info ACA0006: Import type "Helper" as static.
 						Verifier.Diagnostic().WithSpan(16, 13, 16, 19).WithArguments("Helper")
+
 					},
 				},
 				FixedState =
 				{
-					Sources = {fixtest, libraryFile},
+					Sources = {fixtest, LibraryFile},
 				},
 			}.RunAsync();
 		}
 
-		[DataTestMethod]
-		[DataRow(LibraryFileCandidate, DisplayName = "MethodsOnly")]
-		[DataRow(LibraryFileCandidate2, DisplayName = "MixedMembers")]
 		[TestMethod]
-		public async Task RewriteIfFiveOrMore(string libraryFile)
+		public async Task RewriteOnlyDiagnosticMatches()
 		{
 			var test = @"
 using System;
@@ -223,6 +219,158 @@ namespace ConsoleApplication1
     {
         TypeName()
         {
+            Helper.Method1();
+            Helper.Method3();
+            Helper.Method4();
+            Helper.Method5();
+            Helper.Method6();
+            Helper2.Method6();
+        }
+    }
+}";
+
+
+			var fixtest = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using ConsoleApplication1;
+using static ConsoleApplication1.Helper;
+
+namespace ConsoleApplication1
+{
+    class TypeName
+    {
+        TypeName()
+        {
+            Method1();
+            Method3();
+            Method4();
+            Method5();
+            Method6();
+            Helper2.Method6();
+        }
+    }
+}";
+
+			await new CodeFixTest<StaticImportAnalyzer, FixByImportingTypeAsStatic>()
+			{
+				CompilerDiagnostics = CompilerDiagnostics.Errors,
+				TestState =
+				{
+					Sources = {test, LibraryFile},
+					ExpectedDiagnostics =
+					{
+						// Test0.cs(16,13): info ACA0006: Import type "Helper" as static.
+						Verifier.Diagnostic().WithSpan(16, 13, 16, 19).WithArguments("Helper")
+					},
+				},
+				FixedState =
+				{
+					Sources = {fixtest, LibraryFile},
+				},
+			}.RunAsync();
+		}
+
+
+		[TestMethod]
+		public async Task RewriteIfFiveOrMore()
+		{
+			var test = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using ConsoleApplication1;
+
+namespace ConsoleApplication1
+{
+    class TypeName
+    {
+        TypeName()
+        {
+            Helper.Method1();
+            Helper.Method3();
+            Helper.Method4();
+            Helper.Method5();
+            Helper.Method6();
+        }
+    }
+}";
+
+
+			var fixtest = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using ConsoleApplication1;
+using static ConsoleApplication1.Helper;
+
+namespace ConsoleApplication1
+{
+    class TypeName
+    {
+        TypeName()
+        {
+            Method1();
+            Method3();
+            Method4();
+            Method5();
+            Method6();
+        }
+    }
+}";
+
+			await new CodeFixTest<StaticImportAnalyzer, FixByImportingTypeAsStatic>()
+			{
+				CompilerDiagnostics = CompilerDiagnostics.Errors,
+				TestState =
+				{
+					Sources = {test, LibraryFile},
+					ExpectedDiagnostics =
+					{
+						// Test0.cs(16,13): info ACA0006: Import type "Helper" as static.
+						Verifier.Diagnostic().WithSpan(16, 13, 16, 19).WithArguments("Helper")
+					},
+				},
+				FixedState =
+				{
+					Sources = {fixtest, LibraryFile},
+				},
+			}.RunAsync();
+		}
+
+		[TestMethod]
+		public async Task DoNotDuplicateUsingstatements()
+		{
+			var test = @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using ConsoleApplication1;
+using static ConsoleApplication1.Helper;
+
+namespace ConsoleApplication1
+{
+    class TypeName
+    {
+        TypeName()
+        {
+            Helper.Method1();
+            Helper.Method1();
+            Helper.Method1();
+            Helper.Method1();
             Helper.Method1();
         }
     }
@@ -246,73 +394,9 @@ namespace ConsoleApplication1
         TypeName()
         {
             Method1();
-        }
-    }
-}";
-
-			await new CodeFixTest<StaticImportAnalyzer, FixByImportingTypeAsStatic>()
-			{
-				CompilerDiagnostics = CompilerDiagnostics.Errors,
-				TestState =
-				{
-					Sources = {test, libraryFile},
-					ExpectedDiagnostics =
-					{
-						// Test0.cs(16,13): info ACA0006: Import type "Helper" as static.
-						Verifier.Diagnostic().WithSpan(16, 13, 16, 19).WithArguments("Helper")
-					},
-				},
-				FixedState =
-				{
-					Sources = {fixtest, libraryFile},
-				},
-			}.RunAsync();
-		}
-
-		[DataTestMethod]
-		[DataRow(LibraryFileCandidate, DisplayName = "MethodsOnly")]
-		[DataRow(LibraryFileCandidate2, DisplayName = "MixedMembers")]
-		[TestMethod]
-		public async Task DoNotDuplicateUsingstatements(string libraryFile)
-		{
-			var test = @"
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
-using ConsoleApplication1;
-using static ConsoleApplication1.Helper;
-
-namespace ConsoleApplication1
-{
-    class TypeName
-    {
-        TypeName()
-        {
-            Helper.Method1();
-        }
-    }
-}";
-
-
-			var fixtest = @"
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
-using ConsoleApplication1;
-using static ConsoleApplication1.Helper;
-
-namespace ConsoleApplication1
-{
-    class TypeName
-    {
-        TypeName()
-        {
+            Method1();
+            Method1();
+            Method1();
             Method1();
         }
     }
@@ -323,16 +407,16 @@ namespace ConsoleApplication1
 				CompilerDiagnostics = CompilerDiagnostics.Errors,
 				TestState =
 				{
-					Sources = {test, libraryFile},
+					Sources = {test, LibraryFile},
 					ExpectedDiagnostics =
 					{
-						// Test0.cs(16,13): info ACA0006: Import type "Helper" as static.
+						// Test0.cs(17,13): info ACA0006: Import type "Helper" as static.
 						Verifier.Diagnostic().WithSpan(17, 13, 17, 19).WithArguments("Helper")
 					},
 				},
 				FixedState =
 				{
-					Sources = {fixtest, libraryFile},
+					Sources = {fixtest, LibraryFile},
 				},
 			}.RunAsync();
 		}
@@ -356,7 +440,11 @@ namespace ConsoleApplication1
         TypeName()
         {
             var someText = ""something"";
-            var bla = someText.ToString();
+            var bla1 = someText.ToString();
+            var bla2 = someText.ToString();
+            var bla3 = someText.ToString();
+            var bla4 = someText.ToString();
+            var bla5 = someText.ToString();
         }
     }
 }";
@@ -366,7 +454,7 @@ namespace ConsoleApplication1
 				CompilerDiagnostics = CompilerDiagnostics.Errors,
 				TestState =
 				{
-					Sources = {test, LibraryFileCandidate},
+					Sources = {test, LibraryFile},
 					ExpectedDiagnostics =
 					{
 
@@ -374,7 +462,7 @@ namespace ConsoleApplication1
 				},
 				FixedState =
 				{
-					Sources = {test, LibraryFileCandidate},
+					Sources = {test, LibraryFile},
 				},
 			}.RunAsync();
 		}
@@ -400,6 +488,9 @@ namespace ConsoleApplication1
         TypeName()
         {
             Helper.Method1();
+            Helper.Method1();
+            Helper.Method1();
+            Helper.Method1();
         }
     }
 }";
@@ -409,7 +500,7 @@ namespace ConsoleApplication1
 				CompilerDiagnostics = CompilerDiagnostics.Errors,
 				TestState =
 				{
-					Sources = {test, LibraryFileNoCandidate},
+					Sources = {test, LibraryFile},
 					ExpectedDiagnostics =
 					{
 
@@ -417,7 +508,7 @@ namespace ConsoleApplication1
 				},
 				FixedState =
 				{
-					Sources = {test, LibraryFileNoCandidate},
+					Sources = {test, LibraryFile},
 				},
 			}.RunAsync();
 		}

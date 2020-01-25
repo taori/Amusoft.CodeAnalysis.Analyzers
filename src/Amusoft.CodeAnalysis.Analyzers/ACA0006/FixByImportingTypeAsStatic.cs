@@ -76,9 +76,10 @@ namespace Amusoft.CodeAnalysis.Analyzers.ACA0006
 				return document;
 
 			var lastDirective = syntaxRoot.DescendantNodes().OfType<UsingDirectiveSyntax>().LastOrDefault();
+			var replacementTarget = GetInvocationTarget(semanticModel, accessExpressionSyntax);
 
-			editor.ReplaceNode(GetInvocationTarget(semanticModel, accessExpressionSyntax),
-				replacement);
+			editor.ReplaceNode(replacementTarget, replacement);
+			var changedDocument = editor.GetChangedDocument().GetSyntaxRootAsync(cancellationToken).Result.ToFullString();
 
 			if (!UsingDirectiveAlreadyExists(syntaxRoot, usingDirective))
 			{
